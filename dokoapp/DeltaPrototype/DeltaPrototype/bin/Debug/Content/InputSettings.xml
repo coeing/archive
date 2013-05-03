@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<InputSettings>
+  <Command Name="QuitTest">
+    <Trigger Button="Escape" State="Released" />
+    <Trigger Button="F4" State="Released">
+      <Modifier Button="LeftAlt" />
+      <Modifier Button="RightAlt" />
+    </Trigger>
+    <Trigger Button="GamePadBack" State="Released" />
+  </Command>
+  <Command Name="MakeScreenshot">
+    <Trigger Button="PrintScreen" State="Pressed" />
+  </Command>
+  <Command Name="UIPositionChange">
+    <Trigger Button="MouseMove" State="IsPressed" />
+    <Trigger Button="TouchPress" State="IsPressed" />
+    <Trigger Button="KeyboardCursor" State="IsPressed" />
+    <Trigger Button="GamePadLeftStick" State="IsPressed" />
+  </Command>
+  <Command Name="UIClickBegin">
+    <Trigger Button="MouseLeft" State="Pressed" />
+    <Trigger Button="TouchPress" State="Pressed" />
+    <Trigger Button="Space" State="Pressed" />
+    <Trigger Button="GamePadA" State="Pressed" />
+  </Command>
+  <Command Name="UIClick">
+    <Trigger Button="MouseLeft" State="Released" />
+    <Trigger Button="TouchPress" State="Released" />
+    <Trigger Button="Space" State="Released" />
+    <Trigger Button="GamePadA" State="Released" />
+  </Command>
+  <Command Name="UIDoubleClick">
+    <Trigger Button="MouseDoubleTap" State="Released" />
+    <Trigger Button="TouchDoubleTap" State="Released" />
+  </Command>
+  <Command Name="UIRightClick">
+    <Trigger Button="MouseRight" State="Released" />
+    <Trigger Button="TouchHold" State="Released" />
+    <Trigger Button="GamePadB" State="Released" />
+    <Trigger Button="Enter" State="Released" />
+  </Command>
+  <Command Name="UIDragBegin">
+    <Trigger Button="MouseDrag" State="Pressed" />
+    <Trigger Button="TouchDrag" State="Pressed" />
+    <Trigger Button="GamePadRightStick" State="Pressed" />
+    <Trigger Button="KeyboardCursor" State="Pressed">
+      <Modifier Button="Control" />
+    </Trigger>
+    <Trigger Button="GamePadRightStick" State="IsPressed" />
+    <Trigger Button="KeyboardCursor" State="IsPressed">
+      <Modifier Button="Control" />
+    </Trigger>
+    <Trigger Button="GamePadRightStick" State="Released" />
+    <Trigger Button="KeyboardCursor" State="Released">
+      <Modifier Button="Control" />
+    </Trigger>
+  </Command>
+  <Command Name="UIDragMove">
+    <Trigger Button="MouseDrag" State="IsPressed" />
+    <Trigger Button="TouchDrag" State="IsPressed" />
+  </Command>
+  <Command Name="UIDragEnd">
+    <Trigger Button="MouseDrag" State="Released" />
+    <Trigger Button="TouchDrag" State="Released" />
+  </Command>
+  <Command Name="CameraZoomIn">
+    <Trigger Button="PageUp" State="IsPressed" />
+    <Trigger Button="MouseScrollWheel" State="IsPressed" />
+    <Trigger Button="PageDown" State="IsPressed" />
+  </Command>
+  <Command Name="CameraZoomOut">
+    <Trigger Button="MouseScrollWheel" State="IsPressed" />
+  </Command>
+  <Command Name="CameraMoveLeft">
+    <Trigger Button="A" State="IsPressed" />
+    <Trigger Button="GamePadLeftStick" State="IsPressed" />
+    <Trigger Button="GamePadLeft" State="IsPressed" />
+  </Command>
+  <Command Name="CameraMoveRight">
+    <Trigger Button="D" State="IsPressed" />
+    <Trigger Button="GamePadLeftStick" State="IsPressed" />
+    <Trigger Button="GamePadRight" State="IsPressed" />
+  </Command>
+  <Command Name="CameraMoveUp">
+    <Trigger Button="W" State="IsPressed" />
+    <Trigger Button="GamePadLeftStick" State="IsPressed" />
+    <Trigger Button="GamePadUp" State="IsPressed" />
+  </Command>
+  <Command Name="CameraMoveDown">
+    <Trigger Button="S" State="IsPressed" />
+    <Trigger Button="GamePadLeftStick" State="IsPressed" />
+    <Trigger Button="GamePadRight" State="IsPressed" />
+  </Command>
+  <Command Name="CameraRotateLeft">
+    <Trigger Button="CursorLeft" State="IsPressed" />
+    <Trigger Button="MouseMove" State="IsPressed" />
+    <Trigger Button="TouchDrag" State="IsPressed" />
+    <Trigger Button="GamePadRightStick" State="IsPressed" />
+  </Command>
+  <Command Name="CameraRotateRight">
+    <Trigger Button="CursorRight" State="IsPressed" />
+    <Trigger Button="MouseMove" State="IsPressed" />
+    <Trigger Button="TouchDrag" State="IsPressed" />
+    <Trigger Button="GamePadRightStick" State="IsPressed" />
+  </Command>
+  <Command Name="CameraRotateUp">
+    <Trigger Button="CursorUp" State="IsPressed" />
+    <Trigger Button="MouseMove" State="IsPressed" />
+    <Trigger Button="TouchDrag" State="IsPressed" />
+    <Trigger Button="GamePadRightStick" State="IsPressed" />
+  </Command>
+  <Command Name="CameraRotateDown">
+    <Trigger Button="CursorDown" State="IsPressed" />
+    <Trigger Button="MouseMove" State="IsPressed" />
+    <Trigger Button="TouchDrag" State="IsPressed" />
+    <Trigger Button="GamePadRightStick" State="IsPressed" />
+  </Command>
+  <Command Name="ProfilerToggleFps">
+    <Trigger Button="F1" State="Released" />
+  </Command>
+  <Command Name="ProfilerToggleSimulator">
+    <Trigger Button="F2" State="Released" />
+  </Command>
+  <Command Name="ProfilerToggleModules">
+    <Trigger Button="F3" State="Released" />
+  </Command>
+  <Command Name="ProfilerToggleSystem">
+    <Trigger Button="F4" State="Released" />
+  </Command>
+  <Command Name="ProfilerToggleRendering2D">
+    <Trigger Button="F5" State="Released" />
+  </Command>
+  <Command Name="ProfilerToggleRendering3D">
+    <Trigger Button="F6" State="Released" />
+  </Command>
+  <Command Name="ProfilerToggleUI">
+    <Trigger Button="F7" State="Released" />
+  </Command>
+  <Command Name="ProfilerTogglePhysics">
+    <Trigger Button="F8" State="Released" />
+  </Command>
+  <Command Name="ProfilerToggleAI">
+    <Trigger Button="F9" State="Released" />
+  </Command>
+  <Command Name="ProfilerToggleText">
+    <Trigger Button="F10" State="Released" />
+  </Command>
+  <Command Name="ProfilerToggleCustom">
+    <Trigger Button="F11" State="Released" />
+  </Command>
+  <Command Name="DrawDebugInfoToggleRendering2D">
+    <Trigger Button="F5" State="Released">
+      <Modifier Button="Shift" />
+    </Trigger>
+  </Command>
+  <Command Name="DrawDebugInfoToggleRendering3D">
+    <Trigger Button="F6" State="Released">
+      <Modifier Button="Shift" />
+    </Trigger>
+  </Command>
+  <Command Name="DrawDebugInfoToggleUI">
+    <Trigger Button="F7" State="Released">
+      <Modifier Button="Shift" />
+    </Trigger>
+  </Command>
+  <Command Name="DrawDebugInfoTogglePhysics">
+    <Trigger Button="F8" State="Released">
+      <Modifier Button="Shift" />
+    </Trigger>
+  </Command>
+  <Command Name="DrawDebugInfoInfoToggleAI">
+    <Trigger Button="F9" State="Released">
+      <Modifier Button="Shift" />
+    </Trigger>
+  </Command>
+  <Command Name="DrawDebugInfoInfoToggleText">
+    <Trigger Button="F10" State="Released">
+      <Modifier Button="Shift" />
+    </Trigger>
+  </Command>
+  <Command Name="DrawDebugInfoInfoToggleCustom">
+    <Trigger Button="F11" State="Released">
+      <Modifier Button="Shift" />
+    </Trigger>
+  </Command>
+</InputSettings>

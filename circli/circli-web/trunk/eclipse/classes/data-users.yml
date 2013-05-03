@@ -1,0 +1,24 @@
+models.user.User(adam):
+    firstName: Adam
+    lastName: Adamski
+    email: adam@circ.li
+    
+models.user.User(berta):
+    firstName: Berta
+    lastName: Bertowski
+    email: berta@circ.li
+    
+models.user.User(christo):
+    firstName: Christo
+    lastName: Christowski
+    email: christo@circ.li
+    
+models.user.User(daniel):
+    firstName: Daniel
+    lastName: Danowski
+    email: daniel@circ.li
+    
+models.user.User(erika):
+    firstName: Erika
+    lastName: Erkowski    
+    email: erika@circ.li

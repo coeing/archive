@@ -1,0 +1,1269 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.Utilities.Math</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.Utilities.Math.Noise">
+            <summary>
+            Helper class to generate noise and allow to recreate the same conditions
+            over and over again to generate the exact same random noise again. Each
+            noise entry is a Vector4 and will be interpolated in the GetNoise method.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Noise.NoiseBias">
+            <summary>
+            Noise bias = 1024
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Noise.noiseSize">
+            <summary>
+            Size of the noise array, the gradient and permutation seed. All these
+            values can be saved to a stream (see Save) and loaded again later
+            to reconstruct the exact same noise table again (with Load).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Noise.gradientSeed">
+            <summary>
+            Size of the noise array, the gradient and permutation seed. All these
+            values can be saved to a stream (see Save) and loaded again later
+            to reconstruct the exact same noise table again (with Load).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Noise.permutationSeed">
+            <summary>
+            Size of the noise array, the gradient and permutation seed. All these
+            values can be saved to a stream (see Save) and loaded again later
+            to reconstruct the exact same noise table again (with Load).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Noise.noiseTable">
+            <summary>
+            Noise table values, use GetNoise to get to the values.
+            Note: Quaternions are just used here as a Vector4 replacement.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Noise.permutationTable">
+            <summary>
+            Permutation table to jump around like crazy in the noiseTable array.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Noise.gradientRange">
+            <summary>
+            Gradient range
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Noise.permutationRange">
+            <summary>
+            Permutation range
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.#ctor(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Create noise with given table size, gradient seed and permutation seed
+            values (this way you can easily recreate this noise table with the
+            same values again). Each noise value is stored as a Vector4
+            (Quaternion in our engine).
+            </summary>
+            <param name="setNoiseTableSize">Size for the noise table</param>
+            <param name="setGradientSeed">
+            Seed value to regenerate the same random seed values as before.
+            </param>
+            <param name="setPermutationSeed">
+            And another seed for the permutation, must also fit to generate the
+            same values again.
+            </param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create noise parameters from a stream and rebuild the same noise table
+            that was used when this Noise was saved.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.Equals(Delta.Utilities.Math.Noise)">
+            <summary>
+            Equals
+            </summary>
+            <param name="other">Other</param>
+            <returns>Value indicating the equality of two vectors</returns>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.Load(System.IO.BinaryReader)">
+            <summary>
+            Load Noise parameters from a stream and rebuild the same noise table
+            that was used when this Noise was saved.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save Noise parameter out to a stream so we can reconstruct the exact
+            same values again when loading these parameters.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.op_Equality(Delta.Utilities.Math.Noise,Delta.Utilities.Math.Noise)">
+            <summary>
+            Check for equality
+            </summary>
+            <param name="value1">Value 1</param>
+            <param name="value2">Value 2</param>
+            <returns>True if the values are equal, false otherwise</returns>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.op_Inequality(Delta.Utilities.Math.Noise,Delta.Utilities.Math.Noise)">
+            <summary>
+            Check for inequality
+            </summary>
+            <param name="value1">Value 1</param>
+            <param name="value2">Value 2</param>
+            <returns>Bool</returns>	
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.GetNoise(Delta.Utilities.Datatypes.Quaternion)">
+            <summary>
+            Get noise at a specific Vector4 (as Quternion) position. Each of the
+            4 values (x, y, z, w) should be between 0.0 and 1.0. When all values
+            are 0.0, 0.0 is always returned.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.GetHashCode">
+            <summary>
+            Get hash code
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.Equals(System.Object)">
+            <summary>
+            Equals
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.BuildNoise">
+            <summary>
+            Build noise with the given parameters: noiseSize, gradientSeed and
+            permutationSeed. The resulting tables are always the same for the
+            same parameters.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.SCurve(System.Single)">
+            <summary>
+            SCurve helper method for GetNoise.
+            3 t^2 - 2 t^3  ==> Gives some sort of S-Shaped curve
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.Dot(Delta.Utilities.Datatypes.Quaternion,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Dot helper method for GetNoise
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.TriLerp(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+             <summary>
+             Linear, Bilinear and Trilinear interpolation helper for GetNoise.
+             The cube is designed like this:
+            
+                    p3         p2
+                     o--------o
+                    /:       /|          Y
+                 p7/ :    p6/ |          |
+                  o--------o  |          |
+                  |  :p0   |  |p1        |
+                  |  o.....|..o          o------X
+                  | '      | /          /
+                  |'       |/          /
+                  o--------o          Z
+                 p4        p5
+             </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.BiLerp(System.Single,System.Single,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            BiLerp helper method used in GetNoise and TriLerp
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Noise.Lerp(System.Single,System.Single,System.Single)">
+            <summary>
+            Lerp helper method used in GetNoise.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Math.VectorRange">
+            <summary>
+            The VectorRange object is used to store one or two vectors, which
+            result in a 3D range.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.VectorRange.Zero">
+            <summary>
+            Zero range, will always return 0.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.VectorRange.One">
+            <summary>
+            One range, will always return 1.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.VectorRange.ZeroToOne">
+            <summary>
+            Zero to One range, will return a random values between 0 and 1.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.#ctor(Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Create range with fixed value.
+            </summary>
+            <param name="setStartAndEndValue">Set start and end value</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.#ctor(Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Create range with given minimum and maximum values.
+            </summary>
+            <param name="setStartValue">Set start value</param>
+            <param name="setEndValue">Set end value</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.Load(System.IO.BinaryReader)">
+            <summary>
+            Loads VectorRange from a stream (just Start and End).
+            </summary>
+            <param name="reader">The stream that will be used.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.Save(System.IO.BinaryWriter)">
+            <summary>
+            Saves VectorRange to a stream (just Start and End).
+            </summary>
+            <param name="writer">The stream that will be used.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.op_Implicit(Delta.Utilities.Datatypes.Vector)~Delta.Utilities.Math.VectorRange">
+            <summary>
+            Operator to assign a vector range from vector value.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.op_Equality(Delta.Utilities.Math.VectorRange,Delta.Utilities.Math.VectorRange)">
+            <summary>
+            Operator to check for equality
+            </summary>
+            <param name="a">First value of the comparison.</param>
+            <param name="b">Second value of the comparison.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.op_Inequality(Delta.Utilities.Math.VectorRange,Delta.Utilities.Math.VectorRange)">
+            <summary>
+            Operator to check for inequality
+            </summary>
+            <param name="a">First value of the comparison.</param>
+            <param name="b">Second value of the comparison.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.GetValue(System.Single)">
+            <summary>
+            Get value
+            </summary>
+            <param name="percentageFactor">Percentage (in the range of [0,1]) to
+            get the value based of the set Start and End. E.g. a factor of "0.5"
+            will return "3" for a range of [2,4].</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.GetHashCode">
+            <summary>
+            GetHashCode
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.Equals(System.Object)">
+            <summary>
+            Equals
+            </summary>
+            <param name="obj">Object</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.ToString">
+            <summary>
+            To string
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.VectorRange.Start">
+            <summary>
+            Start value of the range.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.VectorRange.End">
+            <summary>
+            End value of the range.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.VectorRange.Difference">
+            <summary>
+            Difference between Start and End.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.VectorRange.RandomValue">
+            <summary>
+            Returns a random value between Start and End.
+            </summary>
+            <returns>Float</returns>
+        </member>
+        <member name="T:Delta.Utilities.Math.VectorRange.VectorRangeTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.VectorRangeTests.TestConstructor">
+            <summary>
+            Test constructor
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.VectorRangeTests.TestNegativeRanges">
+            <summary>
+            Test negative ranges
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.VectorRangeTests.TestRanges">
+            <summary>
+            Test different ranges
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.VectorRangeTests.GetValue">
+            <summary>
+            Get value
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.VectorRange.VectorRangeTests.GetValueLogging">
+            <summary>
+            Get value logging test
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Math.Random250Algorithm">
+            <summary>
+            This class represents an implementation of the R250 algorith comes
+            originally from the "Random isn't Really Random -- C# Random Number
+            Generation" article by Matthew Cochran. For more details see:
+            http://www.shadlen.org/ichbin/random/generators.htm#r250
+            http://www.c-sharpcorner.com/UploadFile/rmcochran/random07172006175425PM/random.aspx
+            <para />
+            Implements the GFSR: x_n = x_(n-P) ^ x_(n-Q), which has period 2^P - 1.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Math.RandomBase">
+            <summary>
+            This class represents the base class for all random generator
+            algorithms. Based on the article "Random isn't Really Random --
+            C# Random Number Generation" by Matthew Cochran. @see:
+            http://www.c-sharpcorner.com/UploadFile/rmcochran/random07172006175425PM/random.aspx
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.#ctor">
+            <summary>
+            Random base
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.#ctor(System.Int32)">
+            <summary>
+            Create random base
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.Next">
+            <summary>
+            Returns a nonnegative random number.
+            </summary>
+            <returns>
+            A 32-bit signed uinteger greater than or equal to zero and less than
+            <see cref="F:System.uint32.MaxValue"></see>.
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.Next(System.Int32)">
+            <summary>
+            Returns a nonnegative random number less than the specified maximum.
+            </summary>
+            <param name="maxValue">
+            The exclusive upper bound of the random number to be generated.
+            maxValue must be greater than or equal to zero.
+            </param>
+            <returns>
+            A 32-bit signed uinteger greater than or equal to zero, and less than
+            maxValue; that is, the range of return values includes zero but not
+            maxValue.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            maxValue is less than zero.
+            </exception>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.Next(System.Int32,System.Int32)">
+            <summary>
+            Returns a random number within a specified range.
+            </summary>
+            <param name="minValue">The inclusive lower bound of the random number
+            returned.
+            </param>
+            <param name="maxValue">The exclusive upper bound of the random number
+            returned. maxValue must be greater than or equal to minValue.
+            </param>
+            <returns>
+            A 32-bit signed uinteger greater than or equal to minValue and less
+            than maxValue; that is, the range of return values includes minValue
+            but not maxValue. If minValue equals maxValue, minValue is returned.
+            </returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">
+            minValue is greater than maxValue.
+            </exception>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.NextDouble">
+            <summary>
+            Returns a random number between 0.0 and 1.0. If you just need a float
+            value instead of a double, just convert it after calling this method.
+            </summary>
+            <returns>
+            A double-precision floating pouint number greater than or equal to 0.0,
+            and less than 1.0.
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.NextBytes(System.Byte[])">
+            <summary>
+            Fills the elements of a specified array of bytes with random numbers.
+            </summary>
+            <param name="buffer">An array of bytes to contain random numbers.</param>
+            <exception cref="T:System.ArgumentNullException">buffer is null. </exception>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.GetBaseNextInt32">
+            <summary>
+            Get base next int 32
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.GetBaseNextUInt32">
+            <summary>
+            Get base next u texture coordinate int 32
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.GetBaseNextDouble">
+            <summary>
+            Get base next double
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.Sample">
+            <summary>
+            Returns a random number between 0.0 and 1.0.
+            </summary>
+            <returns>
+            A double-precision floating pouint number greater than or equal to 0.0, and less than 1.0.
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.ConvertToUInt32(System.Int32)">
+            <summary>
+            Convert to u texture coordinate int 32
+            </summary>
+            <param name="value">Value</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.ConvertToInt32(System.UInt32)">
+            <summary>
+            Convert to int 32
+            </summary>
+            <param name="value">Value</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.ConvertToInt32(System.UInt64)">
+            <summary>
+            Convert to int 32
+            </summary>
+            <param name="value">Value</param>
+        </member>
+        <member name="T:Delta.Utilities.Math.RandomBase.RandomBaseTests">
+            <summary>
+            Tests for RandomBase implementations
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.RandomBaseTests.PerformGenerator(System.Random,System.Diagnostics.Stopwatch)">
+            <summary>
+            Perform generator
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.RandomBase.RandomBaseTests.TestPerformance">
+            <summary>
+            Test performance
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Random250Algorithm.P">
+            <summary>
+            P, used as degree of larger term (250 or 7)
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Random250Algorithm.Q">
+            <summary>
+            Q, used as degree of smaller term (103 or 4)
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Random250Algorithm.L">
+            <summary>
+            L, used as word length (32 or 3)
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Random250Algorithm.x">
+            <summary>
+            X array with all the random values.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Random250Algorithm.pointer">
+            <summary>
+            Pointer to element we are working on.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Random250Algorithm.#ctor">
+            <summary>
+            Create R250
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Random250Algorithm.#ctor(System.Int32)">
+            <summary>
+            Create R250
+            </summary>
+            <param name="seed">Seed</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Random250Algorithm.Next">
+            <summary>
+            Next
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Math.Random250Algorithm.Random250AlgorithmTests">
+            <summary>
+            Tests for Random250Algorithm
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Math.Complex">
+            <summary>
+            Complex number with real and imaginary parts as floats. Rarely used,
+            but can be useful for complex mathematical problems.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Complex.DataSize">
+            <summary>
+            Represents the size in bytes of each Complex (2 * 4 = 8 bytes).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Complex.Zero">
+            <summary>
+            Returns a Complex with all values filled to zero
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.FromSqrt(System.Single)">
+            <summary>
+            From sqrt
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Complex.Real">
+            <summary>
+            Real
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Complex.Imaginary">
+            <summary>
+            Imaginary
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.#ctor(System.Single,System.Single)">
+            <summary>
+            Create complex
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.#ctor(System.Single,System.Single,System.Boolean)">
+            <summary>
+            Create complex from phasor values.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Equals(Delta.Utilities.Math.Complex)">
+            <summary>
+            Equals
+            </summary>
+            <param name="other">Other</param>
+            <returns>Value indicating the equality of two vectors</returns>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Load(System.IO.BinaryReader)">
+            <summary>
+            Load real and imaginary part of this complex number from a stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save real and imaginary part of this complex number to a stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.op_UnaryNegation(Delta.Utilities.Math.Complex)">
+            <summary>
+            Op unary negation
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.op_UnaryPlus(Delta.Utilities.Math.Complex)">
+            <summary>
+            Op unary plus
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.op_Addition(Delta.Utilities.Math.Complex,Delta.Utilities.Math.Complex)">
+            <summary>
+            Op addition
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.op_Subtraction(Delta.Utilities.Math.Complex,Delta.Utilities.Math.Complex)">
+            <summary>
+            Op subtraction
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.op_Multiply(Delta.Utilities.Math.Complex,Delta.Utilities.Math.Complex)">
+            <summary>
+            Op multiply
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.op_Multiply(Delta.Utilities.Math.Complex,System.Single)">
+            <summary>
+            Op multiply
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.op_Multiply(System.Single,Delta.Utilities.Math.Complex)">
+            <summary>
+            Op multiply
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.op_Division(Delta.Utilities.Math.Complex,Delta.Utilities.Math.Complex)">
+            <summary>
+            Op division
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.op_Division(Delta.Utilities.Math.Complex,System.Single)">
+            <summary>
+            Op division
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.op_Equality(Delta.Utilities.Math.Complex,Delta.Utilities.Math.Complex)">
+            <summary>
+            Check for equality
+            </summary>
+            <param name="value1">Value 1</param>
+            <param name="value2">Value 2</param>
+            <returns>True if the values are equal, false otherwise</returns>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.op_Inequality(Delta.Utilities.Math.Complex,Delta.Utilities.Math.Complex)">
+            <summary>
+            Check for inequality
+            </summary>
+            <param name="value1">Value 1</param>
+            <param name="value2">Value 2</param>
+            <returns>Bool</returns>	
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Min">
+            <summary>
+            Minimum
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Min(Delta.Utilities.Math.Complex)">
+            <summary>
+            Minimum
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Max">
+            <summary>
+            Maximum
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Max(Delta.Utilities.Math.Complex)">
+            <summary>
+            Maximum
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Sum">
+            <summary>
+            Sum
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Product">
+            <summary>
+            Product
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Conjugate">
+            <summary>
+            Conjugate
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Sqrt">
+            <summary>
+            Sqrt
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ToString">
+            <summary>
+            To string
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.GetHashCode">
+            <summary>
+            Get hash code
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.Equals(System.Object)">
+            <summary>
+            Equals
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.Complex.LengthSquared">
+            <summary>
+            Length squared
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.Complex.Length">
+            <summary>
+            Length
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.Complex.Argument">
+            <summary>
+            Argument
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Math.Complex.ComplexTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.TestCreate">
+            <summary>
+            Test Constructors
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.Equality">
+            <summary>
+            Equality
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.Inequality">
+            <summary>
+            Inequality
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.ScalarDivison">
+            <summary>
+            Scalar divison
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.ComplexDivision">
+            <summary>
+            Complex division
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.ScalarMultiply">
+            <summary>
+            Scalar multiplyScalar
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.ComplexMultiply">
+            <summary>
+            Complex multiply
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.ComplexSubtract">
+            <summary>
+            Complex subtract
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.ComplexAddition">
+            <summary>
+            Complex addition
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.DataSize">
+            <summary>
+            Data size
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.ComplexMin">
+            <summary>
+            Complex minimum
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.ComplexMax">
+            <summary>
+            Complex maximum
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.Sum">
+            <summary>
+            Complex sum
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.Product">
+            <summary>
+            Product
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.LengthSquared">
+            <summary>
+            Length squared
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.Length">
+            <summary>
+            Length
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.FromSqrt">
+            <summary>
+            From sqrt
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.Argument">
+            <summary>
+            Argument
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.Conjugate">
+            <summary>
+            Conjugate
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.Sqrt">
+            <summary>
+            Sqrt
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Complex.ComplexTests.ToString">
+            <summary>
+            To string
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Math.Graph">
+            <summary>
+            The graph is a list of points (X, Y) which are interpolated linearly
+            when accessing a point between two existing points.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.FromString(System.String)">
+            <summary>
+            From string
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Graph.GraphRange">
+            <summary>
+            The range in which our graph is used.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Graph.Points">
+            <summary>
+            List of points which is sorted by the x values.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Graph.cachedSegments">
+            <summary>
+            Cached segments, which prevents recreation of new segments
+            each time we want a new value.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.#ctor">
+            <summary>
+            Create a new graph with the default length of 0-1.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.#ctor(Delta.Utilities.Math.Range)">
+            <summary>
+            Create graph with a total x-axis length of setStartEndRange.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.#ctor(System.Single)">
+            <summary>
+            Create a new graph with a given y-axis start value with the default
+            length of 0-1.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.Load(System.IO.BinaryReader)">
+            <summary>
+            Load the graph via the binary reader.
+            </summary>
+            <param name="reader">Reader for loading.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save the graph via the binary writer.
+            </summary>
+            <param name="writer">Writer for saving.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.GetIntegratedValue(System.Single,System.Single)">
+            <summary>
+            Get integrated value with given value offset
+            (add valueOffset to Y value)
+            This returns the area below the curve up to given offset.
+            Note: Only tested to work with graphs from 0 to 1 (x axis)
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.GetIntegratedValue(System.Single)">
+            <summary>
+            This returns the area below the curve up to given offset.
+            Note: Only tested to work with graphs from 0 to 1 (x axis),
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.GetValue(System.Single)">
+            <summary>
+            Get the value at the specified x value.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.Add(System.Single,System.Single)">
+            <summary>
+            Add a segment at the specified x value with the y 'height'.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.ToString">
+            <summary>
+            To string, will output everything with ';' separated strings.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.Integrate(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Calculates area covered between start and end and x-axis.
+            Note: This method expects start and end Y to NOT cross the X axis.
+            (Both startY and endY need to have the same sign).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.GetSegment(System.Int32)">
+            <summary>
+            Get the segment at the index.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Math.Graph.GraphTests">
+            <summary>
+            Unit tests for the Graph class.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.GraphTests.TestGraphLengthConstructor">
+            <summary>
+            Test the graph with the length constructor.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.GraphTests.Integrate">
+            <summary>
+            Test the Integrate method
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.GraphTests.TestSaveAndLoad">
+            <summary>
+            Test save and load functionality of the Graph class
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Graph.GraphTests.TestToStringFromString">
+            <summary>
+            Test ToString and FromString functionality of the Graph class
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Math.AxisAngle">
+            <summary>
+            AngleAxis helper class in case we need to manage axis calculations
+            (e.g. coming from a 3D package). Not used much, our code uses mostly
+            vectors, quaternions or just matrices.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.AxisAngle.DataSize">
+            <summary>
+            Represents the size in bytes of each AxisAngle (4 * 4 = 16 bytes).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.AxisAngle.Zero">
+            <summary>
+            Returns a AxisAngle with all values filled to zero
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.AxisAngle.Axis">
+            <summary>
+            Axis we want to rotate around, initially not set (all zero).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.AxisAngle.Angle">
+            <summary>
+            Rotation angle around axis
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.#ctor(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Create angle axis
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.#ctor(System.Single[])">
+            <summary>
+            Create angle axis, first 3 values are for the axis and the 4th one
+            is for the angle.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.#ctor(Delta.Utilities.Datatypes.Vector,System.Single)">
+            <summary>
+            Create angle axis
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.#ctor(Delta.Utilities.Datatypes.Quaternion)">
+            <summary>
+            Create angle axis
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.Equals(Delta.Utilities.Math.AxisAngle)">
+            <summary>
+            Equals, quickly checks if another AxisAngle has the exact same values.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.Load(System.IO.BinaryReader)">
+            <summary>
+            Load axis vector and angle from a stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save axis vector and angle to a stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.op_Explicit(Delta.Utilities.Math.AxisAngle)~Delta.Utilities.Datatypes.Quaternion">
+            <summary>
+            Op explicit
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.op_Explicit(Delta.Utilities.Math.AxisAngle)~Delta.Utilities.Datatypes.Matrix">
+            <summary>
+            Op explicit
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.op_UnaryNegation(Delta.Utilities.Math.AxisAngle)">
+            <summary>
+            Arithmetic operator to negate
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.op_UnaryPlus(Delta.Utilities.Math.AxisAngle)">
+            <summary>
+            Op unary plus
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.op_Addition(Delta.Utilities.Math.AxisAngle,Delta.Utilities.Math.AxisAngle)">
+            <summary>
+            Op addition
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.op_Subtraction(Delta.Utilities.Math.AxisAngle,Delta.Utilities.Math.AxisAngle)">
+            <summary>
+            Op subtraction
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.op_Equality(Delta.Utilities.Math.AxisAngle,Delta.Utilities.Math.AxisAngle)">
+            <summary>
+            Logic operators for equality
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.op_Inequality(Delta.Utilities.Math.AxisAngle,Delta.Utilities.Math.AxisAngle)">
+            <summary>
+            Op inequality
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.Normalize">
+            <summary>
+            Normalize the axis vector
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.Equals(System.Object)">
+            <summary>
+            Equals check with an object, will only return true if it is a matrix
+            and has the exact same values as this matrix.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.GetHashCode">
+            <summary>
+            Get hash code
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.AxisAngle.CreateQuaternion">
+            <summary>
+            Create from axis angle
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.AxisAngle.LengthSquared">
+            <summary>
+            Square Length of the axis
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.AxisAngle.Length">
+            <summary>
+            Length of the axis
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.AxisAngle.IsNormalized">
+            <summary>
+            Is the axis vector normalized?
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Math.Range">
+            <summary>
+            The Range object is used to store one or two values, which result in a 
+            range. Getting the value of a range object, will give you a random
+            value between Start and End.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Range.Zero">
+            <summary>
+            Zero range, will always return 0.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Range.One">
+            <summary>
+            One range, will always return 1.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.Range.ZeroToOne">
+            <summary>
+            Zero to One range, will return a random values between 0 and 1.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.#ctor(System.Single)">
+            <summary>
+            Create range with fixed value.
+            </summary>
+            <param name="setStartAndEndValue">Set start and end value</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.#ctor(System.Single,System.Single)">
+            <summary>
+            Create range with given minimum and maximum values.
+            </summary>
+            <param name="setStartValue">Set start value</param>
+            <param name="setEndValue">Set end value</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.Load(System.IO.BinaryReader)">
+            <summary>
+            Loads Range from a stream (just Start and End).
+            </summary>
+            <param name="reader">The stream that will be used.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.Save(System.IO.BinaryWriter)">
+            <summary>
+            Saves Range to a stream (just Start and End).
+            </summary>
+            <param name="writer">The stream that will be used.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.op_Implicit(System.Single)~Delta.Utilities.Math.Range">
+            <summary>
+            Operator to assign rango from float value.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.op_Equality(Delta.Utilities.Math.Range,Delta.Utilities.Math.Range)">
+            <summary>
+            Operator to check for equality
+            </summary>
+            <param name="a">First value of the comparison.</param>
+            <param name="b">Second value of the comparison.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.op_Inequality(Delta.Utilities.Math.Range,Delta.Utilities.Math.Range)">
+            <summary>
+            Operator to check for inequality
+            </summary>
+            <param name="a">First value of the comparison.</param>
+            <param name="b">Second value of the comparison.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.GetValue(System.Single)">
+            <summary>
+            Get value
+            </summary>
+            <param name="percentageFactor">Percentage (in the range of [0,1]) to
+            get the value based of the set Start and End. E.g. a factor of "0.5"
+            will return "3" for a range of [2,4].</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.GetHashCode">
+            <summary>
+            GetHashCode
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.Equals(System.Object)">
+            <summary>
+            Equals
+            </summary>
+            <param name="obj">Object</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.ToString">
+            <summary>
+            To string
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.Range.Start">
+            <summary>
+            Start value of the range.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.Range.End">
+            <summary>
+            End value of the range.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.Range.Difference">
+            <summary>
+            Difference between Start and End, always a positive value because
+            Max is always bigger than Min.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Math.Range.RandomValue">
+            <summary>
+            Returns a random value between Start and End.
+            </summary>
+            <returns>Float</returns>
+        </member>
+        <member name="T:Delta.Utilities.Math.Range.RangeTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.RangeTests.TestConstructor">
+            <summary>
+            Test constructor
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.RangeTests.TestNegativeRanges">
+            <summary>
+            Test negative ranges
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.RangeTests.TestRanges">
+            <summary>
+            Test different ranges
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.Range.RangeTests.GetValue">
+            <summary>
+            Get value
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Math.LinearSegment">
+            <summary>
+            The linear segment class that exposes the functionality of getting a
+            linearly interpolated value from between Point "Start" and "End".
+            Only used for the Graph class.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.LinearSegment.Zero">
+            <summary>
+            Zero segment with Point.Zero as Start and End points, used to mark
+            unused segments.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.LinearSegment.Start">
+            <summary>
+            Start
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Math.LinearSegment.End">
+            <summary>
+            End
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.LinearSegment.#ctor(Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Point)">
+            <summary>
+            Create linear segment
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.LinearSegment.op_Equality(Delta.Utilities.Math.LinearSegment,Delta.Utilities.Math.LinearSegment)">
+            <summary>
+            Operator to check for equality
+            </summary>
+            <param name="a">First value of the comparison.</param>
+            <param name="b">Second value of the comparison.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.LinearSegment.op_Inequality(Delta.Utilities.Math.LinearSegment,Delta.Utilities.Math.LinearSegment)">
+            <summary>
+            Operator to check for inequality
+            </summary>
+            <param name="a">First value of the comparison.</param>
+            <param name="b">Second value of the comparison.</param>
+        </member>
+        <member name="M:Delta.Utilities.Math.LinearSegment.GetValue(System.Single)">
+            <summary>
+            Get value in segment at position "at" on the x-axis.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.LinearSegment.GetHashCode">
+            <summary>
+            GetHashCode
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Math.LinearSegment.Equals(System.Object)">
+            <summary>
+            Equals
+            </summary>
+            <param name="obj">Object</param>
+        </member>
+    </members>
+</doc>

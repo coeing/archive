@@ -1,0 +1,17 @@
+﻿Program: DeltaPrototype v0.9.3.0
+Modules: Graphic=OpenTK, Input=Windows, Audio=OpenTK, Video=, Physics=
+Start Time: 2012-02-05 20:08:23
+Platform: Windows, 2 CPU Cores, 32 bit (on 64 bit OS), Windows Vista v6002 Service Pack 2, Resolution: 520, 296, VS: 2, PS: 2
+User: christian.oeing (OFFICE-PC)
+
+00.006 Loaded Png Image might cause problems 'Content\card_heart_02.png' has alpha (switching to this), but the given blend mode 'Opaque' from the content system says we have no alpha
+00.070 Loaded Png Image might cause problems 'Content\card_heart_10.png' has alpha (switching to this), but the given blend mode 'Opaque' from the content system says we have no alpha
+00.074 Loaded Png Image might cause problems 'Content\card_club_12.png' has alpha (switching to this), but the given blend mode 'Opaque' from the content system says we have no alpha
+00.077 Loaded Png Image might cause problems 'Content\card_heart_12.png' has alpha (switching to this), but the given blend mode 'Opaque' from the content system says we have no alpha
+00.080 Loaded Png Image might cause problems 'Content\card_diamond_12.png' has alpha (switching to this), but the given blend mode 'Opaque' from the content system says we have no alpha
+00.083 Loaded Png Image might cause problems 'Content\card_spade_11.png' has alpha (switching to this), but the given blend mode 'Opaque' from the content system says we have no alpha
+00.086 Loaded Png Image might cause problems 'Content\card_heart_11.png' has alpha (switching to this), but the given blend mode 'Opaque' from the content system says we have no alpha
+00.227 Loaded Png Image might cause problems 'Content\card_diamond_13.png' has alpha (switching to this), but the given blend mode 'Opaque' from the content system says we have no alpha
+00.230 Loaded Png Image might cause problems 'Content\card_diamond_09.png' has alpha (switching to this), but the given blend mode 'Opaque' from the content system says we have no alpha
+00.233 Loaded Png Image might cause problems 'Content\card_spade_09.png' has alpha (switching to this), but the given blend mode 'Opaque' from the content system says we have no alpha
+00.236 Loaded Png Image might cause problems 'Content\card_club_10.png' has alpha (switching to this), but the given blend mode 'Opaque' from the content system says we have no alpha

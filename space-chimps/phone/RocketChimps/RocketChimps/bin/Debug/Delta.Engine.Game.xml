@@ -1,0 +1,442 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.Engine.Game</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.Engine.Game.GameTime">
+            <summary>
+            Game Time is used for having a pausable and resetable time source,
+            which is useful for games that can pause.<para />
+            Dependant systems are Effects, Physics.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.GameTime.CheckEvery(System.Single)">
+            <summary>
+            Check every time (e.g. one second, half a second, every 10 seconds)
+            if the time has passed and return true once in that time frame and
+            false otherwise. Used for spawning stuff, e.g. every 0.5 seconds and
+            is very useful to write framerate independent code.
+            Note: If using a small value here like 1.0f/100.0f and we have less
+            fps (e.g. 60), then this will return true every time, but obviously
+            we cannot return true 100 times if this method is only called 60 times.
+            </summary>
+            <param name="timeStep">Time step in seconds</param>
+            <returns>
+            True if the timeStep is reached, false if we have too many frames and
+            need to wait until timeStep is reached next.
+            </returns>
+        </member>
+        <member name="M:Delta.Engine.Game.GameTime.CheckEvery(System.Single,System.Int64)">
+            <summary>
+            Check every time (e.g. one second, half a second, every 10 seconds)
+            if the time has passed and return true once in that time frame and
+            false otherwise. Used for spawning stuff, e.g. every 0.5 seconds and
+            is very useful to write framerate independent code.
+            Note: If using a small value here like 1.0f/100.0f and we have less
+            fps (e.g. 60), then this will return true every time, but obviously
+            we cannot return true 100 times if this method is only called 60 times.
+            </summary>
+            <param name="timeStep">Time step in seconds</param>
+            <param name="startTimeMs">
+            Only start checking when this time is reached and then every time step
+            after (in milliseconds).
+            </param>
+            <returns>
+            True if the timeStep is reached, false if we have too many frames and
+            need to wait until timeStep is reached next.
+            </returns>
+        </member>
+        <member name="M:Delta.Engine.Game.GameTime.GetDeltaToNow(System.Int64)">
+            <summary>
+            Get delta to now in seconds as a floating point value.
+            </summary>
+            <param name="startTimeInMs">The start time in ms.</param>
+            <returns>Float Delta to Now</returns>
+        </member>
+        <member name="F:Delta.Engine.Game.GameTime.totalTime">
+            <summary>
+            The total time since the game time was started.
+            </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.GameTime.delta">
+            <summary>
+            Returns the current delta time.
+            </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.GameTime.milliseconds">
+            <summary>
+            Milliseconds the game time has been running.
+            </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.GameTime.lastMilliseconds">
+            <summary>
+            Milliseconds from last frame, allows us to do frame by frame checks.
+            </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.GameTime.wasRunningBeforeAppPause">
+            <summary>
+            Flag if the game time was running before it was paused by the
+            system information event. If we don't save this state we might
+            start the game time again accidentally in OnAppResume.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.GameTime.#ctor">
+            <summary>
+            Create a new game time instance, which is started by default, but can
+            be stopped or restarted by the game if a new level starts.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.GameTime.Start">
+            <summary>
+            Start or resume the game time updating.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.GameTime.Pause">
+            <summary>
+            Pause the game time updating.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.GameTime.Reset">
+            <summary>
+            Reset the game time.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.GameTime.Run">
+            <summary>
+            Update the game time.
+            TODO: implement smoothing here, see ArenaWars code, also ask Enrico to test his game!
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.GameTime.IsRunning">
+            <summary>
+            Flag if the game time is updating or not.
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.GameTime.Milliseconds">
+            <summary>
+            The elapsed game time in milliseconds.
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.GameTime.LastMilliseconds">
+            <summary>
+            The elapsed game time in milliseconds from the last frame. This allows
+            us to do some checks from frame to frame to see if a timeout or
+            cooldown has been reached. See CheckEvery for a use case.
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.GameTime.Delta">
+            <summary>
+            Returns the current delta time. It represents the difference between
+            the last tick and the current tick in seconds (usually small values).
+            Used for many calculations and updates to make sure the time goes
+            on constantly no matter how many frames we have per second.
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.GameTime.TotalTime">
+            <summary>
+            The total time since the game time was started.
+            </summary>
+        </member>
+        <member name="E:Delta.Engine.Game.GameTime.Paused">
+            <summary>
+            Event which will occur everytime the game time is paused.
+            </summary>
+        </member>
+        <member name="E:Delta.Engine.Game.GameTime.Resumed">
+            <summary>
+            Event which will occur everytime the game time is resumed again.
+            </summary>
+        </member>
+        <member name="T:Delta.Engine.Game.BaseProcess">
+            <summary>
+            Base class for all processes, defines what all processes can do.
+            Basically they all have a Run method and can be active (then Run is
+            called) or not (then they needed to be activated).
+            </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.BaseProcess.IsActive">
+            <summary>
+            Is this process active? Run is only called if this is true, inactive
+            processes just sit there waiting to be killed or re-activated.
+            </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.BaseProcess.Next">
+            <summary>
+            Next process if this one is finished. Automatically made active if
+            this process ends (once Run returns true).
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.BaseProcess.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:Delta.Engine.Game.BaseProcess"/> class.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.BaseProcess.Run">
+            <summary>
+            Run is called for all active processes by the ProcessManager each tick
+            </summary>
+            <returns>True if the process finished, otherwise false.</returns>
+        </member>
+        <member name="T:Delta.Engine.Game.MouseTracker">
+            <summary>
+            Very simple class to provide an IAttachable interface that will always
+            return the mouse position. Useful for effect testing.
+            </summary>
+        </member>
+        <member name="T:Delta.Engine.Game.Interfaces.IAttachable">
+            <summary>
+            Currently empty interface for attaching effects to an object.
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.Interfaces.IAttachable.Position">
+            <summary>
+            The current position of the attachable.
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.Interfaces.IAttachable.Rotation">
+            <summary>
+            The current rotation of the attachable.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.MouseTracker.#ctor">
+            <summary>
+            Constructor for MouseTracker, just makes sure the input commands are
+            initialized, which is useful for many tests.
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.MouseTracker.Position">
+            <summary>
+            The current position of the attachable.
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.MouseTracker.Rotation">
+            <summary>
+            The current rotation of the attachable.
+            </summary>
+        </member>
+        <member name="T:Delta.Engine.Game.WaitProcess">
+            <summary>
+            Simple process running as long as the wait time isn't exceeded.
+            </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.WaitProcess.WaitTime">
+            <summary>
+            How long to wait until this process is done, can be changed at any
+            time. When this reaches 0, this process is killed and the next is
+            invoked automatically.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.WaitProcess.#ctor(System.Single,Delta.Engine.Game.BaseProcess)">
+            <summary>
+            Create wait process and execute a certain process after the wait time
+            is over.
+            </summary>
+            <param name="setWaitTime">How long to wait in seconds</param>
+            <param name="setNextProcess">The next process to be executed once the
+            wait time is over</param>
+        </member>
+        <member name="M:Delta.Engine.Game.WaitProcess.Run">
+            <summary>
+            Run is called for all active processes by the ProcessManager each tick
+            </summary>
+            <returns>True if the process finished, otherwise false.</returns>
+        </member>
+        <member name="T:Delta.Engine.Game.ProcessManager">
+            <summary>
+            The process manager has a list of all processes and runs them.
+            This simplifies the logic and optimizes performance a lot for each
+            of the process classes, which are only run if active.
+            </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.ProcessManager.processes">
+            <summary>
+            List of processes we want to run each tick. Some of them might not be
+            active and will be skipped. This list can change at any time.
+            </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.ProcessManager.instance">
+            <summary>
+            Remember the created ProcessManager instance
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.ProcessManager.#ctor">
+            <summary>
+            Create process manager, only allowed internally via the Instance
+            property. Done automatically when creating processes.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.ProcessManager.Run">
+            <summary>
+            Run goes through all processes and runs them if they are active.
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.ProcessManager.Instance">
+            <summary>
+            Helper to make sure to only create the ProcessManager once and via
+            the Factory to be registered as a DynamicModule.
+            </summary>
+        </member>
+        <member name="T:Delta.Engine.Game.Actor">
+             <summary>
+             Basic actor class with state machine.
+             Actor, still needs to be merged with the game code from all the games
+             currently in development. This class is really old and will change soon!
+            TODO: refactor and rethink, merge with actual games using this (Soulcraft, etc.)!
+             </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.Actor.OwnerWorld">
+            <summary>
+            The world that this actor is part of
+            </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.Actor.currentState">
+            <summary>
+            The current state for the state machine
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.#ctor(Delta.Engine.Game.World)">
+            <summary>
+            Create actor
+            </summary>
+            <param name="setOwnerWorld">Set owner world.</param>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.Spawned">
+            <summary>
+            Automatically called by the engine after the actor has been spawned.
+            May be overriden in derived classes.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.Despawned">
+            <summary>
+            Automatically called by the engine after the actor has been despawned.
+            May be overriden in derived classes.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.Destroy">
+            <summary>
+            Destroy
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.CollidesWith(Delta.Engine.Game.Actor)">
+            <summary>
+            Collides with
+            </summary>
+            <param name="otherActor">The other actor.</param>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.SetPosition(Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Set position
+            </summary>
+            <param name="newPosition">The new position.</param>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.SetRotation(System.Single)">
+            <summary>
+            Set rotation
+            </summary>
+            <param name="newRotation">The new rotation.</param>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.Tick">
+            <summary>
+            Tick function. Allows the actor to do tick-based logic.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.Render">
+            <summary>
+            Render function. Allows the actor to do custom rendering logic.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.BeginState(System.String,System.String)">
+            <summary>
+            Begin state
+            </summary>
+            <param name="lastState">The last state.</param>
+            <param name="newState">The new state.</param>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.TickState">
+            <summary>
+            Tick state
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.Actor.EndState(System.String,System.String)">
+            <summary>
+            End state
+            </summary>
+            <param name="state">The state.</param>
+            <param name="newState">The new state.</param>
+        </member>
+        <member name="P:Delta.Engine.Game.Actor.State">
+            <summary>
+            State
+            </summary>
+            <value>
+            The state.
+            </value>
+        </member>
+        <member name="P:Delta.Engine.Game.Actor.WorldPosition">
+            <summary>
+            World position
+            </summary>
+            <value>
+            The world position.
+            </value>
+        </member>
+        <member name="P:Delta.Engine.Game.Actor.WorldRotation">
+            <summary>
+            World rotation
+            </summary>
+            <value>
+            The world rotation.
+            </value>
+        </member>
+        <member name="T:Delta.Engine.Game.World">
+            <summary>
+            Basic world class containing a list of actors which can be spawned and
+            despawned into the world.
+            </summary>
+        </member>
+        <member name="F:Delta.Engine.Game.World.actors">
+            <summary>
+            List of all actors in this world.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.World.#ctor">
+            <summary>
+            Create a new world.
+            </summary>
+        </member>
+        <member name="M:Delta.Engine.Game.World.SpawnActor(Delta.Engine.Game.Actor)">
+            <summary>
+            Spawn an actor in the world.
+            </summary>
+            <param name="newActor">The new actor to spawn.</param>
+        </member>
+        <member name="M:Delta.Engine.Game.World.DespawnActor(Delta.Engine.Game.Actor)">
+            <summary>
+            Calls the despawned method of the actor and then removes the actor
+            from the list of known actors.
+            </summary>
+            <param name="actor">The actor to despawn.</param>
+        </member>
+        <member name="P:Delta.Engine.Game.World.AllActors">
+            <summary>
+            Array of all actors in this world.
+            </summary>
+        </member>
+        <member name="T:Delta.Engine.Game.Interfaces.IActor2D">
+            <summary>
+            Basic 2D Actor interface containing a Position and a Rotation.
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.Interfaces.IActor2D.Position">
+            <summary>
+            The current position of the actor.
+            </summary>
+        </member>
+        <member name="P:Delta.Engine.Game.Interfaces.IActor2D.Rotation">
+            <summary>
+            The current rotation of the actor.
+            </summary>
+        </member>
+    </members>
+</doc>

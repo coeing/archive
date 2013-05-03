@@ -1,0 +1,71 @@
+<mockup version="1.0" skin="sketch" measuredW="667" measuredH="619" mockupW="282" mockupH="510">
+  <controls>
+    <control controlID="37" controlTypeID="com.balsamiq.mockups::iPhone" x="385" y="109" w="-1" h="-1" measuredW="282" measuredH="510" zOrder="0" locked="false" isInGroup="-1"/>
+    <control controlID="43" controlTypeID="com.balsamiq.mockups::IconLabel" x="416" y="237" w="69" h="-1" measuredW="48" measuredH="73" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>HomeMobileIcon%7Clarge</icon>
+        <text>Home</text>
+      </controlProperties>
+    </control>
+    <control controlID="44" controlTypeID="com.balsamiq.mockups::Label" x="416" y="212" w="-1" h="-1" measuredW="65" measuredH="25" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>I%27m%20here%3A</text>
+      </controlProperties>
+    </control>
+    <control controlID="45" controlTypeID="com.balsamiq.mockups::IconLabel" x="491" y="236" w="69" h="-1" measuredW="48" measuredH="73" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>TelephoneIcon%7Clarge</icon>
+        <text>Work</text>
+      </controlProperties>
+    </control>
+    <control controlID="46" controlTypeID="com.balsamiq.mockups::IconLabel" x="560" y="236" w="69" h="-1" measuredW="50" measuredH="73" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>CartIcon%7Clarge</icon>
+        <text>Shop%20A</text>
+      </controlProperties>
+    </control>
+    <control controlID="47" controlTypeID="com.balsamiq.mockups::IconLabel" x="416" y="325" w="69" h="-1" measuredW="62" measuredH="73" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>YIMIcon%7Clarge</icon>
+        <text>Friend%20A</text>
+      </controlProperties>
+    </control>
+    <control controlID="48" controlTypeID="com.balsamiq.mockups::IconLabel" x="491" y="327" w="69" h="-1" measuredW="67" measuredH="71" zOrder="6" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>HeartIcon%7Clarge</icon>
+        <size>12</size>
+        <text>Girl%20friend</text>
+      </controlProperties>
+    </control>
+    <control controlID="49" controlTypeID="com.balsamiq.mockups::IconLabel" x="560" y="326" w="69" h="-1" measuredW="48" measuredH="73" zOrder="7" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>ThumbsUpIcon%7Clarge</icon>
+        <text>Pub</text>
+      </controlProperties>
+    </control>
+    <control controlID="50" controlTypeID="com.balsamiq.mockups::IconLabel" x="416" y="413" w="69" h="-1" measuredW="67" measuredH="70" zOrder="8" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>FlagIcon%7Clarge</icon>
+        <size>11</size>
+        <text>Sports%20Club</text>
+      </controlProperties>
+    </control>
+    <control controlID="51" controlTypeID="com.balsamiq.mockups::IconLabel" x="491" y="412" w="69" h="-1" measuredW="70" measuredH="73" zOrder="9" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>HelpIcon%7Clarge</icon>
+        <text>New%20place</text>
+      </controlProperties>
+    </control>
+    <control controlID="52" controlTypeID="com.balsamiq.mockups::IconLabel" x="560" y="412" w="69" h="-1" measuredW="70" measuredH="73" zOrder="10" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>HelpIcon%7Clarge</icon>
+        <text>New%20place</text>
+      </controlProperties>
+    </control>
+    <control controlID="53" controlTypeID="com.balsamiq.mockups::Button" x="416" y="502" w="220" h="28" measuredW="76" measuredH="28" zOrder="11" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Settings</text>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>

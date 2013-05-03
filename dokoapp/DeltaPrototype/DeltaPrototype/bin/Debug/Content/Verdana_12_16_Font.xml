@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Font FontName="Verdana" FontSize="12" FontStyle="AddOutline" LineHeight="16" Version="0.1" CreationDate="2011-05-26 18:39" Tool="Delta.Rendering.Fonts.FontGenerator">
+  <Bitmap Filename="Verdana_12_16" Width="128" Height="128"/>
+  <Glyphs>
+    <Glyph char=" " bitmap="0" uv="0 0 1 16" advanceWidth="4.34875" leftBearing="0" rightBearing="4.21875"/>
+    <Glyph char="!" bitmap="0" uv="2 0 6 16" advanceWidth="4.852656" leftBearing="1.705078" rightBearing="1.705078"/>
+    <Glyph char="&quot;" bitmap="0" uv="9 0 7 16" advanceWidth="5.637813" leftBearing="0.984375" rightBearing="0.984375"/>
+    <Glyph char="#" bitmap="0" uv="17 0 11 16" advanceWidth="9.950313" leftBearing="1.142578" rightBearing="1.142578"/>
+    <Glyph char="$" bitmap="0" uv="29 0 9 16" advanceWidth="7.758906" leftBearing="0.9082031" rightBearing="0.8320313"/>
+    <Glyph char="%" bitmap="0" uv="39 0 14 16" advanceWidth="13.04406" leftBearing="0.8730469" rightBearing="0.8730469"/>
+    <Glyph char="&amp;" bitmap="0" uv="54 0 10 16" advanceWidth="8.84875" leftBearing="0.6738281" rightBearing="-0.3925781"/>
+    <Glyph char="&apos;" bitmap="0" uv="65 0 4 16" advanceWidth="3.352656" leftBearing="0.9609375" rightBearing="0.9609375"/>
+    <Glyph char="(" bitmap="0" uv="70 0 7 16" advanceWidth="5.579219" leftBearing="1.060547" rightBearing="0.8613281"/>
+    <Glyph char=")" bitmap="0" uv="78 0 7 16" advanceWidth="5.579219" leftBearing="0.8613281" rightBearing="1.060547"/>
+    <Glyph char="*" bitmap="0" uv="86 0 9 16" advanceWidth="7.758906" leftBearing="0.9785156" rightBearing="0.9667969"/>
+    <Glyph char="+" bitmap="0" uv="96 0 11 16" advanceWidth="9.950313" leftBearing="1.230469" rightBearing="1.230469"/>
+    <Glyph char="," bitmap="0" uv="108 0 6 16" advanceWidth="4.495234" leftBearing="0.8613281" rightBearing="0.9960938"/>
+    <Glyph char="-" bitmap="0" uv="115 0 7 16" advanceWidth="5.579219" leftBearing="0.8964844" rightBearing="0.8964844"/>
+    <Glyph char="." bitmap="0" uv="0 16 6 16" advanceWidth="4.495234" leftBearing="1.482422" rightBearing="1.482422"/>
+    <Glyph char="/" bitmap="0" uv="7 16 7 16" advanceWidth="5.579219" leftBearing="-0.1757813" rightBearing="0.4101563"/>
+    <Glyph char="0" bitmap="0" uv="15 16 9 16" advanceWidth="7.758906" leftBearing="0.8027344" rightBearing="0.7910156"/>
+    <Glyph char="1" bitmap="0" uv="25 16 9 16" advanceWidth="7.758906" leftBearing="1.628906" rightBearing="1.277344"/>
+    <Glyph char="2" bitmap="0" uv="35 16 9 16" advanceWidth="7.758906" leftBearing="0.9433594" rightBearing="0.7792969"/>
+    <Glyph char="3" bitmap="0" uv="45 16 9 16" advanceWidth="7.758906" leftBearing="0.9785156" rightBearing="0.9023438"/>
+    <Glyph char="4" bitmap="0" uv="55 16 9 16" advanceWidth="7.758906" leftBearing="0.4511719" rightBearing="0.5800781"/>
+    <Glyph char="5" bitmap="0" uv="65 16 9 16" advanceWidth="7.758906" leftBearing="1.095703" rightBearing="0.8496094"/>
+    <Glyph char="6" bitmap="0" uv="75 16 9 16" advanceWidth="7.758906" leftBearing="0.8027344" rightBearing="0.6503906"/>
+    <Glyph char="7" bitmap="0" uv="85 16 9 16" advanceWidth="7.758906" leftBearing="0.9023438" rightBearing="0.7558594"/>
+    <Glyph char="8" bitmap="0" uv="95 16 9 16" advanceWidth="7.758906" leftBearing="0.7148438" rightBearing="0.7148438"/>
+    <Glyph char="9" bitmap="0" uv="105 16 9 16" advanceWidth="7.758906" leftBearing="0.6621094" rightBearing="0.7910156"/>
+    <Glyph char=":" bitmap="0" uv="115 16 7 16" advanceWidth="5.579219" leftBearing="2.027344" rightBearing="2.021484"/>
+    <Glyph char=";" bitmap="0" uv="0 32 7 16" advanceWidth="5.579219" leftBearing="1.347656" rightBearing="1.59375"/>
+    <Glyph char="&lt;" bitmap="0" uv="8 32 11 16" advanceWidth="9.950313" leftBearing="1.488281" rightBearing="1.570313"/>
+    <Glyph char="=" bitmap="0" uv="20 32 11 16" advanceWidth="9.950313" leftBearing="1.435547" rightBearing="1.435547"/>
+    <Glyph char="&gt;" bitmap="0" uv="32 32 11 16" advanceWidth="9.950313" leftBearing="1.570313" rightBearing="1.488281"/>
+    <Glyph char="?" bitmap="0" uv="44 32 8 16" advanceWidth="6.674922" leftBearing="0.9375" rightBearing="0.65625"/>
+    <Glyph char="@" bitmap="0" uv="53 32 13 16" advanceWidth="12.13" leftBearing="1.03125" rightBearing="1.042969"/>
+    <Glyph char="A" bitmap="0" uv="67 32 9 16" advanceWidth="8.333125" leftBearing="0.1523438" rightBearing="0.1523438"/>
+    <Glyph char="B" bitmap="0" uv="77 32 9 16" advanceWidth="8.356563" leftBearing="1.171875" rightBearing="0.4746094"/>
+    <Glyph char="C" bitmap="0" uv="87 32 10 16" advanceWidth="8.508906" leftBearing="0.6738281" rightBearing="0.46875"/>
+    <Glyph char="D" bitmap="0" uv="98 32 10 16" advanceWidth="9.376094" leftBearing="1.171875" rightBearing="0.703125"/>
+    <Glyph char="E" bitmap="0" uv="109 32 9 16" advanceWidth="7.717891" leftBearing="1.171875" rightBearing="0.6679688"/>
+    <Glyph char="F" bitmap="0" uv="119 32 8 16" advanceWidth="7.026484" leftBearing="1.171875" rightBearing="0.1523438"/>
+    <Glyph char="G" bitmap="0" uv="0 48 11 16" advanceWidth="9.434688" leftBearing="0.6738281" rightBearing="0.8554688"/>
+    <Glyph char="H" bitmap="0" uv="12 48 10 16" advanceWidth="9.147578" leftBearing="1.171875" rightBearing="1.171875"/>
+    <Glyph char="I" bitmap="0" uv="23 48 6 16" advanceWidth="5.180781" leftBearing="0.8027344" rightBearing="0.8027344"/>
+    <Glyph char="J" bitmap="0" uv="30 48 7 16" advanceWidth="5.585078" leftBearing="0.2578125" rightBearing="1.083984"/>
+    <Glyph char="K" bitmap="0" uv="38 48 10 16" advanceWidth="8.444453" leftBearing="1.201172" rightBearing="0.1289063"/>
+    <Glyph char="L" bitmap="0" uv="49 48 8 16" advanceWidth="6.809688" leftBearing="1.171875" rightBearing="-0.01171875"/>
+    <Glyph char="M" bitmap="0" uv="58 48 11 16" advanceWidth="10.24328" leftBearing="1.171875" rightBearing="1.171875"/>
+    <Glyph char="N" bitmap="0" uv="70 48 10 16" advanceWidth="9.106563" leftBearing="1.171875" rightBearing="1.148438"/>
+    <Glyph char="O" bitmap="0" uv="81 48 11 16" advanceWidth="9.575313" leftBearing="0.6738281" rightBearing="0.6679688"/>
+    <Glyph char="P" bitmap="0" uv="93 48 8 16" advanceWidth="7.366328" leftBearing="1.171875" rightBearing="0.3574219"/>
+    <Glyph char="Q" bitmap="0" uv="102 48 11 16" advanceWidth="9.575313" leftBearing="0.6738281" rightBearing="0.4921875"/>
+    <Glyph char="R" bitmap="0" uv="114 48 10 16" advanceWidth="8.47375" leftBearing="1.171875" rightBearing="-0.046875"/>
+    <Glyph char="S" bitmap="0" uv="0 64 9 16" advanceWidth="8.333125" leftBearing="0.7851563" rightBearing="0.6914063"/>
+    <Glyph char="T" bitmap="0" uv="10 64 9 16" advanceWidth="7.524531" leftBearing="0" rightBearing="0"/>
+    <Glyph char="U" bitmap="0" uv="20 64 10 16" advanceWidth="8.913203" leftBearing="1.042969" rightBearing="1.042969"/>
+    <Glyph char="V" bitmap="0" uv="31 64 9 16" advanceWidth="8.333125" leftBearing="0.1523438" rightBearing="0.1523438"/>
+    <Glyph char="W" bitmap="0" uv="41 64 13 16" advanceWidth="11.99523" leftBearing="0.5390625" rightBearing="0.5390625"/>
+    <Glyph char="X" bitmap="0" uv="55 64 9 16" advanceWidth="8.350703" leftBearing="0.3984375" rightBearing="0.3925781"/>
+    <Glyph char="Y" bitmap="0" uv="65 64 9 16" advanceWidth="7.512813" leftBearing="0.03515625" rightBearing="0.03515625"/>
+    <Glyph char="Z" bitmap="0" uv="75 64 9 16" advanceWidth="8.350703" leftBearing="0.7382813" rightBearing="0.6738281"/>
+    <Glyph char="[" bitmap="0" uv="85 64 7 16" advanceWidth="5.579219" leftBearing="1.400391" rightBearing="1.001953"/>
+    <Glyph char="\" bitmap="0" uv="93 64 7 16" advanceWidth="5.579219" leftBearing="0.4101563" rightBearing="-0.1757813"/>
+    <Glyph char="]" bitmap="0" uv="101 64 7 16" advanceWidth="5.579219" leftBearing="1.001953" rightBearing="1.400391"/>
+    <Glyph char="^" bitmap="0" uv="109 64 11 16" advanceWidth="9.950313" leftBearing="1.089844" rightBearing="1.089844"/>
+    <Glyph char="_" bitmap="0" uv="0 80 9 16" advanceWidth="7.758906" leftBearing="-0.0234375" rightBearing="-0.0234375"/>
+    <Glyph char="`" bitmap="0" uv="10 80 9 16" advanceWidth="7.758906" leftBearing="1.992188" rightBearing="3.164063"/>
+    <Glyph char="a" bitmap="0" uv="20 80 8 16" advanceWidth="7.337031" leftBearing="0.609375" rightBearing="1.037109"/>
+    <Glyph char="b" bitmap="0" uv="29 80 9 16" advanceWidth="7.606563" leftBearing="1.083984" rightBearing="0.6328125"/>
+    <Glyph char="c" bitmap="0" uv="39 80 7 16" advanceWidth="6.381953" leftBearing="0.6152344" rightBearing="0.328125"/>
+    <Glyph char="d" bitmap="0" uv="47 80 9 16" advanceWidth="7.606563" leftBearing="0.6328125" rightBearing="1.083984"/>
+    <Glyph char="e" bitmap="0" uv="57 80 8 16" advanceWidth="7.278438" leftBearing="0.6210938" rightBearing="0.5859375"/>
+    <Glyph char="f" bitmap="0" uv="66 80 5 16" advanceWidth="4.34875" leftBearing="0.3984375" rightBearing="-0.3867188"/>
+    <Glyph char="g" bitmap="0" uv="72 80 9 16" advanceWidth="7.606563" leftBearing="0.6328125" rightBearing="1.083984"/>
+    <Glyph char="h" bitmap="0" uv="82 80 9 16" advanceWidth="7.72375" leftBearing="1.083984" rightBearing="1.037109"/>
+    <Glyph char="i" bitmap="0" uv="92 80 4 16" advanceWidth="3.422969" leftBearing="1.025391" rightBearing="1.025391"/>
+    <Glyph char="j" bitmap="0" uv="97 80 5 16" advanceWidth="4.260859" leftBearing="-0.3632813" rightBearing="1.007813"/>
+    <Glyph char="k" bitmap="0" uv="103 80 8 16" advanceWidth="7.231563" leftBearing="1.130859" rightBearing="0.07617188"/>
+    <Glyph char="l" bitmap="0" uv="112 80 4 16" advanceWidth="3.422969" leftBearing="1.095703" rightBearing="1.095703"/>
+    <Glyph char="m" bitmap="0" uv="0 96 13 16" advanceWidth="11.80188" leftBearing="1.083984" rightBearing="1.037109"/>
+    <Glyph char="n" bitmap="0" uv="14 96 9 16" advanceWidth="7.72375" leftBearing="1.083984" rightBearing="1.037109"/>
+    <Glyph char="o" bitmap="0" uv="24 96 8 16" advanceWidth="7.413203" leftBearing="0.6210938" rightBearing="0.6210938"/>
+    <Glyph char="p" bitmap="0" uv="33 96 9 16" advanceWidth="7.606563" leftBearing="1.083984" rightBearing="0.6328125"/>
+    <Glyph char="q" bitmap="0" uv="43 96 9 16" advanceWidth="7.606563" leftBearing="0.6328125" rightBearing="1.083984"/>
+    <Glyph char="r" bitmap="0" uv="53 96 6 16" advanceWidth="5.251094" leftBearing="1.083984" rightBearing="-0.046875"/>
+    <Glyph char="s" bitmap="0" uv="60 96 7 16" advanceWidth="6.381953" leftBearing="0.6445313" rightBearing="0.4921875"/>
+    <Glyph char="t" bitmap="0" uv="68 96 6 16" advanceWidth="4.858516" leftBearing="0.3632813" rightBearing="0.2460938"/>
+    <Glyph char="u" bitmap="0" uv="75 96 9 16" advanceWidth="7.72375" leftBearing="1.037109" rightBearing="1.083984"/>
+    <Glyph char="v" bitmap="0" uv="85 96 8 16" advanceWidth="7.231563" leftBearing="0.3574219" rightBearing="0.3574219"/>
+    <Glyph char="w" bitmap="0" uv="94 96 11 16" advanceWidth="9.950313" leftBearing="0.5039063" rightBearing="0.5039063"/>
+    <Glyph char="x" bitmap="0" uv="106 96 8 16" advanceWidth="7.231563" leftBearing="0.3515625" rightBearing="0.3515625"/>
+    <Glyph char="y" bitmap="0" uv="115 96 8 16" advanceWidth="7.231563" leftBearing="0.3574219" rightBearing="0.3574219"/>
+    <Glyph char="z" bitmap="0" uv="0 112 8 16" advanceWidth="6.434688" leftBearing="0.5449219" rightBearing="0.4746094"/>
+    <Glyph char="{" bitmap="0" uv="9 112 9 16" advanceWidth="7.747188" leftBearing="1.013672" rightBearing="1.095703"/>
+    <Glyph char="|" bitmap="0" uv="19 112 7 16" advanceWidth="5.579219" leftBearing="2.214844" rightBearing="2.214844"/>
+    <Glyph char="}" bitmap="0" uv="27 112 9 16" advanceWidth="7.747188" leftBearing="1.095703" rightBearing="1.013672"/>
+    <Glyph char="~" bitmap="0" uv="37 112 11 16" advanceWidth="9.950313" leftBearing="1.095703" rightBearing="1.095703"/>
+  </Glyphs>
+  <Kernings>
+  </Kernings>
+</Font>

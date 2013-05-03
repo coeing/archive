@@ -1,0 +1,644 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.Rendering.Models</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.Rendering.Models.Bone">
+            <summary>
+            Bone class for skinned mesh animations.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Models.Bone.#ctor(Delta.Rendering.Models.Bone,Delta.Utilities.Datatypes.Matrix,System.String)">
+            <summary>
+            Create bone
+            </summary>
+            <param name="setParentBone">The set parent bone.</param>
+            <param name="setMatrix">The set matrix.</param>
+            <param name="setName">Name of the set.</param>
+        </member>
+        <member name="M:Delta.Rendering.Models.Bone.ToString">
+            <summary>
+            To string, useful for debugging and testing.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents this instance.
+            </returns>
+        </member>
+        <member name="P:Delta.Rendering.Models.Bone.Name">
+            <summary>
+            The name of the bone as loaded from the model file. This info is
+            useful to relate the bone with the naming that artists give.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Models.Bone.Parent">
+            <summary>
+            Parent bone, very important to get all parent matrices when
+            building the finalMatrix for rendering.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Models.Bone.InitialMatrix">
+            <summary>
+            Initial matrix we get from loading the model, it contains
+            the start position and is used for the calculation to get the
+            absolute and final matrices (see below).
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Models.Sky">
+            <summary>
+            Helper to render the sky dome. A model with the name "Skydome" must
+            exist for the current project. You can set or replace the sky mesh also
+            for different levels or different needs. The mesh will be rendered
+            normally (at the end of the frame) and should be inside out and only
+            using the simple and fast TexturedShader3D.
+            Note: At 1-10 million meters away from the origin you will run into
+            floating point errors, you should use a different rendering technique
+            there (not the camera position). Games should be centered around the
+            camera anyway for the best floating point precision and optimizations.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Models.Sky.Draw">
+            <summary>
+            Draw
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Sky.usedSkyMesh">
+            <summary>
+            Used sky mesh
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Models.Sky.SkyMesh">
+            <summary>
+            Sky mesh
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Models.Model">
+            <summary>
+            Sorry, this class is not yet implemented and needs to be merged first!
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Models.Model.IsAnimated">
+            <summary>
+            "True" if the mesh is animated and contains animation data
+            animation.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Models.Model.Animation">
+            <summary>
+            Animation
+            </summary>
+            <returns>Animation</returns>
+        </member>
+        <member name="T:Delta.Rendering.Models.Mesh">
+            <summary>
+            Mesh model class for 3d meshes (but 2d meshes also work). Basically
+            a mesh is just a combination of Geometry and Material. Models can
+            consist of multiple meshes.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Mesh.BoneColors">
+            <summary>
+            Line colors for displaying the bones as lines.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreatePlane(System.String,System.Single,System.Single,Delta.Utilities.Datatypes.Color,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Creates an XY plane.
+            </summary>
+            <param name="setName">Set name</param>
+            <param name="setWidth">Set width</param>
+            <param name="setDepth">Set depth</param>
+            <param name="setColor">Vertex color during creation.</param>
+            <param name="setMaterialData">Set material data</param>
+            <returns>Mesh with the created plane and given material</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreatePlane(System.String,System.Single,System.Single,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Creates an XY plane
+            </summary>
+            <param name="setName">Set name</param>
+            <param name="setWidth">Set width</param>
+            <param name="setDepth">Set depth</param>
+            <param name="setMaterialData">Set material data</param>
+            <returns>Mesh with the created plane and given material</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateSegmentedPlane(System.String,System.Single,System.Single,System.Int32,System.Boolean,Delta.Utilities.Datatypes.Color,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Creates an XY plane with segments, which is useful for testing
+            specular and other shader effects with pre-calculated data in the
+            vertex shader (which will not look close up for just a 1x1 plane).
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setWidth">Width of the set.</param>
+            <param name="setDepth">The set depth.</param>
+            <param name="setSegments">The set segments.</param>
+            <param name="uvForEachSegment">Create new uv from 0-1 for each segment.
+            Useful for tiling (works even without tileable textures)</param>
+            <param name="setColor">Vertex color during creation.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <returns>Mesh containing segmented plane data.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateSegmentedPlane(System.String,System.Single,System.Single,System.Int32,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Creates an XY plane with segments, which is useful for testing
+            specular and other shader effects with pre-calculated data in the
+            vertex shader (which will not look close up for just a 1x1 plane).
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setWidth">Width of the set.</param>
+            <param name="setDepth">The set depth.</param>
+            <param name="setSegments">The set segments.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <returns>
+            The new create Mesh.
+            </returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateBox(System.String,System.Single,System.Single,System.Single,Delta.Utilities.Datatypes.Color,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Create box mesh.
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setWidth">Width of the set.</param>
+            <param name="setDepth">The set depth.</param>
+            <param name="setHeight">Height of the set.</param>
+            <param name="setColor">Vertex color during creation.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <returns>Mesh containing box data.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateBox(System.String,System.Single,System.Single,System.Single,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Create box mesh.
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setWidth">Width of the set.</param>
+            <param name="setDepth">The set depth.</param>
+            <param name="setHeight">Height of the set.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <returns>Mesh containing box data.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateCube(System.String,System.Single,Delta.Utilities.Datatypes.Color,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Create cube shape with all 6 faces with equal size.
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setSize">The size of the faces.</param>
+            <param name="setColor">Vertex color during creation.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <returns>Mesh containing cube data.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateCube(System.String,System.Single,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Create cube shape with all 6 faces with equal size.
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setSize">The size of the faces.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <returns>Mesh containing cube data.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateInnerBox(System.String,System.Single,System.Single,System.Single,Delta.Utilities.Datatypes.Color,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Creates an inner box (-&gt; like the 'CreateBox()' method but in the
+            "inverted" way).
+            Note: This kind of a box is helpful if you want to render something
+            inside a box like a simple (demo) room.
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setWidth">Width of the set.</param>
+            <param name="setDepth">The set depth.</param>
+            <param name="setHeight">Height of the set.</param>
+            <param name="setColor">Vertex color during creation.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <returns>Mesh containing inner box data.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateInnerBox(System.String,System.Single,System.Single,System.Single,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Creates an inner box (-&gt; like the 'CreateBox()' method but in the
+            "inverted" way).
+            Note: This kind of a box is helpful if you want to render something
+            inside a box like a simple (demo) room.
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setWidth">Width of the set.</param>
+            <param name="setDepth">The set depth.</param>
+            <param name="setHeight">Height of the set.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <returns>Mesh containing inner box data.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateSphere(System.String,System.Single,Delta.Utilities.Datatypes.Color,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Creates a sphere as a Mesh with the given parameters.
+            </summary>
+            <param name="setName">Name of the sphere mesh</param>
+            <param name="setRadius">Radius for the sphere from the center</param>
+            <param name="setColor">
+            Color for the new sphere in case the vertex format supports colored
+            vertices (otherwise ignored).
+            </param>
+            <param name="setMaterialData">The material data for the mesh.</param>
+            <returns>Mesh containing the sphere.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateSphere(System.String,System.Single,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Creates a sphere as a Mesh with the given parameters.
+            </summary>
+            <param name="setName">Name of the sphere mesh</param>
+            <param name="setRadius">Radius for the sphere from the center</param>
+            <param name="setMaterialData">The material data for the mesh.</param>
+            <returns>Mesh containing the sphere.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateInnerSphere(System.String,System.Single,Delta.Utilities.Datatypes.Color,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Create sphere with indices inverted (if you want to be inside the
+            sphere, e.g. for a skydome).
+            </summary>
+            <param name="setName">Name of the sphere mesh</param>
+            <param name="setRadius">Radius for the sphere from the center</param>
+            <param name="setColor">
+            Color for the new sphere in case the vertex format supports colored
+            vertices (otherwise ignored).
+            </param>
+            <param name="setMaterialData">The material data for the mesh.</param>
+            <returns>Mesh containing the inner sphere.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateInnerSphere(System.String,System.Single,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Create sphere with indices inverted.
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setRadius">The set radius.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <returns>Mesh containing inner sphere data.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateCapsule(System.String,System.Single,System.Single,Delta.Utilities.Datatypes.Color,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Create capsule mesh.
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setDiameter">The diameter of cylinder.</param>
+            <param name="setLength">Length of the set.</param>
+            <param name="setColor">Vertex color during creation.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <returns>Mesh containing capsule data.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.CreateCapsule(System.String,System.Single,System.Single,Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Create capsule mesh.
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setDiameter">The diameter of cylinder.</param>
+            <param name="setLength">Length of the set.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <returns>Mesh containing capsule data.</returns>
+        </member>
+        <member name="F:Delta.Rendering.Models.Mesh.Material">
+            <summary>
+            The material which is used to visualize the geometry of the mesh.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Mesh.hasPositionOffset">
+            <summary>
+            Remember if we have a position offset, if it is Zero, this is true
+            and the Draw code is a little more optimized (often the case).
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Mesh.cachedRenderMatrix">
+            <summary>
+            Default render matrix when rendering this model without any extra
+            position or render matrix parameters. Usually used for levels and
+            static geometry. Initially Matrix.Identity, but the PositionOffset
+            is also already applied on this. Can be ignored if hasPositionOffset
+            is false.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.#ctor(System.String)">
+            <summary>
+            Create model from content name. Will warn about missing materials.
+            </summary>
+            <param name="contentName">Name of the content.</param>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.#ctor(Delta.ContentSystem.Rendering.MeshData)">
+            <summary>
+            Create model from ModelData (usually called from content name
+            constructor above).
+            TODO: what is this used for?
+            </summary>
+            <param name="setData">Set mesh data</param>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.#ctor(System.String,Delta.ContentSystem.Rendering.GeometryData,Delta.ContentSystem.Rendering.MaterialData,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Prevents a default instance of the <see cref="T:Delta.Rendering.Models.Mesh"/> class from being created.
+            </summary>
+            <param name="setName">Name of the set.</param>
+            <param name="setGeometryData">The set geometry data.</param>
+            <param name="setMaterialData">The set material data.</param>
+            <param name="setPositionOffset">The set position offset.</param>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.Draw">
+            <summary>
+            Draws the mesh exactly in that way as it was originally exported by the
+            artist (including the computed position offset).
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.Draw(Delta.Utilities.Datatypes.Matrix@)">
+            <summary>
+            Draws the mesh with a custom draw transformation additionally to the
+            original mesh transformation (including the computed position offset).
+            </summary>
+            <param name="customDrawTransformation">The custom draw transformation.</param>
+        </member>
+        <member name="M:Delta.Rendering.Models.Mesh.DrawCentered">
+            <summary>
+            Draws the mesh centered in the world origin or in other words without
+            the position offset computed by the content importer.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Models.Mesh.Name">
+            <summary>
+            The name of the model. Usually set from content, but can also be a
+            dynamically created model with a custom name.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Models.Mesh.Geometry">
+            <summary>
+            Gets the geometry which defines the mesh.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Models.Mesh.PositionOffset">
+            <summary>
+            The offset translation of the mesh to represent its local space.
+            Automatically added to rendering when using the Draw method with the
+            matrix overload.
+            </summary>
+            <returns>Vector</returns>
+        </member>
+        <member name="P:Delta.Rendering.Models.Mesh.IsHidden">
+            <summary>
+            Level Editor Property, is true when the mesh should not be rendered.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Models.Level">
+            <summary>
+            Game level.
+            TODO: This class should be automatically run by being a DynamicModule or attaching	to a LevelManager which is a DynamicModule and calls the internal Level.Run()
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Level.MaxCullDistance">
+            <summary>
+            The maximum distance for culling.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Level.HalfMaxCullDistance">
+            <summary>
+            Half of maximum distance for culling
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Models.Level.IsInsideViewFrustum(Delta.Rendering.Models.Mesh,Delta.Rendering.Cameras.BaseCamera,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Check if the mesh bounding box is inside the frustum.
+            http://www.cg.tuwien.ac.at/hostings/cescg/CESCG-2002/DSykoraJJelinek/index.html
+            http://www.lighthouse3d.com/opengl/viewfrustum/index.php?gatest2
+            </summary>
+            <param name="mesh">The mesh.</param>
+            <param name="currentCamera">The current camera.</param>
+            <param name="meshPosition">The mesh position.</param>
+            <returns>
+              <c>true</c> if [is inside view frustum] [the specified mesh]; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="F:Delta.Rendering.Models.Level.IsFrustumCullingOn">
+            <summary>
+            The flag where the frustum culling can be enabled or disabled.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Level.levelCamera">
+            <summary>
+            The camera which moves along the defined camera path
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:Delta.Rendering.Models.Level.levelMeshes" -->
+        <member name="M:Delta.Rendering.Models.Level.#ctor(System.String,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Delta.Rendering.Models.Level"/> class.
+            </summary>
+            <param name="setLevelName">Name of the set level.</param>
+            <param name="setShadowMapName">Name of the set shadow map.</param>
+        </member>
+        <member name="M:Delta.Rendering.Models.Level.#ctor(Delta.ContentSystem.Rendering.LevelData,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Delta.Rendering.Models.Level"/> class.
+            </summary>
+            <param name="setLevelData">The set level data.</param>
+            <param name="setShadowMapName">Name of the set shadow map.</param>
+        </member>
+        <member name="M:Delta.Rendering.Models.Level.Draw">
+            <summary>
+            Draw
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Models.Level.IsObjectVisible(Delta.Rendering.Models.Mesh,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Check if a mesh is visible according to the camera position. 
+            Essentially this class culls objects that are either too far away
+            or not close enough and located out of the camera FOV.
+            </summary>
+            <param name="mesh">Mesh to check against.</param>
+            <param name="worldPosition">World position to check from.</param>
+            <returns>True if object is visible otherwise false.</returns>
+        </member>
+        <member name="T:Delta.Rendering.Models.Level.LevelTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Models.Level.LevelTests.IsInsideViewFrustum">
+            <summary>
+            Is inside view frustum
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Models.Animation">
+            <summary>
+            Simple animation class for mesh skinning.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.FrameRate">
+            <summary>
+            The frame rate as a constant for now.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.Frames">
+            <summary>
+            Array of animation frames (as array of bone matrices)
+            e.g.
+            Frames[0] -> Frame 1
+              Frames[0][0] -> Bone Matrix 1
+              Frames[0][1] -> Bone Matrix 2
+            Frames[1] -> Frame 2
+              Frames[1][0] -> Bone Matrix 1
+              Frames[1][1] -> Bone Matrix 2
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.parent">
+            <summary>
+            The parent mesh of this animation.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.animation">
+            <summary>
+            Animation data / info.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.blendAnimation">
+            <summary>
+            Blend animation data / info.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.onBlending">
+            <summary>
+            Currently on blending an animation.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.blendingTime">
+            <summary>
+            Animation blending time.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.currentBlendingTime">
+            <summary>
+            Current time of the animation blending.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.nextFrame">
+            <summary>
+            The next frame we want to interpolate to.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Models.Animation.#ctor(Delta.Rendering.Models.Mesh,Delta.ContentSystem.Rendering.MeshAnimationData)">
+            <summary>
+            Create a new animation.
+            </summary>
+            <param name="setParent">The parent mesh of this animation.</param>
+            <param name="setAnimationData">The data of this animation.</param>
+        </member>
+        <member name="M:Delta.Rendering.Models.Animation.SetAnimationSpeed(System.Single)">
+            <summary>
+            Set animation speed.
+            </summary>
+            <param name="factor">Scale factor to apply.</param>
+        </member>
+        <member name="M:Delta.Rendering.Models.Animation.SetCurrentAnimation(System.String,System.Int32,System.Int32,System.Single,System.Boolean)">
+            <summary>
+            Change the current animation.
+            </summary>
+            <param name="animaitonName">The animation name to switch to.</param>
+            <param name="indexStart">Animation index start.</param>
+            <param name="indexEnd">Animation index end.</param>
+            <param name="frameRate">Frame rate during animation playback.</param>
+            <param name="loop">True to loop animation, false otherwise.</param>
+        </member>
+        <member name="M:Delta.Rendering.Models.Animation.BlendAnimation(System.String,System.Int32,System.Int32,System.Single,System.Boolean,System.Single)">
+            <summary>
+            Blend animation with current animation playing.
+            </summary>
+            <param name="animationName">The animation name to blend with.</param>
+            <param name="indexStart">Animation index start.</param>
+            <param name="indexEnd">Animation index end.</param>
+            <param name="frameRate">Frame rate during animation playback.</param>
+            <param name="loop">True to loop animation, false otherwise.</param>
+            <param name="blendingTime">Blending duration time.</param>
+        </member>
+        <member name="M:Delta.Rendering.Models.Animation.Update">
+            <summary>
+            Update the animation.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Models.Animation.UpdateAnimation(Delta.Rendering.Models.Animation.AnimationInfo@)">
+            <summary>
+            Update animation simulation.
+            </summary>
+            <param name="currentAnimation">Animation info to update with.</param>
+            <returns>True if animation correctly updated, false otherwise.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Models.Animation.SetAnimation(Delta.Rendering.Models.Animation.AnimationInfo@,System.String,System.Int32,System.Int32,System.Single,System.Boolean)">
+            <summary>
+            Set animation info data.
+            </summary>
+            <param name="data">AnimationInfo data to apply</param>
+            <param name="animationName">The animation name to blend with.</param>
+            <param name="indexStart">Animation index start.</param>
+            <param name="indexEnd">Animation index end.</param>
+            <param name="frameRate">Frame rate during animation playback.</param>
+            <param name="loop">True to loop animation, false otherwise.</param>
+        </member>
+        <member name="P:Delta.Rendering.Models.Animation.Duration">
+            <summary>
+            Length of the Animation in seconds.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Models.Animation.FrameCount">
+            <summary>
+            Number of frames.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Models.Animation.NextFrame">
+            <summary>
+            Next frame
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Models.Animation.AnimationInfo">
+            <summary>
+            Animation info
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.AnimationInfo.Name">
+            <summary>
+            Name of the current animation.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.AnimationInfo.StartIndex">
+            <summary>
+            The start frame index of the active animation.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.AnimationInfo.EndIndex">
+            <summary>
+            The end frame index of the active animation.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.AnimationInfo.FrameRate">
+            <summary>
+            The speed that the animation will run in. (Frames per second)
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.AnimationInfo.DefaultFrameRate">
+            <summary>
+            Default framerate of current animation, 
+            which was set at SetCurrentAnimation.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.AnimationInfo.Loop">
+            <summary>
+            True if the animation should only run once then stop.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.AnimationInfo.FramesCount">
+            <summary>
+            Number of animation frames for currently played animation
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.AnimationInfo.FrameIndex">
+            <summary>
+            The current frame index of the active animation.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.AnimationInfo.FrameTimer">
+            <summary>
+            The time in seconds since the last frame index increase.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Models.Animation.AnimationInfo.BoneMatrices">
+            <summary>
+            Current bone matrices of the animation.
+            </summary>
+        </member>
+    </members>
+</doc>

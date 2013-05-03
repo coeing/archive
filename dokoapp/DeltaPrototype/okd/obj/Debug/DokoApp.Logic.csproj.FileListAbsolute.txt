@@ -1,0 +1,5 @@
+D:\projects\dokoapp\DeltaPrototype\DokoApp.Logic\obj\Debug\ResolveAssemblyReference.cache
+D:\projects\dokoapp\DeltaPrototype\DokoApp.Logic\Bin\Debug\DokoApp.Logic.dll
+D:\projects\dokoapp\DeltaPrototype\DokoApp.Logic\Bin\Debug\DokoApp.Logic.pdb
+D:\projects\dokoapp\DeltaPrototype\DokoApp.Logic\obj\Debug\DokoApp.Logic.dll
+D:\projects\dokoapp\DeltaPrototype\DokoApp.Logic\obj\Debug\DokoApp.Logic.pdb

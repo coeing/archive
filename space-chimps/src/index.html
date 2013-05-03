@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="scripts/conf.js"></script>
+		<script src="scripts/mibbu.js"></script>
+		<script src="scripts/toolkit.js"></script>
+		<script src="scripts/utils.js"></script>
+		<script src="scripts/world.js"></script>
+		<script src="scripts/rocket/abstractparts.js"></script>
+		<script src="scripts/rocket/rocket.js"></script>
+		<script src="scripts/collision/collider.js"></script>
+		<script src="scripts/collision/shape.js"></script>
+		<script src="scripts/enemies/enemies.js"></script>
+		<script src="scripts/enemies/manager.js"></script>
+		<script src="scripts/game/background.js"></script>
+		<script src="scripts/game.js"></script>
+		<script src="scripts/editor.js"></script>
+		<script src="scripts/start_screen.js"></script>
+		<script src="scripts/audio.js"></script>
+		<script type="text/javascript">
+			window.debug_enabled = !true;
+			window.onload = function() {
+				window.game.screens.init();
+				window.game.audio.ingame.play();
+			};
+		</script>
+		<link href='http://fonts.googleapis.com/css?family=VT323' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" href="assets/css/game.css">
+		<title>Space Chimps 2: Cold War</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	</head>
+	<body id="root">
+		<div id="debug"></div>
+		<div id="arcade_machine">
+			<div id="wrapper">
+				<div id="editor" style="display:none">
+					<ul id="parts" class="pixelborder"></ul>
+					<div id="info" class="pixelborder">
+						<div id="money" class="money-icon"></div>
+						<div id="weight" class="bar">
+							<div class="bar-bar"></div>
+							<div class="icon"></div>
+						</div>
+						<div id="thrust" class="bar">
+							<div class="bar-bar"></div>
+							<div class="icon"></div>
+						</div>
+						<div id="fuel" class="bar">
+							<div class="bar-bar"></div>
+							<div class="icon"></div>
+						</div>
+					</div>
+				</div>
+				<div id="start" style="display:none">
+					<a href="#" onclick="return false" id="russians" class="faction"></a>
+					<a href="#" onclick="return false" id="americans" class="faction"></a>
+					<img id="select_faction" src="assets/images/select_faction.gif" alt="select faction" />
+				</div>
+				<div id="altitude" class="gui"></div>
+				<div id="info-bars" class="gui">
+					<div id="fuel-bar" class="gui"></div>
+					<div id="life-bar" class="gui"></div>
+				</div>
+				<div id="scoreboard" style="display:none">
+					<p id="altitude_score"></p>
+					<p id="money_score"></p>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

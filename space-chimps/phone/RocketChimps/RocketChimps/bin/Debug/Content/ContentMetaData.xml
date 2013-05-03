@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentMetaData Name="RocketChimps" Type="Scene" LastTimeUpdated="2012-03-24 10:49:29" ContentDeviceName="Windows">
+  <ContentMetaData Name="ProjectSettings" Type="-2" LastTimeUpdated="2012-03-24 10:49:29">
+    <ContentMetaData Name="Localization" Type="Xml" LastTimeUpdated="2012-03-24 10:49:39" PlatformFileId="12954" FileSize="658" LocalFilePath="Localization.xml"></ContentMetaData>
+    <ContentMetaData Name="InputSettings" Type="Xml" LastTimeUpdated="2012-03-24 10:49:39" PlatformFileId="12955" FileSize="7110" LocalFilePath="InputSettings.xml"></ContentMetaData>
+    <ContentMetaData Name="Settings" Type="Xml" LastTimeUpdated="2012-03-24 10:49:39" PlatformFileId="12956" FileSize="1276" LocalFilePath="Settings.xml"></ContentMetaData>
+    <ContentMetaData Name="EngineTypeList" Type="Xml" LastTimeUpdated="2012-03-24 10:49:39" PlatformFileId="12957" FileSize="9681" LocalFilePath="EngineTypeList.xml"></ContentMetaData>
+  </ContentMetaData>
+  <ContentMetaData Name="Engine" Type="Scene" LastTimeUpdated="2012-02-28 03:17:57">
+    <ContentMetaData Name="LineShader2D" Type="Shader" LastTimeUpdated="2012-03-23 15:19:09" PlatformFileId="6133" FileSize="348" LocalFilePath="LineShader2D.DeltaShader" ShaderFlags="UI2D, NoTexturing, ColoredVertices"></ContentMetaData>
+    <ContentMetaData Name="TexturedShader2D" Type="Shader" LastTimeUpdated="2012-03-23 15:19:09" PlatformFileId="6134" FileSize="438" LocalFilePath="TexturedShader2D.DeltaShader" ShaderFlags="UI2D"></ContentMetaData>
+    <ContentMetaData Name="LineShader3D" Type="Shader" LastTimeUpdated="2012-03-23 15:19:09" PlatformFileId="6135" FileSize="348" LocalFilePath="LineShader3D.DeltaShader" ShaderFlags="NoTexturing, ColoredVertices"></ContentMetaData>
+    <ContentMetaData Name="TexturedColoredShader2D" Type="Shader" LastTimeUpdated="2012-03-23 15:19:09" PlatformFileId="6136" FileSize="588" LocalFilePath="TexturedColoredShader2D.DeltaShader" ShaderFlags="UI2D, ColoredVertices"></ContentMetaData>
+    <ContentMetaData Name="TexturedColoredShader3D" Type="Shader" LastTimeUpdated="2012-03-23 15:19:09" PlatformFileId="6137" FileSize="588" LocalFilePath="TexturedColoredShader3D.DeltaShader" ShaderFlags="ColoredVertices"></ContentMetaData>
+    <ContentMetaData Name="TexturedShader3D" Type="Shader" LastTimeUpdated="2012-03-23 15:19:09" PlatformFileId="6138" FileSize="438" LocalFilePath="TexturedShader3D.DeltaShader" ShaderFlags="Basic"></ContentMetaData>
+    <ContentMetaData Name="DefaultFont" Type="Font" LastTimeUpdated="2012-03-22 01:37:43" FontFamilyName="Verdana" FontSize="12" FontStyle="AddOutline, HighContrast" FontTracking="0" ExtraMetaData="">
+      <ContentMetaData Name="DefaultFont_12_48" Type="Font" LastTimeUpdated="2012-03-22 01:52:14" PlatformFileId="12464" FileSize="27248" LocalFilePath="DefaultFont_12_48.xml" FontFamilyName="Verdana" FontSize="12" FontStyle="AddOutline, HighContrast" FontTracking="0"></ContentMetaData>
+      <ContentMetaData Name="DefaultFont_12_48" Type="Image" LastTimeUpdated="2012-03-23 15:19:09" PlatformFileId="12465" FileSize="9012" LocalFilePath="DefaultFont_12_48.png" PixelSize="256, 180" UseFiltering="False" UV="0,0,1,1"></ContentMetaData>
+    </ContentMetaData>
+    <ContentMetaData Name="DefaultSound" Type="Sound" LastTimeUpdated="2012-03-23 15:19:09" PlatformFileId="6141" FileSize="21254" LocalFilePath="DefaultSound.wav" TimeLength="0.47" ExtraMetaData=""></ContentMetaData>
+    <ContentMetaData Name="DeltaEngineLogo" Type="Image" LastTimeUpdated="2012-03-23 15:19:09" PlatformFileId="6142" FileSize="5244" LocalFilePath="DeltaEngineLogo.png" PixelSize="128, 43" UV="0,0,1,1"></ContentMetaData>
+  </ContentMetaData>
+</ContentMetaData>

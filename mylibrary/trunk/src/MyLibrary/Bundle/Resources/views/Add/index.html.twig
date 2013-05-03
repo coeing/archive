@@ -1,0 +1,18 @@
+<h1>Hello!</h1>
+<h2>Search for your stuff</h2>
+<form action="{{path('add_search')}}" method="post">
+    <input name="keywords" value="{{keywords|default('')}}"/>
+    <input type="submit" />
+</form>
+
+{% if items is defined %}
+{% for item in items %}
+<p>Title: {{item.Title}}, 
+   ASIN: {{item.ASIN}}, 
+   Image: 
+   {% if item.SmallImage %}
+        <a href='{{item.DetailPageURL}}'><img src='{{item.SmallImage.URL}}'/></a>
+   {% endif %}     
+</p>
+{% endfor %}
+{% endif %}

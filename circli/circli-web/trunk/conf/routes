@@ -1,0 +1,30 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+*		/										module:secure
+
+# Home page
+GET     /                                       Application.index
+
+GET		/search									SearchController.index
+
+GET		/users									Users.index
+
+GET		/users/{userId}							Users.show
+
+POST	/users/{userId}							Users.save
+
+GET		/like/{articleId}						UIController.like
+GET		/own/{articleId}						UIController.own
+GET		/ignore/{articleId}						UIController.ignore
+GET		/info/{articleId}						UIController.info
+
+# Ignore favicon requests
+GET     /favicon.ico                            404
+
+# Map static resources from the /app/public folder to the /public path
+GET     /public/                                staticDir:public
+
+# Catch all
+*       /{controller}/{action}                  {controller}.{action}

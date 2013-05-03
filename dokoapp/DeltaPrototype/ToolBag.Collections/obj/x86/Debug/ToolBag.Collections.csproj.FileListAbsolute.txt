@@ -1,0 +1,6 @@
+D:\projects\dokoapp\DeltaPrototype\ToolBag.Collections\bin\x86\Debug\ToolBag.Collections.dll
+D:\projects\dokoapp\DeltaPrototype\ToolBag.Collections\bin\x86\Debug\ToolBag.Collections.pdb
+D:\projects\dokoapp\DeltaPrototype\ToolBag.Collections\obj\x86\Debug\ResolveAssemblyReference.cache
+D:\projects\dokoapp\DeltaPrototype\ToolBag.Collections\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+D:\projects\dokoapp\DeltaPrototype\ToolBag.Collections\obj\x86\Debug\ToolBag.Collections.dll
+D:\projects\dokoapp\DeltaPrototype\ToolBag.Collections\obj\x86\Debug\ToolBag.Collections.pdb

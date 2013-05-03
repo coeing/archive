@@ -1,0 +1,990 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.Rendering.Cameras</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.Rendering.Cameras.IsoPerspectiveCamera">
+            <summary>
+            3D Iso perspective camera which works as LookAtCamera and has its target
+            but the different is that it has iso-perspective projection.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Cameras.BaseCamera">
+            <summary>
+            Abstract base camera class, provides some useful constants and properties
+            that are commonly used in most camera classes. Is used as a dynamic
+            module which updates itself directly after the input module updated, so
+            the camera always have the newest input data to use for camera movement.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.ImplementationVersion">
+            <summary>
+            The current version of the implementation of this Camera class.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.DefaultNearPlane">
+            <summary>
+            The near plane of the camera.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.DefaultFarPlane">
+            <summary>
+            The far plane distance for the camera. See below for previous values.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.FastMultiplier">
+            <summary>
+            Speed multiplier if "fast" key is pressed
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.SlowMultiplier">
+            <summary>
+            Speed multiplier if "slow" key is pressed
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.DefaultFieldOfView">
+            <summary>
+            The default FieldOfView is 60 degrees.
+            obs: 75 degrees (Pi * 5 / 12) because too much people complained.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.UpVector">
+            <summary>
+            The direction vector for the camera to show where is top.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.projectionMatrix">
+            <summary>
+            The projection matrix is only calculated once in the constructor
+            and when the window resizes (because it depends on the AspectRatio).
+            It is only used in UpdateViewMatrix, which will just set
+            ScreenSpace.ViewProjection3D and ScreenSpace.ViewInverse.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.viewMatrix">
+            <summary>
+            Protected viewMatrix for updating the screen properties.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.position">
+            <summary>
+            Position
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.lookDirection">
+            <summary>
+            Look direction
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.target">
+            <summary>
+            Target
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.distance">
+            <summary>
+            Distance
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.rotation">
+            <summary>
+            Rotation
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.currentlyUsedCamera">
+            <summary>
+            Currently used camera
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.BaseCamera.needToUpdateProjectionMatrix">
+            <summary>
+            Helper flag to indicate we need to update the projection matrix because
+            something like NearPlane, FarPlane or FieldOfView has changed.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.#ctor(Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Create the camera
+            </summary>
+            <param name="setPosition">Camera initial position.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.Finalize">
+            <summary>
+            Releases unmanaged resources and performs other cleanup operations
+            before the <see cref="T:Delta.Rendering.Cameras.BaseCamera"/> is reclaimed by garbage collection.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.Load(System.IO.BinaryReader)">
+            <summary>
+            Load camera from BinaryStream.
+            </summary>
+            <param name="reader">Binary reader used for reading data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save camera data to BinaryWritter.
+            </summary>
+            <param name="dataWriter">Binary writer used for writing data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.Dispose">
+            <summary>
+            Dispose the camera and most important remove it from the camera list.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.Activate">
+            <summary>
+            Make the camera current (e.g. index zero on the camera list),
+            so it'll be updated.
+            </summary>
+            <returns>
+            True if this camera has been set as active one, false if it was active
+            last frame.
+            </returns>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.UpdateProjectionMatrix">
+            <summary>
+            Update projection matrix. In the base class this simply creates a
+            normal perspective camera with the Screen aspect ratio. In overridden
+            classes this can be changed (for example for isometric projection).
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.Run">
+            <summary>
+            Update the camera every tick directly after input updated its
+            values so we always have the newest input data.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.UpdateScreenProperties">
+            <summary>
+            Update the screen properties ViewProjection3D and ViewInverse.
+            Called from the InternalRun method.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.SetupInputCommands">
+            <summary>
+            Setup the input commands for controlling this camera.
+            Can be derived in the camera implementing classes.
+            Normally no input is attached.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.UpdateViewMatrix">
+            <summary>
+            Update view matrix of this camera.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.BuildViewFrustum">
+            <summary>
+            Build view frustum
+            http://www.chadvernon.com/blog/resources/directx9/frustum-culling/
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.BaseCamera.InternalRun">
+            <summary>
+            Internal run method for overriding in the derived classes.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.Current">
+            <summary>
+            Currently active camera.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.Position">
+            <summary>
+            The position of this camera.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.LookDirection">
+            <summary>
+            The look direction
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.Target">
+            <summary>
+            The camera target position
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.Distance">
+            <summary>
+            The distance between target position and camera position
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.Rotation">
+            <summary>
+            Camera rotation vector in yaw pitch roll format
+            Rotation Vector should be in degrees
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.FieldOfView">
+            <summary>
+            Field of view, will cause the ProjectionMatrix to be updated the
+            next time InternalRun is called.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.FarPlane">
+            <summary>
+            Far plane
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.NearPlane">
+            <summary>
+            Near plane
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.IsActive">
+            <summary>
+            Determines if the camera is active or not.
+            Only one camera may be active at a given time
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.IsLocked">
+            <summary>
+            If set to true this camera should ignore all user input, which would
+            otherwise be used to control the camera (via Mouse, Touch and Keys).
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.ViewMatrix">
+            <summary>
+            Public ViewMatrix for updating the screen properties.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.ViewFrustum">
+            <summary>
+            An array of 6 planes, one plane for each surface of the viewFrustum.
+            Used order: 0=Left, 1=Right, 2=Top, 3=Bottom, 4=Near, 5=Far
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.VertexLookupTable">
+            <summary>
+            A 2 dimensional array used in checking boxes vs frustum.
+            The first field in the array represents the 6 different planes.
+            The second field represents X, Y, Z normal values of each field.
+            0 = xMax, 1 = yMax, 2 = zMax
+            3 = xMin, 4 = yMin, 5 = zMin.
+            Example: If the bottom (3) plane Y (1) normal is positive (negative = 4)
+            then VertexLookupTable[3,1] = 1.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.BaseCamera.AlwaysNeedsUpdate">
+            <summary>
+            If this camera always needs to be updated.
+            Mainly used for camera implementations which contain multiple cameras,
+            so they are able to decide if they need to switch control.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.IsoPerspectiveCamera.ImplementationVersion">
+            <summary>
+            The current version of the implementation of this Camera class.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.IsoPerspectiveCamera.scale">
+            <summary>
+            Scaling that emulates the Distance property for the isometric camera
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.IsoPerspectiveCamera.cameraShake">
+            <summary>
+            The shake value
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsoPerspectiveCamera.#ctor(Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Create iso perspective camera
+            </summary>
+            <param name="setPosition">Set position</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsoPerspectiveCamera.Shake(System.Single)">
+            <summary>
+            Shake
+            </summary>
+            <param name="amount">The amount.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsoPerspectiveCamera.Save(System.IO.BinaryWriter)">
+            <summary>
+            Override saving data from BinaryStream.
+            </summary>
+            <param name="dataWriter">Binary writer used for writing data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsoPerspectiveCamera.Load(System.IO.BinaryReader)">
+            <summary>
+            Override loading data from BinaryStream.
+            </summary>
+            <param name="reader">Binary reader used for reading data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsoPerspectiveCamera.UpdateViewMatrix">
+            <summary>
+            Update view matrix
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsoPerspectiveCamera.InternalRun">
+            <summary>
+            Updates the camera
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.IsoPerspectiveCamera.Position">
+            <summary>
+            The camera position.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.IsoPerspectiveCamera.Target">
+            <summary>
+            The camera target position
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.IsoPerspectiveCamera.Distance">
+            <summary>
+            The distance between target position and camera position.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.IsoPerspectiveCamera.LookDirection">
+            <summary>
+            The look direction.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Cameras.IsoPerspectiveCamera.IsoPerspectiveTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsoPerspectiveCamera.IsoPerspectiveTests.TestSaveAndLoad">
+            <summary>
+            Test save and load functionality of the Graph class
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Cameras.GameCamera">
+            <summary>
+            Game camera. This is our base camera used for games.
+            Currently it is a combination of PathCamera and FreeCamera with
+            the ability to switch between them.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Cameras.PathCamera">
+            <summary>
+            Path camera represent a camera witch moves on a given path.
+            A path consist of many positions in a 3D space. The camera stops moving,
+            when it reached the last position in the given path.
+            The UP-Vector is implemented in the base camera in the UpdateViewMatrix
+            method. Which is the UnitZ-Vector.
+            <para />
+            TODO: The matrices are not interpolated yet!
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Cameras.LookAtCamera">
+            <summary>
+            3D camera that support setting of position and target.
+            </summary>
+            <remarks>
+            With this camera you can apply behaviour of looking at given target or
+            move around given target.
+            </remarks>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.ImplementationVersion">
+            <summary>
+            The current version of the implementation of this Camera class.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.MPS">
+            <summary>
+            The Move speed Per Second.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.MouseSpeedFactor">
+            <summary>
+            Speed multiplier for mouse control
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.KeyboardSpeedFactor">
+            <summary>
+            Speed multiplier for keyboard control
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.MinPitchRotation">
+            <summary>
+            Limit for looking down
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.MaxPitchRotation">
+            <summary>
+            Limit for looking up
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.DefaultLookAtCamPosition">
+            <summary>
+            A default position which can be used if the current camera position
+            value isn't known (in the constructor).
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.DefaultTargetPosition">
+            <summary>
+            A position to a default target twhich can be used if the current camera
+            target position value isn't known (in the constructor).
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.defaultPosition">
+            <summary>
+            Used to be able to reset the position to constructor time
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.defaultTarget">
+            <summary>
+            Used to be able to reset the target to constructor time
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.shiftPressed">
+            <summary>
+            Flag determining if shift is pressed.
+            Used to make the speed multiplier slower.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.LookAtCamera.ctrlPressed">
+            <summary>
+            Flag determining if control is pressed.
+            Used to make the speed multiplier faster.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.#ctor(Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Create look at camera
+            </summary>
+            <param name="setPosition">Camera initial position.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.#ctor(Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Create look at camera
+            </summary>
+            <param name="setPosition">Camera initial position.</param>
+            <param name="setTarget">Camera initial target.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.UpdateViewMatrix">
+             <summary>
+             Update view matrix
+            TODO: doesn't make that computation more sense in the BaseCamera class?
+             </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.SetupInputCommands">
+            <summary>
+            Setup the connection between input commands and camera movement.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.Zoom(System.Boolean,System.Boolean)">
+            <summary>
+            Zoom in or out. if respectFPS is set to true, Time.Delta will be taken
+            into account. E.g.: set this to true for hold-able buttons.
+            </summary>
+            <param name="zoomIn">if set to <c>true</c> [zoom in].</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.InternalRun">
+            <summary>
+            Update the camera.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.UpdateMouseInput">
+            <summary>
+            Update mouse input
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.UpdateTouchInput">
+            <summary>
+            Update touch input
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.RotateHorizontal(System.Boolean)">
+            <summary>
+            Rotate horizontal
+            </summary>
+            <param name="left">if set to <c>true</c> [left].</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.RotateVertical(System.Boolean)">
+            <summary>
+            Rotate vertical
+            </summary>
+            <param name="up">if set to <c>true</c> [up].</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.ResetCamera">
+            <summary>
+            Resets camera position/rotation to values at constructor time
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.UpdatePosition">
+            <summary>
+            Update position
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.SetPositionValues">
+            <summary>
+            Set position values
+            Used by the Position and Target properties.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.Save(System.IO.BinaryWriter)">
+            <summary>
+            Override saving data from BinaryStream.
+            </summary>
+            <param name="dataWriter">Binary writer used for writing data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.Load(System.IO.BinaryReader)">
+            <summary>
+            Override loading data from BinaryStream.
+            </summary>
+            <param name="reader">Binary reader used for reading data.</param>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.LookAtCamera.Position">
+            <summary>
+            The camera position.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.LookAtCamera.Target">
+            <summary>
+            Target
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.LookAtCamera.Distance">
+            <summary>
+            The distance between target position and camera position
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.LookAtCamera.SpeedMultiplier">
+            <summary>
+            Speed multiplier for every movement
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.LookAtCamera.MoveSpeed">
+            <summary>
+            Movespeed per second over time.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Cameras.LookAtCamera.LookAtCameraTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.LookAtCamera.LookAtCameraTests.TestSaveAndLoad">
+            <summary>
+            Test save and load functionality of the Graph class
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.PathCamera.ImplementationVersion">
+            <summary>
+            The current version of the implementation of this Camera class.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.PathCamera.DefaultSpeed">
+            <summary>
+            Camera default speed.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.PathCamera.LoadColladaCameraPath(System.String)">
+            <summary>
+            Loads the exported camera path (view) matrices from a Collada (file)
+            data string.
+            </summary>
+            <param name="colladaMatricesString">Collada matrices string.</param>
+            <returns>Return the loaded array of matrices.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.PathCamera.LoadColladaMatrix(System.Single[],System.Int32)">
+            <summary>
+            Create matrix from collada float value array. The matrices in collada
+            are stored differently from the xna format (row based instead of
+            columns).
+            </summary>
+            <param name="mat">Array of floats containing this matrix, but
+            not exclusively. Can contain many more matrices by using the offset
+            parameter.</param>
+            <param name="offset">The offset index inside the mat array.</param>
+            <returns>Delta Matrix created from collada matrix data.</returns>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.PathCamera.pathByMatrices">
+            <summary>
+            Interpolated positions and direction as a matrix.
+            We get all the data from a Collada file.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.PathCamera.pathByPoints">
+            <summary>
+            Path of the camera by position points.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.PathCamera.positionDistances">
+            <summary>
+            Precalculated distances from the start to the current position,
+            to speed up the calculations on moving along the path.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.PathCamera.targetPath">
+            <summary>
+            The camera target positions path related to the camera
+            positions path.
+            This path can also be longer or shorter than the positions
+            path, because the current distance on the target path will be
+            calculated relatively to the length of the positions path.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.PathCamera.targetDistances">
+            <summary>
+            Precalculated distances from the start to the current target
+            position, to speed up the calculations on moving along the path.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.PathCamera.elapsedDistance">
+            <summary>
+            The elapsed distance on the path.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.PathCamera.targetDistanceFactor">
+            <summary>
+            The relative factor between the length of the camera path and
+            the length of the target path.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.PathCamera.#ctor(Delta.Utilities.Datatypes.Matrix[])">
+            <summary>
+            Create path camera with a list of matrices.
+            </summary>
+            <param name="setPath">Matrix array containing path data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.PathCamera.#ctor(Delta.Utilities.Datatypes.Vector[],Delta.Utilities.Datatypes.Vector[])">
+            <summary>
+            Create path camera with a list of vectors (positions) and
+            a list of target vectors (if available).
+            </summary>
+            <param name="setPath">Vector array containing
+            path points data.</param>
+            <param name="setPath">Vector array containing
+            target path points data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.PathCamera.#ctor">
+            <summary>
+            Private helper constructor to set the default values for
+            all other constructors above.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.PathCamera.Save(System.IO.BinaryWriter)">
+            <summary>
+            Override saving data from BinaryStream.
+            </summary>
+            <param name="dataWriter">Binary writer used for writing data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.PathCamera.Load(System.IO.BinaryReader)">
+            <summary>
+            Override loading data from BinaryStream.
+            </summary>
+            <param name="reader">Binary reader used for reading data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.PathCamera.InternalRun">
+            <summary>
+            Internal run
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.PathCamera.UpdateMatrixPath">
+            <summary>
+            Update the path camera according to the matrices.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.PathCamera.UpdatePointsPath">
+            <summary>
+            Update the path camera according to the vector positions and target
+            positions (if available).
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.PathCamera.GetPointPosition(Delta.Utilities.Datatypes.Vector[],System.Single[],System.Single,Delta.Utilities.Datatypes.Vector@)">
+            <summary>
+            Get a vector position by an array of positions, precalculated
+            distances (for performance) and a current distance.
+            <para />
+            Basically the logic of a 2d graph but with a 3d vector as the
+            result.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.PathCamera.LookDirection">
+            <summary>
+            Look direction
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.PathCamera.IsFinished">
+            <summary>
+            Has the camera reached the last node of the path?
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.PathCamera.Speed">
+            <summary>
+            The speed of the camera, default is 10f.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.GameCamera.freeCamera">
+            <summary>
+            Free camera we switch into
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.GameCamera.cameraMode">
+            <summary>
+            Camera mode, 0 = level camera, 1 free camera, 2 = waiting, 3 = return
+            to level camera (need extra mode because we have no touch release)
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.GameCamera.#ctor(Delta.Utilities.Datatypes.Matrix[])">
+            <summary>
+            Create new GameCamera
+            </summary>
+            <param name="setPath">Matrix array containing path data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.GameCamera.InternalRun">
+            <summary>
+            Update the camera.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.GameCamera.InLevelCameraMode">
+            <summary>
+            In level camera mode
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Cameras.FreeCamera">
+            <summary>
+            Free camera. This camera is useful to look around in the game scene.
+            Move and rotate the camera as you want with any input device. Not really
+            used much in games, but useful for debugging or observing.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.FreeCamera.ImplementationVersion">
+            <summary>
+            The current version of the implementation of this Camera class.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.FreeCamera.MPS">
+            <summary>
+            The default move speed per second.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.FreeCamera.MouseSpeedFactor">
+            <summary>
+            Speed multiplier for mouse control
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.FreeCamera.KeyboardSpeedFactor">
+            <summary>
+            Speed multiplier for keyboard control
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.FreeCamera.MinPitchRotation">
+            <summary>
+            Limit for looking downwards
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.FreeCamera.MaxPitchRotation">
+            <summary>
+            Limit for looking upwards
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.FreeCamera.DefaultLookAtCamPosition">
+            <summary>
+            A default position which can be used if the current camera position
+            value isn't known (in the constructor).
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.FreeCamera.DefaultTargetPosition">
+            <summary>
+            A position to a default target twhich can be used if the current camera
+            target position value isn't known (in the constructor).
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.FreeCamera.rotationMatrix">
+            <summary>
+            Rotation matrix, will be computed automatically by the (Internal)Run()
+            method.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.#ctor(Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Create free camera
+            </summary>
+            <param name="setPosition">Camera initial position.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.MoveUp(System.Single)">
+            <summary>
+            Moves the camera up.
+            </summary>
+            <param name="moveVelocity">The move velocity.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.MoveDown(System.Single)">
+            <summary>
+            Move the camera down.
+            </summary>
+            <param name="moveVelocity">Move velocity.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.MoveRight(System.Single)">
+            <summary>
+            Move the camera right.
+            </summary>
+            <param name="moveVelocity">Move velocity.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.MoveLeft(System.Single)">
+            <summary>
+            Move the camera left.
+            </summary>
+            <param name="moveVelocity">Move velocity.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.MoveForward(System.Single)">
+            <summary>
+            Move the camera forward.
+            </summary>
+            <param name="moveVelocity">Move velocity.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.MoveBackward(System.Single)">
+            <summary>
+            Move the camera backward.
+            </summary>
+            <param name="moveVelocity">Move velocity.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.Save(System.IO.BinaryWriter)">
+            <summary>
+            Override saving data from BinaryStream.
+            </summary>
+            <param name="dataWriter">Binary writer used for writing data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.Load(System.IO.BinaryReader)">
+            <summary>
+            Override loading data from BinaryStream.
+            </summary>
+            <param name="reader">Binary reader used for reading data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.UpdateViewMatrix">
+            <summary>
+            Update the view matrix.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.InternalRun">
+            <summary>
+            Update the free camera.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.FreeCamera.Pitch">
+            <summary>
+            Pitch
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.FreeCamera.Yaw">
+            <summary>
+            Yaw
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.FreeCamera.Roll">
+            <summary>
+            Roll
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.FreeCamera.IsStopMoving">
+            <summary>
+            Flag for preventing the camera from moving.
+            TODO: remove! this looks really bad here!
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.FreeCamera.UpDirection">
+            <summary>
+            Up direction
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.FreeCamera.RightDirection">
+            <summary>
+            Right direction
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Cameras.FreeCamera.FreeCameraTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.FreeCamera.FreeCameraTests.TestSaveAndLoad">
+            <summary>
+            Test save and load functionality of the Graph class
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Cameras.IsometricCamera">
+            <summary>
+            3D isometric perspective camera which works as LookAtCamera and has its 
+            target but the different is that it has isometric projection.
+            TODO: What about the scale matrix and using the position? this has to be refactored! Needs IsLocked support!
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.IsometricCamera.ImplementationVersion">
+            <summary>
+            The current version of the implementation of this Camera class.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.IsometricCamera.MPS">
+            <summary>
+            The Move speed Per Second.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Cameras.IsometricCamera.scale">
+            <summary>
+            Scaling that emulates the Distance property for the isometric camera
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsometricCamera.#ctor(Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Create isometric camera
+            </summary>
+            <param name="setPosition">Camera initial position.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsometricCamera.Zoom(System.Boolean)">
+            <summary>
+            Zoom in or out. if respectFPS is set to true, Time.Delta will be taken
+            into account. E.g.: set this to true for hold-able buttons.
+            </summary>
+            <param name="zoomIn">if set to <c>true</c> [zoom in].</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsometricCamera.UpdateProjectionMatrix">
+            <summary>
+            Update projection matrix
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsometricCamera.Save(System.IO.BinaryWriter)">
+            <summary>
+            Override saving data from BinaryStream.
+            </summary>
+            <param name="dataWriter">Binary writer used for writing data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsometricCamera.Load(System.IO.BinaryReader)">
+            <summary>
+            Override loading data from BinaryStream.
+            </summary>
+            <param name="reader">Binary reader used for reading data.</param>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsometricCamera.SetupInputCommands">
+            <summary>
+            Setup the connection between input commands and camera movement.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.IsometricCamera.Position">
+            <summary>
+            The camera position
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.IsometricCamera.Target">
+            <summary>
+            The camera target position.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.IsometricCamera.Distance">
+            <summary>
+            The distance between target position and camera position.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Cameras.IsometricCamera.LookDirection">
+            <summary>
+            override the look direction to prevent the set accessor is making
+            bad stuff. An isometric camera always have the same lookdirection,
+            which is set in the constructor.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Cameras.IsometricCamera.IsometricCameraTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Cameras.IsometricCamera.IsometricCameraTests.TestSaveAndLoad">
+            <summary>
+            Test save and load functionality of the Graph class
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,17 @@
+{% extends 'MyLibraryBundle::layout.html.twig' %}
+
+{% block content %}
+    <h1>Welcome to MyLibrary</h1>
+
+    <h2>Hello {{user.Name}}!</h2>
+    <p>We're glad you found your way to MyLibrary, the app where you can show
+       everybody how much cool stuff you own... and where you can share it with your
+       friends.
+    </p>
+    <p>We'll guide you through your first steps, so you can start creating your
+       own big and fancy library.
+    </p>
+    <p>Click on the Next button below to continue the tour.</p>
+{% endblock %}
+
+{% set code = code(_self) %}

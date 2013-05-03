@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.Utilities.Cryptography</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.Utilities.Cryptography.AES">
+            <summary>
+            AES Cryptography helper class to encrypt and decrypt binary data in a
+            symmetric way (from both sides) with a key and a random seed value. The
+            private key should be kept secret (e.g. only be transmitted once
+            to the client or hidden via source code, so only the client with
+            the key can decrypt) and the random seed value is usually transmitted
+            from the client to the server. The random seed value can either be
+            transmitted as a plain byte array (assuming the private key is kept
+            secretly enough) or you can encrypt it with a public key using the
+            <see cref="T:Delta.Utilities.Cryptography.RSA"/> class to provide real security. In any case both sides
+            can encrypt and decrypt data with good speed (see Performance tests in
+            Delta.Utilities.Tests), but both need the exact same AES private key
+            and seed value. Small messages also can have a slight overhead because
+            all data is aligned by the seed size (16 bytes).
+            <para/>
+            This class uses the AES Cryptography functionality of .NET, which works
+            fine on all platforms the Delta Engine supports. A good article about it:
+            http://msdn.microsoft.com/en-us/magazine/cc164055.aspx
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Cryptography.AES.KeyLength">
+            <summary>
+            For AES Cryptography the key length can be 128, 192 or 256 bits.
+            We choose 256 bits, which is 32 bytes. Note: 16 byte keys (128 bits)
+            are about 10% faster, but it is not worth it. The AES algorithm is
+            slow anyway and saving 10% CPU time is not going to matter.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Cryptography.AES.SeedLength">
+            <summary>
+            The seed value is always 16 bytes (128 bits) for AES cryptography.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Cryptography.AES.CreatePrivateKey">
+            <summary>
+            Create private key for AES Cryptography in 256 bits, which is 32 bytes.
+            </summary>
+            <returns>New private key to be used</returns>
+        </member>
+        <member name="M:Delta.Utilities.Cryptography.AES.Encrypt(System.IO.Stream,System.Byte[])">
+            <summary>
+            Encrypt input stream with given key using the AES crypto functions.
+            Note: Both the length of the input stream and the IV key are saved
+            into the stream for the Decrypt method. All you need to decrypt is
+            the data stream and the privateKey. Since this is not very secure it is
+            only used for testing, see <see cref="!:SocketHelper.SendMessageBytes"/>
+            on a real use case, which uses the instance methods of this class.
+            </summary>
+            <param name="inputStream">Input stream of some data</param>
+            <param name="privateKey">256 bit key (32 bytes)</param>
+            <returns>Encrypted memory stream, which can be passed on for
+            networking, authentication, saving files, etc.</returns>
+        </member>
+        <member name="M:Delta.Utilities.Cryptography.AES.Decrypt(System.IO.Stream,System.Byte[])">
+            <summary>
+            Decrypt encrypted data again (see the Encrypt method). Note: Both the
+            length of the input stream and the IV seed are saved into the stream
+            for this method. All you need to decrypt is the data stream and the
+            privateKey. Since this is not very secure it is only used for testing,
+            see <see cref="!:SocketHelper.SendMessageBytes"/> on a real use case,
+            which uses the instance methods of this class.
+            </summary>
+            <param name="encryptedData">Data stream returned by Encrypt</param>
+            <param name="privateKey">Private key for decryption (should be kept
+            really private and never be transmitted). Please note that while this
+            is pretty safe and without the private key it is very unlikely that
+            anyone will decrypt this data, keeping the key really private is most
+            likely impossible if it is published with your application. PGP is
+            a much safer option (see links above), but it will make your
+            application much more complex (which is too much for the Delta Engine
+            cross platform compatibility, but ok for Windows only tools).
+            </param>
+            <returns>The original data that was encrypted before with Encrypt.
+            This data can be used for network transmission, saving files or
+            authentication data, etc.</returns>
+        </member>
+        <member name="F:Delta.Utilities.Cryptography.AES.aes">
+            <summary>
+            Keep an instance of the AES crypto class around, which remembers our
+            private key (Key) and the seed value (IV). Using the instance methods
+            of this class is much faster than using the static methods.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Cryptography.AES.#ctor(System.Byte[])">
+            <summary>
+            Create new AES Cryptography instance, which is faster than using the
+            static methods in this class and it provides us with an easy way to
+            transmit and use the seed (or also called salt) value the first time
+            and then just use it every time we are encrypting or decrypting data.
+            Note: Use the Seed property to get the generated random seed value.
+            </summary>
+            <param name="privateKey">Private key, which must be 32 bytes</param>
+        </member>
+        <member name="M:Delta.Utilities.Cryptography.AES.#ctor(System.Byte[],System.Byte[])">
+            <summary>
+            Create new AES Cryptography instance, which is faster than using the
+            static methods in this class and it provides us with an easy way to
+            transmit and use the salt value the first time and then just use it
+            every time we are encrypting or decrypting something.
+            </summary>
+            <param name="privateKey">Private key, which must be 32 bytes</param>
+            <param name="seedValue">Seed value, which must be 16 bytes
+            and is usually transmitted from the server via networking (when not
+            using any extra encryption like RSA)</param>
+        </member>
+        <member name="M:Delta.Utilities.Cryptography.AES.Encrypt(System.Byte[])">
+            <summary>
+            Encrypt input data with the current Cryptography instance, to decrypt
+            it the exact same instance with the same key and IV values is needed.
+            </summary>
+            <param name="inputData">Input data to encrypt</param>
+            <returns>The encrypted data</returns>
+        </member>
+        <member name="M:Delta.Utilities.Cryptography.AES.Decrypt(System.Byte[],System.Int32)">
+            <summary>
+            Decrypt encrypted data again (see the Encrypt method). Note: The
+            private key and the IV key must be transmitted and setup before
+            this method is called. The length of the output data also must be
+            known and should be transmitted before this block of encrypted data
+            because the algorithm requires it to be 16 byte blocks, but our output
+            data can be any size.
+            </summary>
+            <param name="encryptedData">Data stream returned by Encrypt</param>
+            <param name="outputDataLength">Length of the output data (the
+            encryptedData.Length might be 0-15 bytes bigger).</param>
+        </member>
+        <member name="P:Delta.Utilities.Cryptography.AES.Seed">
+            <summary>
+            Get the random seed value (16 byte), which was either generated in
+            the constructor or passed as an input parameter. Please note that
+            both the private key and the salt value must be the same for encrypting
+            and decrypting data.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Delta.Utilities.Cryptography.RSA" -->
+        <member name="F:Delta.Utilities.Cryptography.RSA.KeySizeInBits">
+            <summary>
+            Use the 2048 bit key default value, which is pretty big and secure.
+            Generating 512 bit or 1024 bit keys is much faster, but those can be
+            guessed and hacked much quicker (still very hard however).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Cryptography.RSA.DataLength">
+            <summary>
+            Data length for packets. Encrypted data always has this length and
+            you cannot use any input data exceeding this length for encryption.
+            When decrypting we will get back the original array size however.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Cryptography.RSA.rsaProvider">
+            <summary>
+            .NET RSA cryptography provider, which works fine on Windows. We always
+            use a 2048 bit key and OAEP padding.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Cryptography.RSA.#ctor(Delta.Utilities.Xml.XmlNode)">
+            <summary>
+            Create new RSA class instance with the given private or public key.
+            If privateOrPublicKey is null, both keys will be generated (which can
+            take a few seconds even on a fast PC).
+            </summary>
+            <param name="privateOrPublicKey">
+            Loaded public or private key xml data. On clients this is usually just
+            the public key, the server keeps the private key secret. If this is
+            null both the private and the public key are generated and can be
+            saved out via Save.
+            </param>
+        </member>
+        <member name="M:Delta.Utilities.Cryptography.RSA.Save(System.Boolean)">
+            <summary>
+            Export private key or just the public key to an xml node, which can
+            be saved locally and used again next program start (much quicker to
+            load than to generate new keys all the time).
+            </summary>
+            <param name="exportPrivateKey">Export the whole private key? Should
+            only be done on the server, if this is false this method just exports
+            the public key (to be used by the clients).</param>
+            <returns>Xml node with exported key data, which can be saved out to
+            a file like Public.RSA.key or Pivate.RSA.key.</returns>
+        </member>
+        <member name="M:Delta.Utilities.Cryptography.RSA.Encrypt(System.Byte[])">
+            <summary>
+            Encrypt helper method. Please note that you are only allowed to
+            encrypt a maximum of 256 bytes of data (because of the 2048 bits key).
+            Anything bigger will result in an exception.
+            </summary>
+            <param name="dataToEncrypt">Data we want to encrypt. A good candidate
+            is an AES key or seed value or a password hash from a user.</param>
+            <returns>Encrypted data, which is usually a bit longer than the input
+            data. Only the server with the private key can decrypt this.</returns>
+        </member>
+        <member name="M:Delta.Utilities.Cryptography.RSA.Decrypt(System.Byte[])">
+            <summary>
+            Decrypt a previously encrypted message. While encryption is possible
+            with public keys, you will need the private key to decrypt a message
+            again. This method will fail if only the public key is available
+            (e.g. on the client). Only call this on the server side.
+            </summary>
+            <param name="dataToDecrypt">Data to decrypt</param>
+            <returns>Decrypted original data the sender gave us</returns>
+        </member>
+    </members>
+</doc>

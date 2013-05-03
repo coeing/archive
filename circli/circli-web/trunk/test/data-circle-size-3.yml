@@ -1,0 +1,23 @@
+# Adam's lists
+models.user.item.WantedItem(wantedItem1Adam):
+    article: bookC
+    user: adam
+models.user.item.OwnedItem(ownedItem1Adam):
+    article: bookG
+    user: adam
+    
+# Berta's lists
+models.user.item.WantedItem(wantedItem1Berta):
+    article: bookG
+    user: berta
+models.user.item.OwnedItem(ownedItem1Berta):
+    article: bookF
+    user: berta
+    
+# Christo's lists
+models.user.item.WantedItem(wantedItem1Christo):
+    article: bookF
+    user: christo
+models.user.item.OwnedItem(ownedItem1Christo):
+    article: bookC
+    user: christo

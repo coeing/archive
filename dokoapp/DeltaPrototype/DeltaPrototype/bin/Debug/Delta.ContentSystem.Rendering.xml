@@ -1,0 +1,2582 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.ContentSystem.Rendering</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.ContentSystem.Rendering.EffectData">
+            <summary>
+            The effect data class is the content implementation of a effect and
+            handles all the saving and loading of an effect.
+            Basically this class only contains a list of Emitters that is filled
+            during loading. The further load logic is then in the EmitterData class.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.EffectData.Get(System.String)">
+            <summary>
+            This is the only method to load XmlData content. If a content object
+            has already been loaded, it will be returned again.
+            </summary>
+            <param name="contentName">Name of the Xml content to load</param>
+            <returns>The loaded XmlData object (or fallback if it failed)</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.EffectData.#ctor(System.String)">
+            <summary>
+            Create and load new effect data. Use the static Get method to call this.
+            </summary>
+            <param name="setEffectName">Name of the effect.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.EffectData.#ctor(System.Collections.Generic.List{Delta.ContentSystem.Rendering.Helpers.EmitterData})">
+            <summary>
+            Create effect data from list of emitter data. Only used internally
+            for the editors, it makes no sense to create content objects in the
+            engine itself. You can dynamically create rendering classes like in
+            this case a Effect class with custom emitters, but it is not a loaded
+            EffectData content class then (the link to data will stay null in the
+            Effect class).
+            </summary>
+            <param name="setEmitters">Set emitter data list</param>
+            <exception cref="T:System.NullReferenceException">To create 'EffectData' you 
+            have to provide a valid emitter data list!</exception>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.EffectData.Load(System.IO.BinaryReader)">
+            <summary>
+            Load saved data back into this EffectData, usually only called from
+            the Load method above from the Content System.
+            </summary>
+            <param name="reader">Reader to read the data from</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.EffectData.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save effect data into stream. Usually called by the tool that saves
+            this data out (EffectEditor) or the ContentSystem for optimizations.
+            </summary>
+            <param name="writer">Writer for the stream to write into</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.EffectData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Native load method, will just load or clone the effect data.
+            </summary>
+            <param name="alreadyLoadedNativeData">
+            The first instance that has already loaded the required content data
+            of this content class or just 'null' if there is none loaded yet (or
+            anymore).
+            </param>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.EffectData.Emitters">
+            <summary>
+            List of emitters.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.Helpers.GlyphDrawInfo">
+            <summary>
+            Glyph draw info helper struct, which is used by FontData, but only
+            really needed in Delta.Rendering.Basics.Fonts.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.GlyphDrawInfo.DrawArea">
+            <summary>
+            That represents the area where the glyph (or in other words the
+            character) will be drawn on the screen.
+            <para/>
+            Note: The area will be created in pixel space from the 'FontData' on
+            the content side and will give it to the 'Font' class on the rendering
+            side. There will the value be transformed in the quadratic space (which
+            is the used space in the DeltaEngine for rendering) and reused for
+            drawing calls of the 'Font' class.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.GlyphDrawInfo.FontMapId">
+            <summary>
+            The ID of the font map that belongs to the font where that draw info is
+            thought for.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.GlyphDrawInfo.UV">
+            <summary>
+            The final (normalized) UV coordinates for the font map related to the
+            set 'FontMapId'.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.MaterialData">
+            <summary>
+            Material data for loading and saving materials through the content
+            system as part of a Model or some UI scene. The actual material is
+            located in the Delta.Rendering module, which uses this class. This
+            class is currently used to just load the MaterialData directly via
+            BinaryReader (for embedded materials in models, UI scenes, etc.).
+            There are no properties or any dynamic loading in this class.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.VersionNumber">
+            <summary>
+            Version number for this MaterialData. If this goes above 1, we need
+            to support loading older versions as well. Saving is always going
+            to be the latest version (this one).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.Default">
+            <summary>
+            Default material data, do not modify, just used as fallback data.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MaterialData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.ShaderName">
+            <summary>
+            Link to the shader we want to use with this material as the content
+            name. If the content cannot be found or does not exist we will output
+            a warning and use a fallback generated shader with the help of
+            material data that is already set (e.g. diffuse map and normal map
+            is set, then generate a fallback shader that can handle that).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.DiffuseMapName">
+            <summary>
+            Diffuse map name, almost always used (else meshes look dull). For
+            sky cube map shaders this is used as the sky cube map texture, which
+            even can be in HDR mode if the platform supports it. If unused this
+            string is empty (same goes for all other strings here), but for
+            shaders that need a diffuse map (most do), this will result in using
+            the default fallback image for DiffuseMap (see Image.Default)!
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.NormalMapName">
+            <summary>
+            Normal map name, used for NormalMapping, only used if a normal map
+            shader is used. Please note this image might have the red and alpha
+            channel swapped if this is supported and wanted through shaders. This
+            trick is used to increase quality of compressed normal maps, e.g. DXT1
+            compresses nicely (1:6 ratio), but can look crappy for detailed normal
+            maps, so DXT5 is used instead (1:4 ratio still) with R and A swapped.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.SpecularMapName">
+            <summary>
+            Specular map name. Gloss (specular map) mapping effect for a 
+            directional or point light shaders.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.HeightMapName">
+            <summary>
+            Height map name, this is usually used for parallax effects and
+            usually a reduced texture because we don't need much precision or
+            accuracy for parallax effects. See ShaderConstants for ParallaxHeight.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.DetailMapName">
+            <summary>
+            Detail map name, this is almost a diffuse map with more details.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.ReflectionCubeMapName">
+            <summary>
+            Reflection cube map name to make reflections more shiny (uses usually
+            the same sky cube map as for the sky cube rendering via DiffuseMap)
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.LightMapName">
+            <summary>
+            Light map name for mesh data with light mapped images baked on top.
+            Only used if a light map shader is used.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.ShaderLutTexture">
+            <summary>
+            Shader helper texture for pre-calculations. Usually used for 1D or 2D
+            texture lookups for specular power and fresnel power with some extra
+            pre-calculated data maybe (combined fresnel and specular, already
+            applied colors, fresnel factors, etc.).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.ShadowMapTexture">
+            <summary>
+            Texture used for performing shadow casting from given object.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.Ambient">
+            <summary>
+            TODO: Has currently no effect, no shader attribute exists for this yet! All pre-calculated!
+            Ambient is usually always 0.15 (the default), many shaders even ignore
+            this if all we want is light from light sources.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.Diffuse">
+            <summary>
+            TODO: Has currently no effect, no shader attribute exists for this yet! All pre-calculated!
+            The diffuse color is usually always white (90% by default), but can
+            be changed from time to time to other colors. Different diffuse colors
+            need a extra shader pass and cannot be merged, it is much quicker to
+            let this stay white (the default) and use colored vertices for effects
+            or UI, which mostly use the same atlas image, but need all kind of
+            different colors per vertex!
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.SpecularPower">
+            <summary>
+            TODO: Has currently no effect, no shader attribute exists for this yet! All pre-calculated!
+            Specular shininess power, usually defaults to DefaultShininess.
+            Sometimes not possible on low end pixel shaders, will be optimized
+            out or put in the vertex shader instead.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MaterialData.FresnelPower">
+            <summary>
+            TODO: Has currently no effect, no shader attribute exists for this yet! All pre-calculated!
+            Fresnel power if the shader for this material does fresnel,
+            fresnel bias is 0 (or bias in the shader) and the factor is 1.0 too.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MaterialData.#ctor(System.String)">
+            <summary>
+            Create a material from content, just makes sure we use the material
+            content type, all loading happens in the Load method below.
+            Use the static Get method to call this.
+            </summary>
+            <param name="setMaterialName">
+            Name for this content object, should not contain any path, project,
+            scene or any special character! If this is empty or starts with an
+            &gt; character, we assume this is code generated content
+            (e.g. "&gt;IntroScene&lt;" or "") and no loading will happen!
+            </param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MaterialData.#ctor">
+            <summary>
+            Create a default material data container. All textures are empty,
+            just the default color values are used. This has also no content name.
+            Use the .NET 3 style constructor to assign values easily.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MaterialData.Load(System.IO.BinaryReader)">
+            <summary>
+            Load material data from binary data stream.
+            </summary>
+            <param name="reader">BinaryReader for reading the data</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MaterialData.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save material data, which consists of a bunch of strings and some
+            colors plus some additional settings.
+            </summary>
+            <param name="writer">BinaryWriter for the stream to write into</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MaterialData.ToString">
+            <summary>
+            To string
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MaterialData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Native load method, will just load the xml data.
+            </summary>
+            <param name="alreadyLoadedNativeData">
+            The first instance that has already loaded the required content data
+            of this content class or just 'null' if there is none loaded yet (or
+            anymore).
+            </param>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.ImageData">
+            <summary>
+            Helper class for accessing image content, which is needed in the Texture
+            class (but it can also be used in other places when loading images).
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ImageData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ImageData.GetAllContentNames">
+            <summary>
+            Get list of all image content names available in the current project.
+            </summary>
+            <returns>List of all image content names</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ImageData.#ctor(System.String)">
+            <summary>
+            Create a base texture, just makes sure we use the image content type.
+            Use the static Get method to call this.
+            </summary>
+            <param name="setImageName">Set image name</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ImageData.ToString">
+            <summary>
+            To string, will display the image name and some extra data.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents this ImageData instance
+            with the content name, pixel size, blend mode and uv meta data.
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ImageData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Load texture content data. This method does not load the content yet,
+            it only provides the common functionality for all derived classes that
+            actually contain the image data. No loading happens here (it all
+            happens in Texture), we can obviously clone all ImageDatas with the
+            same name as they are not loaded here.
+            </summary>
+            <param name="alreadyLoadedNativeData">If we already have native data
+            loaded, clone it from this instance. Only used if not null. Please
+            note that this is only used for other objects that had the same
+            RawFileId and are already loaded and returned true for this method.
+            </param>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageData.PixelSize">
+            <summary>
+            The size of the image in pixels (NOT in quadratic space and also NOT
+            necessarily the size of the real bitmap from disk, which might be
+            an atlas texture that is much bigger than this image size).
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageData.BlendMode">
+            <summary>
+            Blend mode used for this image, set in constructor and can't be
+            changed. This is important for the MaterialManager sorting logic!
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageData.UseLinearFiltering">
+            <summary>
+            Helper property to determinate if we need to enable filtering for
+            rendering this image (usually in a shader). True is the default and
+            means we are going to use Trilinear filtering, false means no
+            filtering, which is often called Nearest or Point filtering.
+            Note: For fonts and the default image (4x4 pixels) this is
+            automatically set to false for more accurate and sharp rendering.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageData.AllowTiling">
+            <summary>
+            Allow tiling for this texture? By default this is off and using this
+            prevents us from using atlas textures and many optimizations, so it
+            should be avoided as much as possible.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageData.UV">
+            <summary>
+            The texture coordinates of this image. Normally (0, 0, 1, 1)
+            But necessary when using atlas textures (what we are mostly doing).
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageData.InnerDrawArea">
+            <summary>
+            Helper for the inner rectangle for rendering, which will reduce any
+            draw rectangle by this to make it fit in case there were empty pixels
+            around this image.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageData.AtlasFileId">
+            <summary>
+            Atlas file id, needed to compare for atlas textures. Each content file
+            with the same PlatformFileId will use the same native texture object
+            (sharing it with all the other content entries using the same atlas).
+            By comparing this we can quickly group all rendering by atlas textures
+            to make best use of draw call batching and speeding up the rendering.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageData.IsCubeMap">
+            <summary>
+            Is this image data for a cube map texture? Usually off.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.Helpers.EmitterData">
+            <summary>
+            Emitter data class, used for EffectData, which just contains a list of
+            emitters. Please note that this class can be derived for additional
+            functionality and each of the modifiers stored here can also be
+            any class using the IEffectModifier interface.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.Helpers.EmitterData.#ctor">
+            <summary>
+            Create a new emitter data instance.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.Helpers.EmitterData.Load(System.IO.BinaryReader)">
+            <summary>
+            Load the emitter data and all the modifiers.
+            </summary>
+            <param name="reader">BinaryReader for reading the data</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.Helpers.EmitterData.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save the emitter data and all the modifiers.
+            </summary>
+            <param name="writer">BinaryWriter for the stream to write into</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.Helpers.EmitterData.ToString">
+            <summary>
+            To string helper method to print out the name of this emitter instance.
+            </summary>
+            <returns>String representing this EmitterData instance (name)</returns>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.Helpers.EmitterData.Name">
+            <summary>
+            The name of the Emitter.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.Helpers.EmitterData.Modifiers">
+            <summary>
+            The list of modifiers for this emitter.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.ImageAnimationData">
+            <summary>
+            Helper class for accessing image animations, which is just a collection
+            of images, but with all important meta data for them. All images are
+            just children and can be accessed easily with this class.
+            <para />
+            Please note that Image Animations just contain images and have no data
+            own their own (just meta data).
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ImageAnimationData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ImageAnimationData.#ctor(System.String)">
+            <summary>
+            Create image animation instance, which just holds some meta data and
+            the list of images for this animation (see Images property).
+            Use the static Get method to call this.
+            </summary>
+            <param name="setImageAnimationName">
+            Name for this content object, should not contain any path, project,
+            scene or any special character! If this is empty or starts with an
+            &gt; character, we assume this is code generated content
+            (e.g. "&gt;IntroScene&lt;" or "") and no loading will happen!
+            </param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ImageAnimationData.ToString">
+            <summary>
+            To string, will display the image animation images list.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents this ImageAnimationData
+            instance with the list of image names.
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ImageAnimationData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Load animated image content data, will just set the Images property.
+            </summary>
+            <param name="alreadyLoadedNativeData">
+            Ignored here, can't be cloned.
+            </param>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageAnimationData.Images">
+            <summary>
+            List of images that are children to this ImageAnimation content node.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageAnimationData.AnimationSpeed">
+            <summary>
+            Animation speed in FPS. 30 means we got 30 animations per second, 12
+            means we only have 12 animations that are played per second (default).
+            Used for 2D animated image sequences, but also for 3D Models using
+            animations. The default value is 30 and usually used for all animated
+            content unless it is optimized for 15 fps or less to save memory.
+            Note: Not used if each of the images has its own AnimationLengthInMs!
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageAnimationData.AnimationIndicesAndMs">
+            <summary>
+            Animation frame indices and their lengths in milliseconds for whatever
+            crazy animation logic you want to build. Usually unused (0), but if
+            this is used for all animated images in a sequence, you can control
+            how quickly each part of the animation is played back. You are not
+            forced to play the animation in order and you can repeat frames as
+            many times as you like and make the animation as long as you want (see
+            TotalAnimationLengthMs). AnimationSpeed (see above) is also ignored,
+            you need to set each of these frame length times yourself.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageAnimationData.PixelSize">
+            <summary>
+            Size of the images in this animation in pixels. Each animation image
+            can have its own PixelSize, but this is the important size used for
+            displaying this image animation (children can be bigger or smaller).
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageAnimationData.BlendMode">
+            <summary>
+            Blend mode used for all images, set in data and can't be changed.
+            This is important for the MaterialManager sorting logic!
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ImageAnimationData.UseLinearFiltering">
+            <summary>
+            Helper property to determinate if we need to enable filtering for
+            rendering this images (usually in a shader). True is the default and
+            means we are going to use Trilinear filtering, false means no
+            filtering, which is often called Nearest or Point filtering.
+            Note: For fonts and the default image (4x4 pixels) this is
+            automatically set to false for more accurate and sharp rendering.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.Helpers.IEffectModifier">
+            <summary>
+            Interface for the effect modifiers, which all implement ISaveLoadBinary.
+            We currently use the interface because the Modifier itself shouldn't
+            be in the here (in Delta.ContentSystem) and especially not the Particle
+            struct which is needed in the Base Modifier class.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.FontData">
+            <summary>
+            That class takes care about the correct loading of the requested bitmap
+            font based on the given parameters in the constructor. The font bitmap
+            textures itself (font maps) will be created by the FontGenerator of the
+            ContentServer.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.FontData.MinFontSize">
+            <summary>
+            The minimal size (in points) that a font is allowed to have.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.FontData.MaxFontSize">
+            <summary>
+            The maximal size (in points) that a font is allowed to have.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.FontData.NoChar">
+            <summary>
+            Helper constant to initialize the "char" variables
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.FontData.FallbackChar">
+            <summary>
+            The fallback character which is used if a character isn't supported by
+            a font.
+            </summary>
+            <remarks>
+            Is used for parsing a text.
+            </remarks>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.Get(System.String,System.Int32,Delta.Utilities.Graphics.FontStyle)">
+            <summary>
+            Get or load a font without the content name, but instead by searching
+            for all the meta data: Font Family Name, Font Size and Font Style.
+            Please note that other values like Font Tracking is ignored, you have
+            to use the Get(contentName) overload for that.
+            <para />
+            This method will always return a font. If just a style or size was not
+            found a content entry with the same font family is returned. If that
+            is also not found the default font is returned (which is part of each
+            project because the Engine content is always available as fallback
+            content).
+            </summary>
+            <param name="fontFamilyName">Font family name (like "Verdana",
+            "Arial", etc.).</param>
+            <param name="fontSize">Font size (like 9pt, 12pt, 24pt, etc.).</param>
+            <param name="fontStyle">Font style flags (bold, italic, sharp, etc.)
+            </param>
+            <returns>The loaded FontData content object. If this content was loaded
+            before the same copy is used again.</returns>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.FontData.ResolutionFonts">
+            <summary>
+            Font content entries can either be concrete font settings with an
+            xml file for all the glyph data or just a parent entry with children
+            that contain the resolution specific font data (4 children for the 4
+            default resolutions, see Font.DetermineBestFont, which switches fonts
+            at 480x320, 800x480, 1024x768 and 1920x1080).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.FontData.glyphDictionary">
+            <summary>
+            Dictionary of each unicode character we have in the font maps and can
+            use for drawing.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.FontData.defaultData">
+            <summary>
+            Default data
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.FontData.kernDictionary">
+            <summary>
+            Character spacing with kerning dictionary, which tells us how much
+            spacing is needed between two characters. Most character combinations
+            have no extra values in here, but some have (like W, I, etc.)
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.#ctor(System.String)">
+            <summary>
+            Creates a font from the content data. All font data is stored in xml
+            files (in the Fonts content directory). Will also load all bitmaps
+            required for this font.
+            </summary>
+            <param name="contentName">Font content name to load. If this is empty
+            no content will be loaded (just fallback data will be set).</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.GetGlyphDrawInfos(System.String,System.Single,Delta.Utilities.Datatypes.Advanced.HorizontalAlignment)">
+            <summary>
+            Return the draw info of all glyphs that are needed to show the text
+            on the screen (in pixel space).
+            <para/>
+            ASCII reference:
+            http://www.tcp-ip-info.de/tcp_ip_und_internet/ascii.htm
+            <para/>
+            Note: The glyph info exists as single array but the data itself
+            represents the text inclusive line breaks, so in other words the
+            several text lines are "flattened" to a single-dimensioned array.
+            </summary>
+            <param name="text">Text</param>
+            <param name="lineSpacing">Line spacing</param>
+            <param name="textAlignment">Horizontal text alignment mode</param>
+            <returns>
+            List of GlyphDrawInfos ready for drawing.
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.GetGlyphDrawInfos(System.String,System.Single,Delta.Utilities.Datatypes.Advanced.HorizontalAlignment,System.Boolean,System.Boolean,Delta.Utilities.Datatypes.Size@)">
+            <summary>
+            Return the draw info of all glyphs that are needed to show the text
+            on the screen (in pixel space).
+            <para/>
+            ASCII reference:
+            http://www.tcp-ip-info.de/tcp_ip_und_internet/ascii.htm
+            <para/>
+            Note: The glyph info exists as single array but the data itself
+            represents the text inclusive line breaks, so in other words the
+            several text lines are "flattened" to a single-dimensioned array.
+            </summary>
+            <param name="text">Text</param>
+            <param name="lineSpacing">Line spacing</param>
+            <param name="textAlignment">Horizontal text alignment mode</param>
+            <param name="isClippingOn">Is clipping check required</param>
+            <param name="maxTextSize">Max. available size in Pixel Space</param>
+            <param name="isWordWrapOn">
+            Indicates if the words of the given text should be wrapped or clipped
+            (if enabled) at the end of a text line.
+            </param>
+            <returns>
+            List of GlyphDrawInfos ready for drawing.
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.ToString">
+            <summary>
+            To String method, will just extend the Content.ToString method by
+            some extra font meta information.
+            </summary>
+            <returns>A info string about this object instance.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Native load method, will just load the xml data.
+            </summary>
+            <param name="alreadyLoadedNativeData">
+            The first instance that has already loaded the required content data
+            of this content class or just 'null' if there is none loaded yet (or
+            anymore).
+            </param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.ParseText(System.String)">
+            <summary>
+            Parses the given text by analyzing every character to decide if the
+            current is supported or not. Every character that is not drawable will
+            be replaced by the "fallback character" (or skipped if the font doesn't
+            support even that). Addtionally by checking the characters also (every
+            tyoe of) line breaks will be detected and teh text splitted by them.
+            </summary>
+            <param name="text">Text</param>
+            <remarks>
+            This method has no validation checks because every caller makes already
+            sure that the text is valid.
+            </remarks>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.GetTextLines(System.String,System.Single,Delta.Utilities.Datatypes.Size,Delta.Utilities.Datatypes.Advanced.HorizontalAlignment,System.Boolean,System.Boolean,System.Collections.Generic.List{System.Single}@,System.Single@)">
+            <summary>
+            Gets the single text lines of multi line text by determining the line
+            breaks. Each of the detected text line will be represented as a list of
+            chars whereby only "known" characters will be listed here or at least
+            represented by a question mark. All other characters will skipped and
+            logged out.
+            </summary>
+            <remarks>
+            This method will also handle clipping and word-wrapping.
+            </remarks>
+            <param name="text">Text</param>
+            <param name="lineSpacing">Line spacing</param>
+            <param name="maxTextSize">Maximum text size</param>
+            <param name="textAlignment">Text alignment</param>
+            <param name="isClippingOn">Is clipping on</param>
+            <param name="isWordWrapOn">Is word wrap on</param>
+            <param name="textlineWidths">Textline widths</param>
+            <param name="maxTextlineWidth">Maximum textline width</param>
+            <returns>
+            The list of final text lines where the words contains only allowed
+            characters.
+            </returns>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.FontData.Default">
+            <summary>
+            The font data which is chosen by default if a concrete one is not
+            available (yet). This is always Verdana, 12pt, with an outline.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.FontData.FamilyName">
+            <summary>
+            The family name of the font, e.g. Verdana, Consolas, etc.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.FontData.SizeInPoints">
+            <summary>
+            The size of the font in points, e.g. 12, 14, etc.
+            </summary>
+            <returns>Int</returns>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.FontData.Style">
+            <summary>
+            The style how the characters will be shown, e.g. normal, bold, italic,
+            etc.
+            </summary>
+            <returns>Font style</returns>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.FontData.Tracking">
+            <summary>
+            Defines the distance (in normalized percentage) which is added between
+            2 characters. This is only used for this FontData and set by the
+            content system (cannot be changed by the user, unlike
+            Font.TrackingMultiplier, which is just a multiplier to adjust spacing).
+            <para/>
+            0.0 means no additional space (default)
+            <para/>
+            1.0 means 100% of the AdvanceWidth of the character as additional space
+            to the right.
+            <para/>
+            -1.0 means 100% of the AdvanceWidth of the character as "reverse" space
+            to the left.
+            </summary>
+            <returns>Int</returns>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.FontData.LineHeight">
+            <summary>
+            The height of the font in pixel space based on the set font size.
+            <para/>
+            CAUTION: That is not the final height of the font on the screen!
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.FontData.FontMapNames">
+            <summary>
+            The list of the names of font maps where all characters are stored.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.FontData.FontDataTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.FontDataTests.GetTestFont">
+            <summary>
+            Get font data which is used for all tests where the tests values are
+            tweaked for.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.FontDataTests.LoadDefaultFontData">
+            <summary>
+            Load default font data
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.FontDataTests.ParseTextLines">
+            <summary>
+            Parse text lines
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.FontDataTests.GetTextLines">
+            <summary>
+            Get text lines
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.FontDataTests.GetTextlineWrapped">
+            <summary>
+            Get text line wrapped
+            </summary>
+            Caution: For this unit test are the following modules required:
+            - Graphic
+            - Platforms.IWindow
+            - ContentManager.Client
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.FontData.FontDataTests.GetGlyphDrawInfos">
+            <summary>
+            Get glyph draw infos
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.ModelData">
+            <summary>
+            Model data class, which combines a list of meshes and a list of mesh
+            animations. Because models can have multiple meshes and animations they
+            should be used for more complex 3d data. If you only need a static mesh
+            just use the Mesh class, which is better optimized and can be used for
+            level geometry with lots of extra optimizations and mesh merging than
+            possibly than rendering everything as models.
+            <para />
+            Please note that Models just contain meshes and animations and have no
+            data own their own (just meta data).
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ModelData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.ModelData.Meshes">
+            <summary>
+            List of meshes to be used for this model. Often is just one mesh.
+            Please note that we also will load and link up the animations inside
+            of each mesh (see load method below), this way it is easier to manage.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ModelData.#ctor">
+            <summary>
+            Create model data object with no data in it. Just add stuff to the
+            Meshes and Animations fields.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ModelData.#ctor(System.String)">
+            <summary>
+            Create mesh animation data by loading it from content, see Load below.
+            Use the static Get method to call this.
+            </summary>
+            <param name="contentName">Name of the content.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ModelData.ToString">
+            <summary>
+            To string, will display the model name with the meshes in it (plus
+            optionally their animations if they have those).
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents this ModelData
+            instance with the list of mesh names.
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ModelData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Native load method, will just load meshes and animations contained in
+            this content type (models have no data on their own).
+            </summary>
+            <param name="alreadyLoadedNativeData">Ignored here, can't be cloned.
+            </param>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ModelData.InitialScale">
+            <summary>
+            Provides the initial scale value as provided by the content meta data.
+            Usually 1.0f, which means rendering is done normally. If this value is
+            different the content model will be scaled accordingly (should rarely
+            be needed, scaling has obviously performance impacts, it is currently
+            also ignored for most content types including meshes).
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.Helpers.Glyph">
+            <summary>
+            Info for each glyph in the font, used for FontData to store all glyph
+            data. Glyphs are characters and their information on where it is found
+            in a texture, only needed in the Font and FontGenerator classes.
+            </summary>
+            <remarks>
+            Based on Benjamin Nitschke's older BitmapFont class for XNA,
+            which was based on the XNAExtras project from Gary Kacmarcik
+            (garykac@microsoft.com), more information can be found at:
+            http://blogs.msdn.com/garykac/articles/749188.aspx
+            If you want to know more details about creating bitmap fonts in XNA,
+            how to generate the bitmaps and more details about using it, please
+            check out the following links:
+            http://blogs.msdn.com/garykac/archive/2006/08/30/728521.aspx
+            http://blogs.msdn.com/garykac/articles/732007.aspx
+            http://www.angelcode.com/products/bmfont/
+            </remarks>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.Glyph.FontMapId">
+            <summary>
+            Font map number (starts with 0) in case we need multiple images for
+            this font (the bigger the font is and the more characters we got in
+            there, the more important this gets). Links to the materialList in
+            the Font class (which loads the font maps via the Material, which has
+            images that are loaded from our font maps)!
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.Glyph.UV">
+            <summary>
+            TODO: Change description
+            UV Rectangle (in Pixels) used for drawing this character. Includes
+            the position and size obviously. We should not use atlas textures
+            because fonts are already atlases and we can directly use this UVs
+            for drawing.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.Glyph.AdvanceWidth">
+            <summary>
+            Advance width (in pixels) for this character. This is the ruff offset
+            we have to move to the right after drawing the character. The
+            precise width has to be calculated with this the glyph distance from
+            the kerning (see the Font class).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.Glyph.LeftSideBearing">
+            <summary>
+            Left side bearing (in pixels) is used to offset this character to the
+            left. This means that rendering starts earlier than the currently
+            specified pixel position to make sure the text looks right on the
+            screen. Often unused and just 0, but sometimes has negative values.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.Glyph.RightSideBearing">
+            <summary>
+            Right side bearing (in pixels) is used to offset this character to the
+            right. This means that rendering starts earlier than the currently
+            specified pixel position to make sure the text looks right on the
+            screen. Often unused and just 0, but sometimes has negative values.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.Glyph.FontMapUV">
+            <summary>
+            TODO: Change description
+            Precomputed font map UVs. Not stored in the Xml font file because we
+            can easily generate them at load time (just divide the UV by the image
+            size).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.Glyph.Kernings">
+            <summary>
+            That dictionary contains the amount of extra distances offsets between
+            the current character to any other one. But usually there are only some
+            few cases like combinations with 'W', 'I', and other big or small
+            glyph's. Mostly the is no need for an extra distance offset to other
+            characters.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.Helpers.Glyph.GetDrawWidth(System.Char,System.Single)">
+            <summary>
+            Gets the (to fully pixel rounded) drawing width of the glyph based on
+            the previous one.
+            </summary>
+            <param name="nextChar">Next char</param>
+            <param name="trackingPercentage">Tracking percentage</param>
+            <returns>Draw width</returns>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.Helpers.BoneData">
+            <summary>
+            Helper class to store one bone entry for animated 3D models,
+            this is not directly a content class, but used for MeshData and is
+            also important for AnimationData, which keeps all the animated matrices.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.BoneData.CurrentVersion">
+            <summary>
+            Version number for this MeshData. If this goes above 1, we need
+            to support loading older versions as well. Saving is always going
+            to be the latest version (this one).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.BoneData.Id">
+            <summary>
+            Id
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.BoneData.Name">
+            <summary>
+            Name
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.BoneData.InverseTransformMatrix">
+            <summary>
+            The inverse bone skin matrix
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.BoneData.ParentId">
+            <summary>
+            Parent id
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.BoneData.ChildrenIds">
+            <summary>
+            Children ids
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.Helpers.BoneData.#ctor">
+            <summary>
+            Create bone data
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.Helpers.BoneData.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create bone data
+            </summary>
+            <param name="dataReader">Data reader</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.Helpers.BoneData.Load(System.IO.BinaryReader)">
+            <summary>
+            Load bone data (mostly all the matrices and their relationship).
+            </summary>
+            <param name="reader">Reader</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.Helpers.BoneData.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save bone date (mostly all the matrices and their relationship).
+            </summary>
+            <param name="dataWriter">Data writer</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.Helpers.BoneData.ToString">
+            <summary>
+            To string
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames">
+            <summary>
+            Defines the names of all uniforms that we support (with properties) in
+            all shaders by the directly by the engine. Every else uniform needs to
+            be handled by the project code itself. Please note that most shaders
+            are very simple and only have very few pixel shader instructions
+            because we need to optimize as much as possible on most mobile
+            devices. There are some complex shaders however for special effects,
+            skinning, water, fog or even using multiple lights or shadow mapping.
+            On faster hardware these can be used to archive great effects.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.World">
+            <summary>
+            Global matrices, important for transforming vertices in the vertex
+            shader. We only use optimized matrices, more are not supported!
+            Set in Set2DRenderMatrix and Set3DRenderMatrix.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.ViewInverse">
+            <summary>
+            Global matrices, important for transforming vertices in the vertex
+            shader. We only use optimized matrices, more are not supported!
+            Set in Set2DRenderMatrix and Set3DRenderMatrix.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.WorldViewProj">
+            <summary>
+            Global matrices, important for transforming vertices in the vertex
+            shader. We only use optimized matrices, more are not supported!
+            Set in Set2DRenderMatrix and Set3DRenderMatrix.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.SkinnedMatrices">
+            <summary>
+            For skinned meshes, this are all the bone matrices, which are
+            updated by the app for each animated meshes and will be applied to
+            all skinned vertices in the vertex shader (if shaders are possible).
+            Set in Set3DRenderMatrix.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.Time">
+            <summary>
+            Time for animated shaders, rarely used however. Also set in
+            Set2DRenderMatrix and Set3DRenderMatrix.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.DiffuseMap">
+            <summary>
+            All the material data. Please note that many of these are not used
+            in most shaders, e.g. DirectionalTextured just has DiffuseMap and
+            the LightDirection plus global matrices, that's it, the rest is
+            constant! It is faster and easier to merge materials if the shader
+            uses constants and thus all materials rendered with them are
+            basically the same, they only differ in the DiffuseMap, which is
+            quickly checked.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.DetailMap">
+            <summary>
+            Detail map
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.SpecularMap">
+            <summary>
+            Specular map
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.HeightMap">
+            <summary>
+            Height map
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.NormalMap">
+            <summary>
+            Normal map
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.LightMap">
+            <summary>
+            Light map
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.SkyCubeMap">
+            <summary>
+            Sky cube map
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.ReflectionCubeMap">
+            <summary>
+            Reflection cube map
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.ShaderLutTexture">
+            <summary>
+            Shader lut texture for optimizations
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.ShadowMap">
+            <summary>
+            Shadow map
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.AmbientColor">
+            <summary>
+            Global ambient color.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.DiffuseColor">
+            <summary>
+            Diffise color.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.DirectionalLightDirection">
+            <summary>
+            Extra data for light shaders, this usually slows down pixel shaders
+            a lot, so mobile shaders rarely use direct lighting. Instead we try
+            to use a directional light source and light maps as much as possible.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.PointLightPosition">
+            <summary>
+            Point lights have a position and a radius, optionally also a color.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.PointLightRadius">
+            <summary>
+            Point lights have a position and a radius, optionally also a color.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.PointLightColor">
+            <summary>
+            Point lights have a position and a radius, optionally also a color.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.PointLightTwoPosition">
+            <summary>
+            We support 0-2 lights, but this is very rare. For more lights,
+            choose the 2 most dominant ones, ignore the rest or if you are
+            really nice, fade them out as you get closer to other light sources.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.PointLightTwoRadius">
+            <summary>
+            We support 0-2 lights, but this is very rare. For more lights,
+            choose the 2 most dominant ones, ignore the rest or if you are
+            really nice, fade them out as you get closer to other light sources.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.PointLightTwoColor">
+            <summary>
+            We support 0-2 lights, but this is very rare. For more lights,
+            choose the 2 most dominant ones, ignore the rest or if you are
+            really nice, fade them out as you get closer to other light sources.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.PostScreenWindowSize">
+            <summary>
+            Extra uniforms for post screen shaders, render-to-texture window size
+            and the resulting texture are required for all post screen shaders.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.PostScreenMap">
+            <summary>
+            Post screen map
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.PostScreenBorderFadeoutMap">
+            <summary>
+            For the last pass we can add this fadeout map to darken the borders
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.PostScreenNoiseMap">
+            <summary>
+            Noise map
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.ShadowMapTransform">
+            <summary>
+            For shadow mapping we got some extra uniforms. These are only used
+            for shadow mapping algorithms, which is a huge pixel cost for older
+            mobile devices. There stencil shadows or fake shadow blobs make
+            usually more sense, however shadow mapping often looks better.
+            Transformation matrix for converting world position to texture
+            coordinates of the shadow map.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.ShadowMapLightWorldViewProj">
+            <summary>
+            WorldViewProj of the light projection for shadow mapping.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames.ShadowMapLightViewProjectionBias">
+            <summary>
+            Light view projection bias for shadow mapping.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.ShaderData">
+            <summary>
+            Shader data, currently just a list of ShaderFeatures, which are high
+            level classes providing shader functionality and parameters. These
+            contain currently fixed code paths and will generate data for the final
+            fx, glsl and glessl shaders. All this will be more dynamic later when
+            we can directly edit all shader nodes and put those things into modules,
+            which are similar to our ShaderFeatures now.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.ShaderData.VersionNumber">
+            <summary>
+            Version number for this ShaderData. If this goes above 1, we need
+            to support loading older versions as well. Saving is always going
+            to be the latest version (this one).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.ShaderData.Extension">
+            <summary>
+            Default extension for Delta Engine shader files. Only used in the
+            shader content processors and generators.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            Can also be used to create empty shader data object without having to
+            invoke the ContentSystem (with "", for Delta.ContentPlugins.Shader).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded or empty Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.Get(Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags)">
+            <summary>
+            Get or load a shader without the content name, but instead by searching
+            for the given shaderFlags combination. Used to find shaders by
+            features, not by the content name, which is not that important or
+            interesting for shader creation with code. If nothing was found it
+            still can provide a fallback (Basic shader) or crash if that fails too.
+            </summary>
+            <param name="shaderFlags">The shader flags.</param>
+            <returns>
+            Loaded shader data (if nothing was found the fallback shader
+            TexturedShader2D is used)
+            </returns>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.ShaderData.ShaderCode">
+            <summary>
+            Shader code to be compiled for this platform. Provided by the content
+            system in the format this platform supports (.fx, .glsl, .glessl).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.ShaderData.Flags">
+            <summary>
+            By default all shader only have the basic features. If more features
+            are added or removed this must be updated as well. Mainly used for
+            optimizations, fall backs and fixed function code paths to support
+            similar effects like defined in the shader code.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.ShaderData.VertexFormat">
+            <summary>
+            Vertex format, set in the constructor! Very important to make
+            decisions and optimizations. This should not be null, else classes like
+            GeometryData will crash with NullReferenceException (they rely on
+            valid vertex formats).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.ShaderData.features">
+            <summary>
+            List of shader features this shader currently has. Should be always
+            synchronized up with featureFlags! Use Add and Remove to add and remove
+            shader features.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.ShaderData.cachedParameters">
+            <summary>
+            Cached shader parameters and their default or constant values for this
+            shader. Set like features and featureFlags in Add and Remove. If the
+            features change over time you need to re-add them or just save and
+            load the whole ShaderData (this dictionary is supposed to be fast, we
+            don't want to go through all features and search for all parameters).
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.#ctor(System.String)">
+            <summary>
+            Create shader data by loading it from content right away.
+            Use the static Get method to call this.
+            </summary>
+            <param name="contentName">Name of the content.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.Load(System.IO.BinaryReader)">
+            <summary>
+            Load shader data from binary data stream.
+            </summary>
+            <param name="reader">Binary reader of the underlying stream</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save shader data, which consists just of features (enum and their
+            IShaderFeature classes with all their shader parameters in them).
+            </summary>
+            <param name="writer">The writer.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.Add(Delta.Utilities.Graphics.ShaderFeatures.IShaderFeature)">
+            <summary>
+            Add a new ShaderFeature to the ShaderData.
+            </summary>
+            <param name="newShaderFeature">The new shader feature.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.Remove(Delta.Utilities.Graphics.ShaderFeatures.IShaderFeature)">
+            <summary>
+            Remove the ShaderFeature from the ShaderData.
+            </summary>
+            <param name="featureToRemove">The feature to remove.</param>
+            <returns>True if we could remove the shader feature, false (and a log
+            warning) when the feature did not exist here.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.IsFeatureOn(Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags)">
+            <summary>
+            Is a certain shader flag used? Very simple combined enum check,
+            but this is used several times here and in higher levels up.
+            </summary>
+            <param name="featureToCheck">The feature to check for</param>
+            <returns>
+            <c>true</c> if the shader feature to check is on. Otherwise,<c>false</c>
+            is returned (feature was not found). Note that features can be combined.
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.GetShaderFeatures">
+            <summary>
+            Get shader features, needed in the shader editor to list all features.
+            </summary>
+            <returns>Shader features</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.IsShaderFeatureFlagOn(Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags,Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags)">
+            <summary>
+            Helper to check if a specific flag is set, used for Get.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Native load method, will just load the xml data.
+            </summary>
+            <param name="alreadyLoadedNativeData">
+            The first instance that has already loaded the required content data
+            of this content class or just 'null' if there is none loaded yet (or
+            anymore).
+            </param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.LoadShaderFeature(System.IO.BinaryReader)">
+            <summary>
+            Load shader feature
+            TODO: this makes no sense, use the factory to create features!
+            </summary>
+            <param name="reader">Reader to the binary stream for grabbing the
+            data for the shader feature.</param>
+            <returns>The loaded shader feature</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.ShaderData.UpdateCachedParameters">
+            <summary>
+            Update cached parameters
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ShaderData.UsesTexturing">
+            <summary>
+            Does this shader use texturing? Always true except when the NoTexturing
+            shader feature flag was specified (only used for line shaders).
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ShaderData.UsesVertexColoring">
+            <summary>
+            Uses vertex coloring, only true if ColoredVertices was specified.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ShaderData.UseSkinning">
+            <summary>
+            Use skinning
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ShaderData.UseAlphaTest">
+            <summary>
+            UseAlphaTest
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.ShaderData.UseLightMap">
+            <summary>
+            Use light map
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.GeometryData">
+            <summary>
+            Geometry data class, just contains vertices and indices for rendering.
+            Geometry meshes are highly dependant on the underlying type for the
+            vertices. Some helper methods can be used to generate simple meshes
+            (boxes, spheres, etc.). Data is stored in binary format for quick access
+            and the used material data is also stored internally in here. Please note
+            that rendering a level or a complex model usually consists of multiple
+            meshes, a geometry mesh is just the lowest underlying 3D type in the
+            engine! Meshes are even used for dynamic vertex buffers, lines and all 2D
+            UI drawing, but those meshes are usually not saved out to content files.
+            <para />
+            While this is not directly a content type, it is pretty much what defines
+            a mesh, which is used in many other content types as well (Models, Levels
+            and also important for MeshAnimations, which are linked up in Models
+            too). You can of course also use this class for your own dynamically
+            created data (e.g. landscape rendering, BSP trees, or any other type of
+            rendering)
+            <para />
+            Note: Geometry data can get quite big and while we need this class and
+            all the internal data for dynamic geometry data that needs to be updated
+            from time to time, it is not needed for static geometry data after the
+            internal data structure has been created on the graphic card (vertex
+            and index buffer objects). To save memory we can dispose this object
+            and just in case it is needed again, we need to notify the owner to
+            make sure that the data is reloaded again.
+            </summary>
+            <remarks>
+            Vertex data. Note: Filling data into this is up to 5 times slower than
+            directly filling a struct array. For setting this once or even loading
+            from a file, this class is perfectly fine (loading from a file is even
+            about 2 times faster than using struct arrays). However, for dynamic
+            vertex buffers it is a good optimization to have a native struct
+            representing the data and setting that instead with SetData (e.g. see
+            the DrawManager implementation for line rendering using ColoredVertex).
+            Please note that even with the slower speed of GeometryData it is still
+            a very good idea to use for our engine because we want to use vertex
+            and index buffers, which is only possible with a generic byte data
+            stream and thus much faster as converting data types or not using
+            vertex buffers. So rendering is as quick as it gets, especially for
+            static geometry data (which is what we will use 99% of the time) and
+            dynamic geometry is also rendered very quickly (in fact as fast as
+            possible on each platform), just setting the data is a little slow on
+            the CPU because of all the reader/writer stuff involved here.
+            </remarks>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.VersionNumber">
+            <summary>
+            Version number for this MeshData. If this goes above 1, we need
+            to support loading older versions as well. Saving is always going
+            to be the latest version (this one).
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.CreateCube(Delta.Utilities.Graphics.VertexFormat,System.Single,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Generate a cube mesh with the same size in all dimensions. Box meshes
+            have their pivot point at Vector.Zero (to make them easier to place).
+            Note: The GeometryHelper in Delta.Rendering.Models has many more
+            Create methods to create spheres, cones, cylinders, etc.
+            </summary>
+            <param name="vertexFormat">The vertex format for this geometry</param>
+            <param name="size">Size of the box in all dimensions</param>
+            <param name="setColor">Vertex color during creation.</param>
+            <returns>
+            Geometry Data containing all vertices and indices for this box
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.CreateCube(Delta.Utilities.Graphics.VertexFormat,System.Single)">
+            <summary>
+            Generate a cube mesh with the same size in all dimensions. Box meshes
+            have their pivot point at Vector.Zero (to make them easier to place).
+            Note: The GeometryHelper in Delta.Rendering.Models has many more
+            Create methods to create spheres, cones, cylinders, etc.
+            </summary>
+            <param name="vertexFormat">The vertex format for this geometry</param>
+            <param name="size">Size of the box in all dimensions</param>
+            <returns>
+            Geometry Data containing all vertices and indices for this box
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.CreateBox(Delta.Utilities.Graphics.VertexFormat,System.Single,System.Single,System.Single,System.Boolean,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Generates a box mesh with the given sizes and a material. Box meshes
+            have their pivot point at Vector.Zero (to make them easier to place).
+            </summary>
+            <param name="vertexFormat">The vertex format.</param>
+            <param name="width">The width in the X dimension</param>
+            <param name="depth">The depth in the Y dimension</param>
+            <param name="height">The height in the Z dimension</param>
+            <param name="invertWinding">Whether to invert indices order</param>
+            <param name="setColor">Vertex color during creation.</param>
+            <returns>
+            Geometry Data containing all vertices and indices for this box
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.CreateBox(Delta.Utilities.Graphics.VertexFormat,System.Single,System.Single,System.Single,System.Boolean,System.String,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Generates a box mesh with a given pivot point height (usually used
+            to generate the box at Vector.Zero, see other overloads).
+            </summary>
+            <param name="vertexFormat">The vertex format.</param>
+            <param name="width">The width in the X dimension</param>
+            <param name="depth">The depth in the Y dimension</param>
+            <param name="height">The height in the Z dimension</param>
+            <param name="invertWinding">Whether to invert indices order</param>
+            <param name="meshName">Name of the mesh.</param>
+            <param name="setColor">Vertex color during creation.</param>
+            <returns>
+            Geometry Data containing all vertices and indices for this box
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.CreateSphere(Delta.Utilities.Graphics.VertexFormat,System.Single,Delta.Utilities.Datatypes.Color,System.Boolean)">
+            <summary>
+            Creates a sphere as an GeometryData object with the given parameters.
+            </summary>
+            <param name="vertexFormat">The vertex format to use.</param>
+            <param name="radius">The radius for the sphere from the center</param>
+            <param name="setColor">
+            Color for the new sphere in case the vertex format supports colored
+            vertices (otherwise ignored).
+            </param>
+            <param name="invertWinding">
+            Whether to invert winding order (usually false, except you want to be
+            inside the sphere).
+            </param>
+            <returns>The geometry data of the specified sphere.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.CreatePlane(Delta.Utilities.Graphics.VertexFormat,System.Single,System.Single)">
+            <summary>
+            Create plane
+            </summary>
+            <param name="vertexFormat">The vertex format.</param>
+            <param name="setWidth">Width of the set.</param>
+            <param name="setHeight">Height of the set.</param>
+            <returns>The geometry data of the specified plane.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.CreatePlane(Delta.Utilities.Graphics.VertexFormat,System.Single,System.Single,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Creates an XY plane in the specified vertex format (you can use
+            one of the predefined vertex formats from VertexData).
+            </summary>
+            <param name="vertexFormat">The vertex format.</param>
+            <param name="setWidth">Set width.</param>
+            <param name="setHeight">Set Height.</param>
+            <param name="setColor">Set Color.</param>
+            <returns>The geometry data of the specified plane.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.CreateSegmentedPlane(Delta.Utilities.Graphics.VertexFormat,System.Single,System.Single,System.Int32,System.Boolean,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Creates an XY plane in the specified vertex format (you can use
+            one of the predefined vertex formats from VertexData).
+            </summary>
+            <param name="vertexFormat">The vertex format.</param>
+            <param name="setWidth">Sets Width.</param>
+            <param name="setHeight">Sets Height.</param>
+            <param name="segments">The segments.</param>
+            <param name="uvForEachSegment">Create new uv from 0-1 for each segment.
+            Useful for tiling (works even without tileable textures)</param>
+            <param name="setColor">Sets Color.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.CreateSegmentedPlane(Delta.Utilities.Graphics.VertexFormat,System.Single,System.Single,System.Int32)">
+            <summary>
+            Create segmented plane.
+            </summary>
+            <param name="vertexFormat">The vertex format.</param>
+            <param name="setWidth">Width of the set.</param>
+            <param name="setHeight">Height of the set.</param>
+            <param name="segments">The segments.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.CreateCapsule(Delta.Utilities.Graphics.VertexFormat,System.Single,System.Single)">
+            <summary>
+            Creates a capsule geometry in the specified vertex format (you can use
+            one of the predefined vertex formats from VertexData).
+            </summary>
+            <param name="vertexFormat">The vertex format.</param>
+            <param name="setDiameter">Diameter of the capsule</param>
+            <param name="setLength">Length of the capsule</param>
+            <returns>The geometry data of the specified capsule.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.CreateCapsule(Delta.Utilities.Graphics.VertexFormat,System.Single,System.Single,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Creates a capsule geometry in the specified vertex format (you can use
+            one of the predefined vertex formats from VertexData).
+            </summary>
+            <param name="vertexFormat">The vertex format.</param>
+            <param name="setDiameter">Diameter of the capsule</param>
+            <param name="setLength">Length of the capsule</param>
+            <param name="setColor">Color for the capsule</param>
+            <returns>
+            Geometry Data with the capsule, using tessellation of 12.
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.Create(System.Collections.Generic.List{Delta.Utilities.Datatypes.Vector},System.Collections.Generic.List{Delta.Utilities.Datatypes.Color},System.Collections.Generic.List{System.UInt16})">
+            <summary>
+            Helper method to create a geometry out of position vectors, indices
+            and a color for each position. Will use VertexFormat.Position3DColor.
+            </summary>
+            <param name="positions">3D positions for the new geometry.</param>
+            <param name="colors">
+            Colors for each of the positions, must match the length of the
+            positions list.
+            </param>
+            <param name="indices">
+            Indices to connect the triangles, must be at least 3 for one triangle
+            or a multiple of 3 for more.
+            </param>
+            <returns>
+            A newly created GeometryData, which can be passed to MeshData to be
+            used for rendering.
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.Create(System.Collections.Generic.List{Delta.Utilities.Datatypes.Vector},System.Collections.Generic.List{Delta.Utilities.Datatypes.Point},System.Collections.Generic.List{System.UInt16})">
+            <summary>
+            Helper method to create a geometry out of position vectors, indices
+            and a uv for each position. Will use VertexFormat.Position3DTextured.
+            </summary>
+            <param name="positions">3D positions for the new geometry.</param>
+            <param name="uvs">
+            Texture uvs for each of the positions, must match the length of the
+            positions list.
+            </param>
+            <param name="indices">
+            Indices to connect the triangles, must be at least 3 for one triangle
+            or a multiple of 3 for more.
+            </param>
+            <returns>
+            A newly created GeometryData, which can be passed to MeshData to be
+            used for rendering.
+            </returns>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.writer">
+            <summary>
+            Writer to directly manipulate the vertex data (use Seek and Write).
+            You can also just define or use an existing vertex struct and use
+            SetData to store it into this GeometryData.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.reader">
+            <summary>
+            Reader to get data back. For debugging you could also use the Get
+            methods defined below (GetPosition, etc.), but they are slower.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.Indices">
+            <summary>
+            And all the indices that link into the vertices. For 2D, UI or
+            effect billboards these indices can be pre-calculated (e.g.
+            0, 1, 2, 0, 2, 3) and be used with whatever vertices are used.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.NumberOfUsedIndices">
+            <summary>
+            Number of used indices, only used for dynamic vertex and index data.
+            Note: Not in Indices because that struct only contains the indices
+            arrays as unions.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.Bones">
+            <summary>
+            Flat list of bones, the first bone is always the root bone, all
+            children can be accessed from here. The main reason for having a flat
+            list is easy access to all bones for showing bone previous and of
+            course to quickly access all animation matrices.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.HasDataChanged">
+            <summary>
+            This value is used to check if the data has changed for dynamic
+            geometry objects. Only if this is true we actually need to update the
+            native objects on the GPU (VBO and IBO), which is slow and should be
+            avoided if nothing has changed (e.g. no new lines were added).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.defaultBoxMesh">
+            <summary>
+            Cached default box mesh data.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.numberOfUsedVerticesInternal">
+            <summary>
+            Optimization to make the NumberOfUsedVertices property as fast as
+            possible, especially in debug mode and when profiling the property
+            set slows us down.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.boundingBox">
+            <summary>
+            Box
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.sphere">
+            <summary>
+            Sphere
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.stream">
+            <summary>
+            Data stream for all the data.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.GeometryData.reloadContent">
+            <summary>
+            Helper delegate to reload this geometry content after it has been
+            disposed. Usually used for static geometry, which can be disposed
+            after the GPU VBO and IBO have been created to save memory.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.#ctor(System.String,System.Int32,Delta.Utilities.Graphics.VertexFormat,System.Int32,System.Boolean,System.Boolean)">
+            <summary>
+            Create geometry data with a predefined number of vertices. This way all
+            the vertex data is already allocated and future writes to this vertex
+            data are fast. Use the writer directly to write up to 2000 vertices,
+            for more use the SetData method below.
+            Note: When rendering this is always send to the native vertex buffer
+            (e.g. in Xna DynamicVertexBuffer is used). The index buffer is not used
+            if setNumberOfIndices is 0, else you must fill the indices yourself
+            after filling in the vertices.
+            </summary>
+            <param name="setName">
+            Set name for this geometry for identification. Should start with &gt;
+            for dynamically created geometry to not confuse it with loaded gometry
+            from content, which uses content names.
+            </param>
+            <param name="setMaxNumberOfVertices">
+            Set maximum number of vertices to be used, can be increased if the
+            geometry is dynamic (not static).
+            </param>
+            <param name="setVertexFormat">
+            Set vertex format (usually from a shader).
+            </param>
+            <param name="setNumberOfIndices">Set number of indices</param>
+            <param name="setIsStaticData">
+            Is static data? Faster to render because does not need to be modified.
+            </param>
+            <param name="setIsLineData">
+            Set if line data is used in this vertex stream. Only used for dynamic
+            mesh data for the DrawManager. Only used without indices.
+            </param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.#ctor(System.String,System.Int32,Delta.Utilities.Graphics.VertexFormat,System.Int32,System.Boolean,System.Boolean,Delta.Utilities.Datatypes.BoundingBox)">
+            <summary>
+            Create geometry data with a predefined number of vertices. This way all
+            the vertex data is already allocated and future writes to this vertex
+            data are fast. Use the writer directly to write up to 2000 vertices,
+            for more use the SetData method below.
+            Note: When rendering this is always send to the native vertex buffer
+            (e.g. in Xna DynamicVertexBuffer is used). The index buffer is not used
+            if setNumberOfIndices is 0, else you must fill the indices yourself
+            after filling in the vertices.
+            </summary>
+            <param name="setName">
+            Set name for this geometry for identification. Should start with &gt;
+            for dynamically created geometry to not confuse it with loaded gometry
+            from content, which uses content names.
+            </param>
+            <param name="setMaxNumberOfVertices">
+            Set maximum number of vertices to be used, can be increased if the
+            geometry is dynamic (not static).
+            </param>
+            <param name="setVertexFormat">
+            Set vertex format (usually from a shader).
+            </param>
+            <param name="setNumberOfIndices">Set number of indices</param>
+            <param name="setIsStaticData">
+            Is static data? Faster to render because does not need to be modified.
+            </param>
+            <param name="setIsLineData">
+            Set if line data is used in this vertex stream. Only used for dynamic
+            mesh data for the DrawManager. Only used without indices.
+            </param>
+            <param name="setBoundingBox">
+            Set bounding box with given data, useful for physics and displaying
+            the boundings in debug mode. For content this is usually calculated
+            already in the content system, for generated geometry it will not be
+            set usually and will be calculated automatically when first needed.
+            </param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.#ctor(System.IO.BinaryReader,Delta.Engine.Dynamic.RunDelegate)">
+            <summary>
+            Create geometry data from a binary stream (e.g. as part of ModelData).
+            This constructor requires the binary stream data and a way to reload
+            the content when Dispose was called. This is used for static geometry
+            to save memory and this constructor is always used for static geometry.
+            </summary>
+            <param name="dataReader">
+            The data reader which contains the stored content data internally.
+            </param>
+            <param name="setReloadContent">
+            The delegate which contains the code for reloading the content.
+            </param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.Dispose">
+            <summary>
+            Dispose all internal data (vertices and indices). The lists are still
+            valid, just empty. This is mainly used for static geometry data, which
+            can be disposed after the native objects have been created.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.Load(System.IO.BinaryReader)">
+            <summary>
+            Load the mesh data, the vertices, indices and the material used here.
+            </summary>
+            <param name="dataReader">The data reader.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save the geometry data, which consists of the vertices, indices and
+            the MaterialId.
+            </summary>
+            <param name="dataWriter">The data writer.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.AddNumberOfUsedVertices(System.Int32)">
+            <summary>
+            Add number of used vertices and if we reach the MaxNumberOfVertices
+            limit, it is increased by a factor of 2. Used for dynamic vertex data.
+            </summary>
+            <param name="numberOfNewVerticesWeWantToAdd">
+            Number of vertices we want to add (usually 4 for one quad)
+            </param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.AddNumberOfUsedIndices(System.Int32)">
+            <summary>
+            Add number of used indices and if we reach Length, it is increased by
+            a factor of 2. Used for dynamic vertex and index data.
+            </summary>
+            <param name="numberOfNewIndicesWeWantToAdd">
+            Number of indices we want to add (usually 6 for one quad)
+            </param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.AddNumberOfUsedVerticesFast(System.Int32)">
+            <summary>
+            Add number of used vertices fast method, will not perform any checking
+            and will not increase any buffers, the caller has to make sure that
+            nothing changes and the new data fits!
+            </summary>
+            <param name="newVertices">The number of new vertices.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.AddNumberOfUsedVerticesAndIndicesFast(System.Int32,System.Int32)">
+            <summary>
+            Add number of used vertices and indices fast method, will not perform
+            any checking and will not increase any buffers, the caller has to make
+            sure that nothing changes and the new data fits!
+            </summary>
+            <param name="newVertices">The number of new vertices.</param>
+            <param name="newIndices">The number of new indices.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.ResizeIndices(System.Int32)">
+            <summary>
+            Resize indices array, all indices will be copied to the new array.
+            </summary>
+            <param name="newSize">The new size of the index buffer.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.ResetUsedVerticesAndIndices">
+            <summary>
+            Reset used vertices and indices, used to reset NumberOfUsedVertices
+            and NumberOfUsedIndices, which should be increased again next frame
+            with the AddNumberOfUsedVertices and AddNumberOfUsedIndices methods.
+            If we have no active vertices (NumberOfUsedVertices is 0) there is no
+            reason to render or update anything (often the case, e.g. no lines).
+            Only used for dynamic geometry.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.SetVertexData(System.Int32,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Point)">
+            <summary>
+            Set vertex data helper method to directly set vertex data without
+            knowing the actual vertex format. This method and all its overloads
+            have quite some overhead and should only be used for generating
+            fallback content (simplifies setting vertices a lot at the cost of
+            performance).
+            </summary>
+            <param name="vertexIndex">Index of the vertex.</param>
+            <param name="position">The position.</param>
+            <param name="uv">The uv.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.SetVertexData(System.Int32,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Color,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Set vertex data helper method to directly set vertex data without
+            knowing the actual vertex format. This method and all its overloads
+            have quite some overhead and should only be used for generating
+            fallback content (simplifies setting vertices a lot at the cost of
+            performance).
+            </summary>
+            <param name="vertexIndex">Index of the vertex.</param>
+            <param name="position">The position.</param>
+            <param name="uv">The uv.</param>
+            <param name="color">The color.</param>
+            <param name="normal">The normal.</param>
+            <param name="tangent">The tangent.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.SetVertexData(System.Int32,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Color,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Set vertex data helper method to directly set vertex data without
+            knowing the actual vertex format. This method and all its overloads
+            have quite some overhead and should only be used for generating
+            fallback content (simplifies setting vertices a lot at the cost of
+            performance). Normally you should write your own code calling SaveData
+            for each format element.
+            </summary>
+            <param name="vertexIndex">Index of the vertex</param>
+            <param name="position">The position for this vertex</param>
+            <param name="uv">UV for the diffuse channel</param>
+            <param name="color">Vertex color</param>
+            <param name="normal">Normal vector</param>
+            <param name="tangent">Tangent vector</param>
+            <param name="secondUv">
+            Second uv channel data (lightmap or extra uv).
+            </param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.SetVertexData(System.Int32,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Color,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Point)">
+            <summary>
+            Set vertex data helper method to directly set vertex data without
+            knowing the actual vertex format. This method and all its overloads
+            have quite some overhead and should only be used for generating
+            fallback content (simplifies setting vertices a lot at the cost of
+            performance). Normally you should write your own code calling SaveData
+            for each format element.
+            </summary>
+            <param name="vertexIndex">Index of the vertex.</param>
+            <param name="position">The position.</param>
+            <param name="uv">The uv.</param>
+            <param name="color">The color.</param>
+            <param name="normal">The normal.</param>
+            <param name="tangent">The tangent.</param>
+            <param name="skinWeights">The skin weights.</param>
+            <param name="skinIndices">The skin indices.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.SetSkinData(System.Int32,Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Point)">
+            <summary>
+            Set skin data
+            </summary>
+            <param name="vertexIndex">Index of the vertex.</param>
+            <param name="skinIndices">The skin indices.</param>
+            <param name="skinWeights">The skin weights.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.GetVerticesBytes">
+            <summary>
+            Get vertices bytes from the stream, will just return GetBuffer,
+            which returns the internal buffer data and is fast. If the geometry
+            data was disposed (only used for static geometry), it will
+            automatically be reloaded.
+            </summary>
+            <returns>Returns the native underlying bytes for the GPU</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.GetPosition(System.Int32)">
+            <summary>
+            Get position, just for debugging (this is not very fast, it is much
+            better to directly use the reader if you know the vertex format).
+            </summary>
+            <param name="vertexIndex">Vertex index</param>
+            <returns>Vector</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.GetNormal(System.Int32)">
+            <summary>
+            Get normal, just for debugging (this is not very fast, it is much
+            better to directly use the reader if you know the vertex format).
+            </summary>
+            <param name="vertexIndex">Vertex index</param>
+            <returns>Vector</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.GetTangent(System.Int32)">
+            <summary>
+            Get tangent, just for debugging (this is not very fast, it is much
+            better to directly use the reader if you know the vertex format).
+            </summary>
+            <param name="vertexIndex">Vertex index</param>
+            <returns>Vector</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.GetUV(System.Int32)">
+            <summary>
+            Get UV, just for debugging (this is not very fast, it is much
+            better to directly use the reader if you know the vertex format).
+            </summary>
+            <param name="vertexIndex">Vertex index</param>
+            <returns>
+            Point
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.BeginUseReader">
+            <summary>
+            This moves the stream to starting position.
+            Must be called if you want to use the reader yourself.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.SwitchToStaticData(System.String)">
+            <summary>
+            Switch to geometry data to static data and set a content name for it
+            (can still be generated with &gt; and &lt;).
+            </summary>
+            <param name="newName">The new name.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.AddMeshGeometry(Delta.ContentSystem.Rendering.GeometryData,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Add mesh geometry helper method for MeshData.OptimizeLevelMeshes. It
+            will merge the given mesh geometry into this geometry data instance.
+            This will only work if this is a dynamic geometry (can be switched to
+            static later once we added all meshes) and obviously will only result
+            in correct rendering if all these meshes share the same material data!
+            </summary>
+            <param name="otherMeshGeometrySharingMaterial">The other mesh geometry
+            sharing material.</param>
+            <param name="positionOffset">The position offset.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.ToString">
+            <summary>
+            To string
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents this instance.
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.ModifyVertexPosition(System.Int32,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Modify vertex position, will read the position at the given vertex
+            index, then add the positionOffset to it and save it out again in the
+            same format.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.LoadContentVersion1(System.IO.BinaryReader)">
+            <summary>
+            Load content version 1
+            </summary>
+            <param name="dataReader">
+            The data reader which contains the stored content data internally.
+            </param>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.DefaultBox">
+            <summary>
+            Default box (created on demand) with the size (1, 1). Usually using
+            the default material and used to display fallback content if loading
+            failed (e.g. if mesh content file was not found).
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.Name">
+            <summary>
+            Name of the geometry, useful for debugging or identify warnings.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.MaxNumberOfVertices">
+            <summary>
+            Number of vertices this VertexData currently can hold. We usually only
+            increase this if the buffer needs to get bigger (e.g. via SetData or
+            IncreaseVertices). Normally this should be set once in the constructor
+            however (for static meshes we know beforehand)! This value is usually
+            the same as NumberOfUsedVertices, but for dynamic vertex data (e.g.
+            in DrawManager for lines or in MaterialManager for 2D UI vertices)
+            the number of used vertices can be lower and increase over time!
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.NumberOfUsedVertices">
+            <summary>
+            Number of used vertices, must always be the same (for static meshes)
+            or lower than MaxNumberOfVertices. For dynamic vertex data this can
+            go up to more than MaxNumberOfVertices can handle, then just call
+            IncreaseMaxVertices to increase MaxNumberOfVertices!
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.Format">
+            <summary>
+            Vertex element format as specified in the constructor. Everything
+            else here depends on it, so changing this is not possible, create
+            a new VertexData instance to convert vertex formats.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.VertexDataLengthInBytes">
+            <summary>
+            Vertex data length for each of the vertices in bytes.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.IsStatic">
+            <summary>
+            Is the data in this Mesh static or dynamic? Only dynamic data can
+            be changed at runtime and will force a dynamic vertex buffer update.
+            Always true for loaded content, sometimes false for generated content.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.IsStaticAndLoadedFromContent">
+            <summary>
+            For static geometry we can get rid of the vertices and indices as we
+            have them now on the GPU. This saves memory and the content can be
+            reloaded at any time too.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.IsLineData">
+            <summary>
+            Is line data in the vertex stream? Only used for dynamic mesh data
+            for the DrawManager. Only used without indices.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.IsSky">
+            <summary>
+            Is sky
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.PolygonCount">
+            <summary>
+            Gets the number of polygons for this mesh (indices / 3)
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.BoundingBox">
+            <summary>
+            Get bounding box of all vertices (in whatever space they are). Only
+            calculated once and also used for the BoundingSphere calculation.
+            TODO: Test the bounding geometries
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.BoundingSphere">
+            <summary>
+            Bounding radius
+            TODO: optimize, we actually do not need the bounding box to calc this!
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.GeometryData.CheckFirstPlaneId">
+            <summary>
+            The ID of the plane that the box was outside last in the
+            frustum check. Most of the time the frustum check will fail at the
+            same plane again so checking that one first makes it faster.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.GeometryData.GeometryDataTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.GeometryDataTests.SetVertexData">
+            <summary>
+            Set vertex data
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.GeometryDataTests.SetSkinData">
+            <summary>
+            Set skin data
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.GeometryData.GeometryDataTests.GetElementData">
+            <summary>
+            Get element data
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.LevelData">
+            <summary>
+            Level data for loading and saving levels, which are currently just
+            a bunch of meshes and the camera data.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.LevelData.VersionNumber">
+            <summary>
+            Version number for this MaterialData. If this goes above 1, we need
+            to support loading older versions as well. Saving is always going
+            to be the latest version (this one).
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.LevelData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.LevelData.optimizedMeshes">
+            <summary>
+            List of optimized level meshes that have all geometry merged by
+            material usage. Stuff that does not fit into the index buffer range
+            (65535) will be split up into multiple meshes (rarely happens).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.LevelData.cameraData">
+            <summary>
+            Quick hack for camera support for MWC demo
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.LevelData.#ctor(System.String)">
+            <summary>
+            Loads level data. Use the static Get method to call this.
+            </summary>
+            <param name="setLevelName">Set level name</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.LevelData.Load(System.IO.BinaryReader)">
+            <summary>
+            Load level data from a binary reader.
+            </summary>
+            <param name="reader">Reader to get the data from, underlying stream
+            must be in the correct position.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.LevelData.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save level data into a stream.
+            </summary>
+            <param name="writer">Binary stream writer to save data into.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.LevelData.Dispose">
+            <summary>
+            Dispose meshes data, which is called when the content system disposes
+            this class (or someone else wants to get rid of the memory).
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.LevelData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Native load method, will just load the xml data.
+            </summary>
+            <param name="alreadyLoadedNativeData">
+            The first instance that has already loaded the required content data
+            of this content class or just 'null' if there is none loaded yet (or
+            anymore).
+            </param>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.Helpers.ShadowType">
+            <summary>
+            Shadow type enum for the different shadow techniques implemented.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShadowType.Simple">
+            <summary>
+            Simple shadow. No filtering is done, should only be used for very
+            sharp shadows or if applying a blur filter later. Obviously the fastest
+            way to generate shadows.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShadowType.Projection">
+            <summary>
+            Projection shadow, use shadow2DProj to get 4 Pixels in one swoop. This
+            is faster if the hardware (like NVidia GPUs) supports this directly.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShadowType.PCF4X4">
+            <summary>
+            Percentage-Closer Soft shadow with 16 pixels in a 4x4 area.
+            Note: The 4x4 area can be bigger than 4 by 4 pixels, 1.0-1.5 pixels
+            is usually a good distance, more like 2.0-3.0 works too, but is very
+            experimental and needs a lot of tweaking and testing.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.Helpers.ShadowType.PCF2X2">
+            <summary>
+            Percentage-Closer Soft shadow with 4 pixels in a 2x2 area.
+            Note: The 4x4 area can be bigger than 4 by 4 pixels, 1.0-2.0 pixels
+            is usually a good distance, more like 3.0 works too, but is very
+            experimental and needs a lot of tweaking and testing.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.MeshData">
+            <summary>
+            Model data for imported 3D models (from FBX, Collada, 3DS, OBJ, or DXF
+            files). Contains a list of geometries for each mesh in the file (often
+            just one mesh, but can be more complex) and a list of materials used
+            in those geometry meshes.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MeshData.VersionNumber">
+            <summary>
+            Version number for this ModelData. If this goes above 1, we need
+            to support loading older versions as well. Saving is always going
+            to be the latest version (this one). Version 1, 2 and 3 were used
+            early in 2011 for combined meshes with material and animation data
+            baked into it. Now with version 4 and higher for v0.8.7 and up meshes
+            only contain geometry, bones, offset and a link to the used material
+            content file (which contains the textures and shaders used).
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshData.GetAllContentNames">
+            <summary>
+            Get list of all mesh content names available in the current project.
+            </summary>
+            <returns>List of all mesh content names</returns>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MeshData.PositionOffset">
+            <summary>
+            The offset translation of the mesh to represent its local space.
+            This is both important for optimizations and fixing not-centered meshes
+            and also good for rendering out meshes optimized and allowing merging
+            easily if needed.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MeshData.Animations">
+            <summary>
+            Mesh Animation data for each specific mesh. Note: This is not loaded or
+            set here when loading content. Animations are always loaded and set by
+            the Model class (but you can do whatever you want in your own code).
+            Also notice that setting the active Animation and switching between
+            them all happens in the Model class as well.
+            <para />
+            Note: Using the same MeshData with different Models using it with
+            different animations is currently not supported and might cause
+            trouble.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshData.#ctor(System.String)">
+            <summary>
+            Create mesh data from a model content name, use Get to call this.
+            </summary>
+            <param name="meshContentName">Name of the mesh content.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshData.#ctor(Delta.ContentSystem.Rendering.GeometryData,Delta.ContentSystem.Rendering.MaterialData,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Create model data from geometry and material data. Only used internally
+            for the editors, it makes no sense to create content objects in the
+            engine itself. You can dynamically create rendering classes like in
+            this case a Mesh class with custom geometry and custom materials,
+            but it is not a loaded MeshData content class then (the link to data
+            will stay null in the Mesh class).
+            </summary>
+            <param name="setGeometry">Set geometry data</param>
+            <param name="setMaterial">Set material data</param>
+            <param name="setPositionOffset">Set position offset</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshData.Load(System.IO.BinaryReader)">
+            <summary>
+            Load model data from binary data stream.
+            </summary>
+            <param name="reader">Binary reader of the underlying stream</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshData.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save model data, which consists of a list of geometries and materials.
+            </summary>
+            <param name="writer">Writer</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshData.ToString">
+            <summary>
+            To string, will display the mesh name and optionally list of animations.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents this mesh instance with
+            the optional list of animation names.
+            </returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Native load method, will just load or clone the effect data.
+            </summary>
+            <param name="alreadyLoadedNativeData">
+            The first instance that has already loaded the required content data
+            of this content class or just 'null' if there is none loaded yet (or
+            anymore).
+            </param>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.MeshData.Geometry">
+            <summary>
+            Geometries used in this model. Usually we just have one mesh geometry.
+            Note: One difference from 3D Studio is that a Geometry mesh in our
+            engine is only allowed to be used by one material with one shader,
+            if a multi-material mesh was exported, it will be split up into
+            several Geometries with different MaterialIds (see Materials).
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.MeshData.Material">
+            <summary>
+            Materials used in the Geometries above. Often we just have one
+            material. Please note that we optimize the list of materials and
+            geometries, no duplicates are allowed. This list is even used for
+            levels where many meshes with the same material are merged together.
+            A material is the same if all values are equal, which can easily
+            happen because of texture atlas optimizations merging many textures.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.MeshData.HasBones">
+            <summary>
+            Has bone data for animations? Note: The animations are in MeshAnimation.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.CameraData">
+            <summary>
+            Helper class to store camera data and save it out as content to use used
+            in levels or scenes (or just in your game code).
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.CameraData.VersionNumber">
+            <summary>
+            Version number for this CameraData. If this goes above 1, we need
+            to support loading older versions as well. Saving is always going
+            to be the latest version (this one).
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.CameraData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.CameraData.FieldOfView">
+            <summary>
+            Field of view, usually around 60.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.CameraData.NearPlane">
+            <summary>
+            Near plane, when does the camera start in meters from the camera.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.CameraData.FarPlane">
+            <summary>
+            Far plane, how far can we look in meters.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.CameraData.Path">
+            <summary>
+            Optional precomputed camera path.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.CameraData.#ctor">
+            <summary>
+            Create camera data
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.CameraData.#ctor(System.String)">
+            <summary>
+            Create camera data by loading it from content, use Get to call this.
+            Use the static Get method to call this.
+            </summary>
+            <param name="contentName">Name of the content.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.CameraData.Load(System.IO.BinaryReader)">
+            <summary>
+            Load camera data (positions, matrices, etc.) from a stream.
+            </summary>
+            <param name="reader">Reader</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.CameraData.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save camera data (positions, matrices, etc.) to a stream.
+            </summary>
+            <param name="writer">Writer</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.CameraData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Native load method, will just load the data.
+            </summary>
+            <param name="alreadyLoadedNativeData">
+            The first instance that has already loaded the required content data
+            of this content class or just 'null' if there is none loaded yet (or
+            anymore).
+            </param>
+        </member>
+        <member name="T:Delta.ContentSystem.Rendering.MeshAnimationData">
+            <summary>
+            Mesh Animation data class, which keeps all the data (matrices) for one
+            mesh animation. This can be something like a simple Idle animation or
+            some really complex cinematic animation for a character with bones.
+            See BoneData for the bone details. Mesh and MeshAnimations must fit.
+            </summary>
+        </member>
+        <member name="F:Delta.ContentSystem.Rendering.MeshAnimationData.CurrentVersion">
+            <summary>
+            Version number for this MeshData. If this goes above 1, we need
+            to support loading older versions as well. Saving is always going
+            to be the latest version (this one).
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshAnimationData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshAnimationData.#ctor(Delta.Utilities.Datatypes.Matrix[][])">
+            <summary>
+            Create mesh animation data with a given set of matrices for the bones.
+            </summary>
+            <param name="setAnimationFrames">Set animation frames</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshAnimationData.#ctor(System.String)">
+            <summary>
+            Create mesh animation data by loading it from content, use the static
+            Get method to call this.
+            </summary>
+            <param name="contentName">Name of the content.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshAnimationData.Load(System.IO.BinaryReader)">
+            <summary>
+            Load animation data, which is mostly animation matrices.
+            </summary>
+            <param name="reader">Reader</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshAnimationData.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save animation data, which is mostly animation matrices.
+            </summary>
+            <param name="dataWriter">Data writer</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Rendering.MeshAnimationData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Native load method, will just load the data.
+            </summary>
+            <param name="alreadyLoadedNativeData">
+            The first instance that has already loaded the required content data
+            of this content class or just 'null' if there is none loaded yet (or
+            anymore).
+            </param>
+        </member>
+        <member name="P:Delta.ContentSystem.Rendering.MeshAnimationData.Frames">
+            <summary>
+            Array of animation frames (as array of bone matrices), e.g.
+            <para />
+            Frames[0] -> Frame 1
+              Frames[0][0] -> Bone Matrix 1
+              Frames[0][1] -> Bone Matrix 2
+            Frames[1] -> Frame 2
+              Frames[1][0] -> Bone Matrix 1
+              Frames[1][1] -> Bone Matrix 2
+            </summary>
+        </member>
+    </members>
+</doc>

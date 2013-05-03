@@ -1,0 +1,783 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.Utilities.Xml</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.Utilities.Xml.XmlNode">
+            <summary>
+            Our own XmlNode format which provides only required information and
+            offers a couple of useful functions. The main idea is avoiding that the
+            user handle complicated xml functions, instead giving a very simple
+            class which wraps the properties and function we think are important
+            and is presented in a very easy way to use.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetNamespaceName(System.String,System.String)">
+            <summary>
+            Helper method to construct NamespaceName from given
+            namespaceName and nodeName.
+            </summary>
+            <param name="namespaceName">Namespace name</param>
+            <param name="nodeName">Node name</param>
+            <returns>Namespace name</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetNamespaceName(System.Xml.Linq.XNamespace,System.String)">
+            <summary>
+            Helper method to construct NamespaceName from given
+            namespace and nodeName.
+            </summary>
+            <param name="xNamespace">Namespace</param>
+            <param name="nodeName">Node name</param>
+            <returns>Namespace name</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.FromFile(System.String)">
+            <summary>
+            Loads the XML file under the given path and returns the root node or
+            'null' if the loading fails. AutoSetNamespaceOnChildren is set to
+            false.
+            </summary>
+            <param name="xmlFilePath">Xml file path</param>
+            <returns>the root node or 'null' if the loading fails</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.FromFile(System.String,System.Boolean,System.String@)">
+            <summary>
+            Loads the XML file under the given path and returns the root node or
+            'null' if the loading fails.
+            </summary>
+            <param name="xmlFilePath">Xml file path</param>
+            <param name="autoSetNamespaceOnChildren">Flag if the namespace should
+            be set to the children automatically.</param>
+            <returns>the root node or 'null' if the loading fails</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.FromSnippet(System.String)">
+            <summary>
+            Loads and Xml node from an Xml snippet.
+            </summary>
+            <param name="xmlAsText">Xml as text</param>
+            <returns>Xml node</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.FromSnippet(System.String,System.String@)">
+            <summary>
+            Loads and Xml node from an Xml snippet.
+            </summary>
+            <param name="xmlAsText">Xml as text</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.FromMemoryStream(System.IO.MemoryStream)">
+            <summary>
+            Helper method to load xml data from a memory stream, which must contain
+            the same data as a saved xml file (see the Save() method). To load
+            snippet strings use the FromSnippet method instead.
+            </summary>
+            <param name="xmlData">Xml data in a memory stream</param>
+            <returns>Loaded XmlNode</returns>
+        </member>
+        <member name="F:Delta.Utilities.Xml.XmlNode.xNodeRoot">
+            <summary>
+            Main element that contain all the info related with the xml node.
+            Be aware that from this variable we get all the information from
+            the xml file we are working with.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.#ctor(System.Xml.Linq.XElement)">
+            <summary>
+            We only allow to create a XmlNode internally and we rely on
+            XmlHelper to create it when necessary. As expected, to start off
+            we assign a root node that contains everything we need.
+            </summary>
+            <param name="setNodeRoot">represents the root node</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.#ctor(System.Xml.Linq.XElement,System.Boolean)">
+            <summary>
+            We only allow to create a XmlNode internally and we rely on
+            XmlHelper to create it when necessary. As expected, to start off
+            we assign a root node that contains everything we need.
+            </summary>
+            <param name="setNodeRoot">represents the root node</param>
+            <param name="autoSetNamespaceOnChildren">Flag if the namespace should
+            be set to the children automatically.</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.#ctor(System.Xml.Linq.XElement,Delta.Utilities.Xml.XmlNode)">
+            <summary>
+            We only allow to create a XmlNode internally and we rely on
+            XmlHelper to create it when necessary. As expected, to start off
+            we assign a root node that contains everything we need.
+            </summary>
+            <param name="setNodeRoot">represents the root node</param>
+            <param name="setParent">the parent node</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.#ctor(System.Xml.Linq.XElement,Delta.Utilities.Xml.XmlNode,System.Boolean)">
+            <summary>
+            We only allow to create a XmlNode internally and we rely on
+            XmlHelper to create it when necessary. As expected, to start off
+            we assign a root node that contains everything we need.
+            </summary>
+            <param name="setNodeRoot">represents the root node</param>
+            <param name="setParent">the parent node</param>
+            <param name="autoSetNamespaceOnChildren">Flag if the namespace should
+            be set to the children automatically.</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.#ctor(System.String,System.String,System.Boolean)">
+            <summary>
+            Creates an XML root node with the given name, but no children yet.
+            When createWithXmlHeader is true an Xml declaration is added at top!
+            </summary>
+            <param name="createWithXmlHeader">Create with xml header</param>
+            <param name="setNamespace">Set namespace</param>
+            <param name="setRootName">Set root node name</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.#ctor(System.Xml.Linq.XNamespace,System.String,System.Boolean)">
+            <summary>
+            Creates an XML root node with the given name, but no children yet.
+            When createWithXmlHeader is true an Xml declaration is added at top!
+            </summary>
+            <param name="createWithXmlHeader">create with xml header</param>
+            <param name="setNamespace">set namespace</param>
+            <param name="setRootName">set root name</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.#ctor(System.String,System.Boolean)">
+            <summary>
+            Creates an XML root node with the given name, but no children yet.
+            When createWithXmlHeader is true an Xml declaration is added at top!
+            </summary>
+            <param name="createWithXmlHeader">create with xml heater</param>
+            <param name="setRootName">set root name</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.#ctor(System.String)">
+            <summary>
+            Create xml node root node with the given name (no xml header)
+            </summary>
+            <param name="setRootName">set root name</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.AddChild(System.String)">
+            <summary>
+            Adds a new child with given name and returns it to be filled.
+            If ChildWillInheritNamespace is true, it will inherit the namespace of
+            this node (Namespace part in given name will be ignored).
+            </summary>
+            <param name="name">Name for the new child</param>
+            <returns>The newly added child as an XmlNode</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.AddChild(System.String,System.String)">
+            <summary>
+            Adds a new child with given name and returns it to be filled.
+            If ChildWillInheritNamespace is true, it will inherit the namespace of
+            this node (Namespace part in given name will be ignored).
+            </summary>
+            <param name="name">Name</param>
+            <param name="value">Value</param>
+            <returns>The newly added child as an XmlNode</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.AddChild(Delta.Utilities.Xml.XmlNode)">
+            <summary>
+            Add child from XmlNode. Note: This will create a copy of the XmlNode
+            to make sure we do not modify the original XmlNode that could come
+            from another tree or document.
+            </summary>
+            <param name="childNode">Child node we want to add</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.AddAttribute(System.String,System.String)">
+            <summary>
+            Add attribute
+            </summary>
+            <param name="name">name</param>
+            <param name="value">value</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.AddAttribute(System.String,System.String,System.String)">
+            <summary>
+            Add attribute
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetValueAs``1(``0)">
+            <summary>
+            Get value as any supported datatype that is passed to this generic
+            method. Uses StringHelper.FromInvariantString to convert.
+            </summary>
+            <param name="defaultValue">Default value</param>
+            <returns>Value string converted to type T</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetAttribute(System.String,System.Boolean)">
+            <summary>
+            Look for the value of an attribute (specified as parameter) in the
+            root node. It returns the first attribute which matches with the
+            given parameters. If desired we can do an depth search in the child
+            nodes. It is optional due to performance costs (it has to be carefully 
+            used). By default the search is NOT done recursively.
+            </summary>
+            <param name="name">Attribute name to search</param>
+            <param name="searchRecursively">
+            Allow search recursively in the child nodes (defaults to false).
+            </param>
+            <returns>
+            If found the attribute value, otherwise an empty string.
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetAllAttributes">
+            <summary>
+            Get all attributes, use this method if you want better performance
+            than calling GetAttribute or GetAttributeAs, which both do a lot of
+            checking, support recursion (which is slow) and will do all the
+            conversion for you (again slow). This is the fastest way to get to
+            attribute values, but you will have to convert types yourself.
+            </summary>
+            <returns>
+            Dictionary with all attributes and values as strings.
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetAttributeAs``1(System.String,``0,System.String)">
+            <summary>
+            Get attribute as any supported datatype that is passed to this generic
+            method. Note: This currently throws warnings if an attribute is missing
+            or has no value (empty string), use GetAttribute instead of you don't
+            want all this extra checking and warnings (this method is slow).
+            Uses StringHelper.FromInvariantString to convert.
+            </summary>
+            <param name="name">Attribute name to search for</param>
+            <param name="defaultValue">
+            Default value if the attribute was not found.
+            </param>
+            <param name="extraWarningTextIfAnythingGoesWrong">
+            Extra warning in case anything goes wrong to really help the user to
+            identify the problem with a related message (e.g. font content name)
+            </param>
+            <returns>
+            Filled T value or defaultValue if attribute was not found or type
+            conversion is not supported (a log warning will also be outputted).
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetChild(System.String)">
+            <summary>
+            Look for a node with the name specified as parameter. It returns the
+            first node which matchs with the given parameter.
+            Note: The search is recursively.
+            </summary>
+            <param name="childName">Node name to search</param>
+            <returns>Node</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetChild(System.String,System.Boolean)">
+            <summary>
+            Look for a node with the name specified as parameter. It returns the
+            first node which matchs with the given parameter.
+            </summary>
+            <param name="childName">Node name to search</param>
+            <param name="searchRecursively">Allow search recursively in the child
+            nodes ?</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetChild(System.String,System.String)">
+            <summary>
+            Look for a node with the name specified as parameter and which
+            contains a particular attribute. This function is thought for when
+            we have several nodes with the same name to allow the user to
+            get one with a concrete attribute. It returns the first node which
+            matchs with the attribute name and value. 
+            Note: The search is recursively.
+            </summary>
+            <param name="attributeName">Attribute to search</param>
+            <param name="attributeValue">Attribute value to search</param>
+            <returns>Node</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetChild(System.String,System.String,System.String)">
+            <summary>
+            Look for a node with the name specified as parameter and which
+            contains a particular attribute. This function is thought for when
+            we have several nodes with the same name to allow the user to
+            get one with a concrete attribute. It returns the first node which
+            matchs with the attribute name and value. 
+            Note: The search is recursively.
+            </summary>
+            <param name="childName">Node name to search</param>
+            <param name="attributeName">Attribute to search</param>
+            <param name="attributeValue">Attribute value to search</param>
+            <returns>Node</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetChild(System.String,System.String,System.String,System.String,System.String)">
+            <summary>
+            Look for a node with the name specified as parameter and which
+            contains two particular attributes. This function is thought for when
+            we have several nodes with the same name to allow the user to
+            get one with a concrete attribute. It returns the first node which
+            matches the attribute names and values. 
+            Note: The search is recursively.
+            </summary>
+            <param name="childName">Node name to search</param>
+            <param name="attribute1Name">First attribute to search</param>
+            <param name="attribute1Value">First attribute value to search</param>
+            <param name="attribute2Name">Second attribute to search</param>
+            <param name="attribute2Value">Second attribute value to search</param>
+            <returns>Node</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetChildCount(System.String)">
+            <summary>
+            Gets the number of child that match with the given name.
+            </summary>
+            <param name="childName">Child name</param>
+            <returns>number</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetLastChild(System.String)">
+            <summary>
+            Gets last child that matches with the given name.
+            Note: The search is recursively.
+            </summary>
+            <param name="childName">Child name</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetLastChild(System.String,System.String)">
+            <summary>
+            Gets last child that matches with the given attribute name and value.
+            Note: The search is recursively.
+            </summary>
+            <param name="attributeName">Attribute name</param>
+            <param name="attributeValue">Attribute value</param>
+            <returns>XmlNode of the last child or null if not found.</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetLastChild(System.String,System.String,System.String)">
+            <summary>
+            Gets last child that matches with the given name.
+            Note: The search is recursively.
+            </summary>
+            <param name="childName">Node name to search</param>
+            <param name="attributeName">Attribute to search</param>
+            <param name="attributeValue">Attribute value to search</param>
+            <returns>XmlNode of the last child or null if not found.</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetAllChildren(System.String)">
+            <summary>
+            Look for all nodes with the name specified as parameter and returns
+            them in an array (non recursive implementation yet).
+            <para />
+            <b>Note:</b> Will always return a valid array, in worst case just an
+            empty one.
+            </summary>
+            <param name="childName"></param>
+            <returns>
+            Array of XmlNodes from all the children of this node.
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.RemoveChild(Delta.Utilities.Xml.XmlNode)">
+            <summary>
+            Remove child node from this xml node. Basically just does a Children
+            remove, but since Children is an array it is not that easy. Note:
+            This will not check recursively, only a direct children is removed.
+            </summary>
+            <param name="childNode">Child XmlNode we want to remove</param>
+            <returns>True if a child node was removed, false otherwise</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.RemoveChildRecursively(Delta.Utilities.Xml.XmlNode)">
+            <summary>
+            Remove xml child node recursively and return if we found and removed
+            the given child node.
+            </summary>
+            <param name="childNodeToRemove">Child XmlNode we want to remove</param>
+            <returns>True if a child node was removed, false otherwise</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.RemoveAllChildren(System.String)">
+            <summary>
+            Removes all children with given childName. (Not recursively)
+            </summary>
+            <param name="childName">child name</param>
+            <returns>Number of removed children</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.Remove">
+            <summary>
+            Remove this child node from its parent. Useful to unlink stuff.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetWholeDocumentXmlText">
+            <summary>
+            Get the whole xml document as formatted xml text.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.GetThisNodeXmlText">
+            <summary>
+            Returns the xml text from this node and its children. Use
+            GetWholeDocumentXmlText to get the xml of the whole file or use
+            the Name property and GetAttributes for just this node without the
+            children (this will still return all the children and if we are at
+            the document level, this returns the same as GetWholeDocumentXmlText.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.Save(System.String)">
+            <summary>
+            Save whole xml file (does not matter from which xml node we call this).
+            In case saving is not possible this method will output a warning in
+            the log and return false, but does not throw an exception.
+            </summary>
+            <param name="filePath">Where to save the ContentMetaData.xml</param>
+            <returns>
+            True if saving the file was successful, false (and a log warning)
+            otherwise.
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.Save">
+            <summary>
+            Save whole xml file (does not matter from which xml node we call this)
+            into a memory stream, which contains the same data as if we would have
+            saved this to a file with the other Save overload. Can be loaded again
+            with FromMemoryStream.
+            </summary>
+            <returns>
+            The newly created memory stream containing the saved xml file.
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.ToString">
+            <summary>
+            To string, will return a limited string with max. 200 characters to
+            get an overview what this XmlNode is about. Use GetXmlText to grab
+            the full xml text.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.ConstructName(System.String)">
+            <summary>
+            if WillChildInheritNamespace is true, it applies the parent
+            namespace to given name, ignoring any given namespace.
+            </summary>
+            <param name="name">name</param>
+            <returns>Namespace name if this child inherits it, otherwise name
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.FindFirstDescendantAttribute(System.Collections.Generic.IEnumerable{System.Xml.Linq.XElement},System.String)">
+            <summary>
+            Find the first descendant attribute in a list of Elements. It 
+            searchs in depth through the descendant nodes, searching for a 
+            coincidence with the name. The first match stops inmediatly the 
+            depth-search and returns the attribute.
+            </summary>
+            <param name="Elements">Elements to proceed with the search</param>
+            <param name="name">Name of the searched attribute</param>
+            <returns>null</returns>
+        </member>
+        <member name="P:Delta.Utilities.Xml.XmlNode.Name">
+            <summary>
+            Name of the xml root node.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Xml.XmlNode.Value">
+            <summary>
+            Value of the xml root node
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Xml.XmlNode.Parent">
+            <summary>
+            Returns the parent node of this node or 'null' if there is no parent
+            (anymore).
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Xml.XmlNode.Children">
+            <summary>
+            Returns children nodes from current parent.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Xml.XmlNode.FilePath">
+            <summary>
+            The (absolute) file path from where the xml was loaded (is 'None' if
+            the XML was created dynamically).
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Xml.XmlNode.WillChildInheritNamespace">
+            <summary>
+            If disabled (by default all XmlNodes have this disabled):
+            You have to manually set the namespace on every child node you add,
+            else it will be empty namespace.
+            
+            If enabled:
+            Added children will automatically use the same namespace as parent node
+            
+            You may set the namespace this way:
+            
+            XmlNode projectNode =
+            	new XmlNode(
+            	  XmlNode.GetNamespaceName(
+            	    CsprojXml.Namespace + CsprojXml.ProjectKeyword),
+            	  true);
+            
+            or
+            
+            node.AddChild(XmlNode.GetNamespaceName("some namespace", "Tag Name"))
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Xml.XmlNode.XmlNodeTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Xml.XmlNode.XmlNodeTests.testRootNode">
+            <summary>
+            Test root node
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.CreateXmlNode">
+            <summary>
+            Create xml node. Note: Too slow for a dynamic unit test.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.FromFile">
+            <summary>
+            Load file. Note: Too slow for a dynamic unit test.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.RemoveAllChildren">
+            <summary>
+            Remove all children
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.RemoveChild">
+            <summary>
+            Test the RemoveChild functionality
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.GetXmlAttribute">
+            <summary>
+            Get xml attribute.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.ReplaceAttribute">
+            <summary>
+            Replace attribute.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.GetChildNode">
+            <summary>
+            Get child node. Note: Too slow for a dynamic unit test.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.Parent">
+            <summary>
+            Parent. Note: Too slow for a dynamic unit test.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.Childs">
+            <summary>
+            Get children. Note: Too slow for a dynamic unit test.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.GetValueAs">
+            <summary>
+            Get xml Value. Note: Too slow for a dynamic unit test.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.GetAttributeAs">
+            <summary>
+            Get attribute. Note: Too slow for a dynamic unit test.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlNode.XmlNodeTests.WillChildInheritNamespace">
+            <summary>
+            Get namespace name
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Xml.XmlNode.XmlNodeTests.TestXml">
+            <summary>
+            Test xml
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Xml.XmlHelper">
+            <summary>
+            Xml helper class to provide some helper functionality for extracting or
+            generating xml data from XmlNodes.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.Serialize(System.String,System.Object)">
+            <summary>
+            Serializes an object
+            This saves an object as an xml structure to a file.
+            Every variable is saved as a node with
+            </summary>
+            <param name="filePath">filepath</param>
+            <param name="obj">obj</param>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.Deserialize(System.String,System.Type)">
+            <summary>
+            Deserialize a file to an object
+            This reads an xml structured file if it's of the same type
+            as we provide in the parameters
+            It returns an object by the type we declared and we can
+            simply cast the object after calling this function
+            </summary>
+            <param name="fileName">filename</param>
+            <param name="type">type</param>
+            <returns>Deserialized object</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddDeclaration(System.String,System.String)">
+            <summary>
+            Add an xml declaration
+            </summary>
+            <param name="version">The current version of the xml file.</param>
+            <param name="encoding">The current encoding of the xml file.</param>
+            <returns>xml declaration</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddTag(System.String)">
+            <summary>
+            Create a tag item from the specified string.
+            </summary>
+            <param name="tagName">The name of the tag to create.</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddTag(System.String,System.Int32)">
+            <summary>
+            Add a tag with a given depth
+            </summary>
+            <param name="tagName">Tag name</param>
+            <param name="depth">Depth of the node</param>
+            <returns>Tag with given depth</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddTagEnd(System.String)">
+            <summary>
+            Add a tag end
+            </summary>
+            <param name="tagName">Tag name</param>
+            <returns>tag</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddTagEnd(System.String,System.Int32)">
+            <summary>
+            Add a tag end with a given depth
+            </summary>
+            <param name="tagName">Tag name</param>
+            <param name="depth">Depth of the node</param>
+            <returns>tag</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddElement(System.String,System.String)">
+            <summary>
+            Add an element
+            </summary>
+            <param name="tagName">Tag name</param>
+            <param name="element">Element</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddElement(System.String,System.String,System.Int32)">
+            <summary>
+            Add an element
+            </summary>
+            <param name="tagName">Tag name</param>
+            <param name="element">Element</param>
+            <param name="depth">Depth of the node</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddAttribute(System.String,System.String[],System.String[])">
+            <summary>
+            Add an attribute. The number of attribute names and values must be 
+            equal. Each value will be assigned to a name with the corresponding 
+            position in the arrays. (1="1" , 2="2", ...)
+            </summary>
+            <param name="tagName">Tag name</param>
+            <param name="attributeNames">Attribute names</param>
+            <param name="attributeValues">Attribute values</param>
+            <returns>xmlNode</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddAttribute(System.String,System.String[],System.String[],System.Int32)">
+            <summary>
+            Add an attribute with a given depth. The number of attribute names and 
+            values must be equal. 
+            Each value will be assigned to a name with the corresponding 
+            position in the arrays. (1="1" , 2="2", ...)
+            </summary>
+            <param name="tagName">Tag name</param>
+            <param name="attributeNames">Attribute names</param>
+            <param name="attributeValues">Attribute values</param>
+            <param name="depth">Depth of the node</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddAttributeEnd(System.String,System.String[],System.String[])">
+            <summary>
+            Add an attribute with an end. The number of attribute names and values 
+            must be equal. 
+            Each value will be assigned to a name with the corresponding 
+            position in the arrays. (1="1" , 2="2", ...)
+            </summary>
+            <param name="tagName">Tag name</param>
+            <param name="attributeNames">Attribute names</param>
+            <param name="attributeValues">Attribute values</param>
+            <returns>String with the new xmlNode data</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddAttributeEnd(System.String,System.String[],System.String[],System.Int32)">
+            <summary>
+            Add an attribute with a given depth and an end. The number of
+            attribute names and values must be equal. 
+            Each value will be assigned to a name with the corresponding 
+            position in the arrays. (1="1" , 2="2", ...)
+            </summary>
+            <param name="tagName">Tag name</param>
+            <param name="attributeNames">Attribute names</param>
+            <param name="attributeValues">Attribute values</param>
+            <param name="depth">Depth of the node</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddAttributeElement(System.String,System.String[],System.String[],System.String)">
+            <summary>
+            Add an attribute with a given element between the start and end tag. 
+            The number of attribute names and values must be equal. 
+            Each value will be assigned to a name with the corresponding 
+            position in the arrays. (1="1" , 2="2", ...)
+            </summary>
+            <param name="tagName">Tag name</param>
+            <param name="attributeNames">Attribute names</param>
+            <param name="attributeValues">Attribute values</param>
+            <param name="element">Element</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.AddAttributeElement(System.String,System.String[],System.String[],System.String,System.Int32)">
+            <summary>
+            Add an attribute with a given element between the start and end tag and
+            a given depth. 
+            The number of attribute names and values must be equal. 
+            Each value will be assigned to a name with the corresponding 
+            position in the arrays. (1="1" , 2="2", ...)
+            </summary>
+            <param name="tagName">Tag name</param>
+            <param name="attributeNames">Attribute names</param>
+            <param name="attributeValues">Attribute values</param>
+            <param name="element">Element</param>
+            <param name="depth">Depth of the node</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.ConvertToXmlSpecialCharacters(System.String)">
+            <summary>
+            Convert to xml special characters, will replace all special characters
+            that need replacement (&lt; becomes &lt;, " becomes &quot;, etc.).
+            See http://xml.silmaril.ie/authors/specials/ for more information.
+            Note: The input text should not already contain special xml characters.
+            </summary>
+            <param name="inputText">input text</param>
+            <returns>string</returns>
+        </member>
+        <member name="T:Delta.Utilities.Xml.XmlHelper.XmlHelperTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.XmlHelperTests.LoadFile">
+            <summary>
+            Load file. Note: Too slow for a dynamic unit test.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.XmlHelperTests.LoadingMultipleXmlFiles">
+            <summary>
+            Loading multiple xml files. Note: Too slow for dynamic unit tests
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.XmlHelperTests.TestSerialization">
+            <summary>
+            Test serialization. Note: This test is too slow for a dynamic unit
+            test. It also is strange that this c:\testfile.xml is created ..
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.XmlHelperTests.XmlGeneration">
+            <summary>
+            XmlGeneration
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.XmlHelperTests.ImportFromXml">
+            <summary>
+            Import from xml
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.XmlHelperTests.LoadSnippet">
+            <summary>
+            Load snippet
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Xml.XmlHelper.XmlHelperTests.ConvertToXmlSpecialCharacters">
+            <summary>
+            Convert to xml special characters
+            </summary>
+        </member>
+    </members>
+</doc>

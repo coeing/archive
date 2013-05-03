@@ -1,0 +1,1264 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.Rendering.Basics</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.Rendering.Basics.Drawing.Line">
+            <summary>
+            Draw 2D or 3D lines with help of this class. Rarely used. If you want
+            to render more complex shapes use one of the other classes here or
+            implement one yourself. This has the advantage of optimizing it better.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Line.Draw(Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draw line in 2D
+            </summary>
+            <param name="startPosition">Start position in quadratic space.</param>
+            <param name="endPosition">End position in quadratic space.</param>
+            <param name="lineColor">Line color</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Line.DrawCross(Delta.Utilities.Datatypes.Point,System.Single,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draws a cross in 2D
+            </summary>
+            <param name="position">Position</param>
+            <param name="radius">Radius</param>
+            <param name="color">Color</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Line.Draw(Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draw line in 3D
+            </summary>
+            <param name="startPosition">Start position</param>
+            <param name="endPosition">End position</param>
+            <param name="color">Line color</param>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.Line.WasLastLineCulled">
+            <summary>
+            Helper boolean for the Culling Draw Test which counts the
+            number of drawn lines.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Drawing.Grid">
+            <summary>
+            Helper class to draw a coordinate system grid and gizmo, mostly used
+            for debugging or some tools that display simple 3D data like the mesh
+            viewer in the ContentManager tool.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Grid.Draw">
+            <summary>
+            Draw a 3D grid, default values are 20m x 20m with the Color Grey.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Grid.Draw(System.Single,System.Single,System.Int32,System.Int32,Delta.Utilities.Datatypes.Color,Delta.Utilities.Datatypes.Color,System.Boolean)">
+            <summary>
+            Draws a grid with the given positions/sizes and colors.
+            </summary>
+            <param name="width">Grid width</param>
+            <param name="depth">Grid depth</param>
+            <param name="widthFaceCount">Number of faces in width</param>
+            <param name="depthFaceCount">Number of faces in depth</param>
+            <param name="gridColor">The color for the inner grid lines</param>
+            <param name="lineColor">The color for the marker lines</param>
+            <param name="drawCoordinateSystemGizmo">If tue, a coordinate
+            system gizmo will be drawn at (0f,0f,0.1f)</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Grid.Draw(System.Single,System.Single,System.Int32,System.Int32,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draws a 3-dimensional grid using "LineColor" as ambient color.
+            </summary>
+            <param name="width">Grid width.</param>
+            <param name="depth">Grid depth.</param>
+            <param name="widthFaceCount">Count of faces in width.</param>
+            <param name="depthFaceCount">Count of faces in depth.</param>
+            <param name="color">Grid color.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Grid.DrawCoordinateSystemGizmo">
+            <summary>
+            Draw gizmo with offset of 0.01f
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Grid.DrawCoordinateSystemGizmo(System.Single)">
+            <summary>
+            DrawCoordinateSystemGizmo with given offset
+            </summary>
+            <param name="offset">The offset.</param>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Drawing.Circle">
+            <summary>
+            Circle class to draw circles either as line circles or as filled ones.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.Circle.cachedSinCosValues">
+            <summary>
+            Cached sin and cos value calculations based on the input radius,
+            which is often the same (almost always the same value in fact).
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Circle.DrawOutline(Delta.Utilities.Datatypes.Point,System.Single,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draw circle outline with lines. This method is quite fast, but mostly
+            used for debug code to show circles, bounding circles and for other
+            simple 2d cases. You can render thousands of circles even on mobile
+            devices, just make sure they share the radius as much as possible for
+            best performance. You can also tweak Circle.MaxCirclePoints for
+            better performance (lower value) or more roundness (higher value).
+            </summary>
+            <param name="screenPosition">Screen position</param>
+            <param name="radius">Radius</param>
+            <param name="circleColor">Circle color</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Circle.DrawFilled(Delta.Utilities.Datatypes.Point,System.Single,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draw a filled solid circle with the given color. If you want to use
+            this for debugging or marking something better use a transparent
+            color or use DrawOutline instead to just show a circle line around.
+            Same as DrawOutline this method is quite fast. For bigger circles it
+            is however mostly fill rate limited as quite a bit of pixels need to
+            be filled (which is especially slow on mobile devices).
+            </summary>
+            <param name="screenPosition">Screen position</param>
+            <param name="radius">Radius</param>
+            <param name="circleColor">Circle color</param>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.Circle.MaxCirclePoints">
+            <summary>
+            Number of points used to draw a circle with lines. 64 was chosen for
+            performance reasons. This way we can draw hundreds of circles for
+            debugging or even for game code without hurting the overall fps much.
+            See Delta.Rendering.BasicTests.DrawTests.DrawCirclePerformance.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Circle.GrabCachedCirclePoints(System.Single)">
+            <summary>
+            Grab cached circle points and calculates how many circle points are
+            needed to make it round enough while keeping the performance as good
+            as possible with as few as possible circle points (only use
+            MaxCirclePoints for really big circles bigger than the screen).
+            </summary>
+            <param name="radius">The radius.</param>
+            <returns>Array of points needed for drawing the circle.</returns>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Drawing.BillboardManager">
+            <summary>
+            Class that allows drawing billboards and managing them in a more
+            optimized and useful matter than just drawing out materials (which is
+            also possible). Usually used from Effects system to draw 3D billboards.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.BillboardManager.DefaultNormal">
+            <summary>
+            The default normal vector of billboards e.g. Vector.Zero so the
+            billboard will be calculated in special ways.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.BillboardManager.DefaultGroundNormal">
+            <summary>
+            The default ground normal used to calculate the billboard directly.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.BillboardManager.instance">
+            <summary>
+            Private instance
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.BillboardManager.transformMatrix">
+            <summary>
+            These matrices cache the last calculated transformation for billboards,
+            used for billboards that only get calculated the first time and then
+            reusing these matrices.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.BillboardManager.calculatedTransformAll">
+            <summary>
+            Flags for the calculation caches above to notice if something needs
+            to be calculated or not.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.BillboardManager.currentPosition3D">
+            <summary>
+            The current 3d position of the billboard, set in the ProcessBillboard
+            method. This "cache" is only used so we don't have to copy over
+            the position every time (even with ref it costs) and to make the
+            method more readable by removing all the "ref position3D" stuff.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.BillboardManager.billboardMode">
+            <summary>
+            The current mode of the billboard. Same usage as position3D above.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.BillboardManager.points3D">
+            <summary>
+            Helper for calculating billboard positions
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.BillboardManager.rotatedPoints">
+            <summary>
+            Rotation points helper for the Add method with rotation. The
+            Rectangle.Rotate method will fill these 4 points and they will then
+            be filled into the vertex data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.BillboardManager.#ctor">
+            <summary>
+            Creates a new instance of BillboardManager.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.BillboardManager.Draw(Delta.Rendering.MaterialColored,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Size,System.Single)">
+            <summary>
+            Performs draw billboard stuff.
+            </summary>
+            <param name="material">The material to draw with.</param>
+            <param name="position3D">The position in 3D space.</param>
+            <param name="size">The size of the quad.</param>
+            <param name="rotation">The rotation.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.BillboardManager.Draw(Delta.Rendering.MaterialColored,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Size,System.Single,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Performs draw billboard stuff.
+            </summary>
+            <param name="material">The material to draw with.</param>
+            <param name="position3D">The position in 3D space.</param>
+            <param name="size">The size of the quad.</param>
+            <param name="rotation">The rotation.</param>
+            <param name="normal">Normal to align the billboard to</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.BillboardManager.Draw(Delta.Rendering.MaterialColored,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Size,System.Single,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Performs draw billboard stuff.
+            </summary>
+            <param name="material">The material to draw with.</param>
+            <param name="position3D">The position in 3D space.</param>
+            <param name="size">The size of the quad.</param>
+            <param name="rotation">The rotation.</param>
+            <param name="blendColorOverride">Overwritten blend color</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.BillboardManager.DrawPlane(Delta.Rendering.MaterialColored)">
+            <summary>
+            Draw the material as a billboard ground plane.
+            </summary>
+            <param name="material">The material to draw with.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.BillboardManager.DrawPlane(Delta.Rendering.MaterialColored,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Size,System.Single)">
+            <summary>
+            Draw the material as a billboard ground plane.
+            </summary>
+            <param name="material">The material to draw with.</param>
+            <param name="position3D">The position in 3D space.</param>
+            <param name="size">The size of the quad.</param>
+            <param name="rotation">The rotation.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.BillboardManager.Run">
+            <summary>
+            Run method from DynamicModule.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.BillboardManager.SetupBillboardTransformOnce(Delta.Utilities.Datatypes.Matrix@,System.Boolean@)">
+            <summary>
+            Only does the actual setup if alreadyDone is set to false.
+            Sets alreadyDone to true afterwards
+            </summary>
+            <param name="alreadyDone">
+            Boolean value used and assigned after setting the transform once.
+            </param>
+            <param name="transform">
+            The transform calculated if alreadyDone is false.
+            </param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.BillboardManager.SetupBillboardTransform(Delta.Utilities.Datatypes.Matrix@)">
+            <summary>
+            Setup billboard transform for all upcoming billboard render actions.
+            Note: It does not set translation, as this must be done individually.
+            </summary>
+            <param name="transform">Transform matrix for the billboards</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.BillboardManager.ApplyBillboardTransform(Delta.Utilities.Datatypes.Matrix@)">
+            <summary>
+            Apply billboard transform to given Vector Array.
+            given position overrides transform.Translation
+            </summary>
+            <param name="transform">Transform matrix for the billboards</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.BillboardManager.ProcessBillboard(Delta.Rendering.MaterialColored,Delta.Utilities.Datatypes.Vector@,Delta.Utilities.Datatypes.Size@,System.Single,Delta.Utilities.Datatypes.Vector@)">
+            <summary>
+            Process a billboard and add it to the material manager.
+            </summary>
+            <param name="material">Material to render on the billboard.</param>
+            <param name="position3D">The #define position of the billboard.</param>
+            <param name="size">The size of the billboard.</param>
+            <param name="rotation">The rotation of the billboard.</param>
+            <param name="normal">The normal vector of the billboard
+            (if available)</param>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Drawing.BillboardManager.Instance">
+            <summary>
+            Instance for this Billboard manager (handled only here privately)
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Drawing.Sphere">
+            <summary>
+            Draw 3D spheres with help of this class. They can be drawn as only
+            outline or filled shape. This has the advantage of optimizing it better.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Sphere.DrawOutline(Delta.Utilities.Datatypes.Vector,System.Single,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draws a 3D sphere with lines. This basically draws 3 circles (one in
+            each direction) to form a sphere.
+            </summary>
+            <param name="position">Position</param>
+            <param name="radius">Radius</param>
+            <param name="color">Sphere color</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Sphere.DrawFilled(Delta.Utilities.Datatypes.Vector,System.Single,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draw a filled sphere in 3d space.
+            </summary>
+            <param name="position">The center position of the sphere in 3d.</param>
+            <param name="radius">The radius of the sphere.</param>
+            <param name="color">The fill color of the sphere.</param>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.Sphere.cachedPitchTransform">
+            <summary>
+            The pitch transform for the outline of the sphere is always the
+            same, so we can speed things up a little by caching this value
+            the first time.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.Sphere.cachedRollTransform">
+            <summary>
+            The roll transform for the outline of the sphere is always the
+            same, so we can speed things up a little by caching this value
+            the first time.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Sphere.#cctor">
+            <summary>
+            Static constructor for cached values.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Materials.Material">
+            <summary>
+            Material class, just derived from the BaseMaterial class, which contains
+            all the functionality for drawing and animations. Note: For 2D rendering
+            use Material2D, which does not share this class, but all the BaseMaterial
+            functionality.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material.#ctor(System.String,Delta.Graphics.Basics.Shader)">
+            <summary>
+            Create material with just a diffuse map and a shader. Will check if
+            the diffuse map is an animation set and load all animated images
+            automatically (use StartAnimation to control it).
+            </summary>
+            <param name="setDiffuseMapName">Diffuse map name.</param>
+            <param name="setShader">Shader to use during rendering.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material.#ctor(Delta.Graphics.Basics.Texture,Delta.Graphics.Basics.Shader)">
+            <summary>
+            Special constructor to allow creating a material just with a single
+            diffuse map image (e.g. created from RenderToTexture).
+            </summary>
+            <param name="setDiffuseMap">Diffuse texture to use.</param>
+            <param name="setShader">The shader to use.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material.#ctor(Delta.ContentSystem.Rendering.MaterialData)">
+            <summary>
+            Create material from MaterialData, only used internally, for example
+            for loading Models from ModelData (they contain a list of MaterialData)
+            </summary>
+            <param name="setData">
+            The <see cref="T:Delta.ContentSystem.Rendering.MaterialData"/> to use during rendering.
+            </param>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Materials.Material2D">
+            <summary>
+            Material 2D without vertex coloring, but otherwise has the same features
+            as Material2DColored. Rendering this is a bit faster because we don't
+            need to send vertex colors to the GPU (saves bandwidth and performance).
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Materials.Material2D.defaultMaterial2D">
+            <summary>
+            Default material 2D
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2D.#ctor(System.String)">
+            <summary>
+            Create material from just a diffuse map image name. The
+            material will always just use the basic shader without vertex coloring.
+            </summary>
+            <param name="setDiffuseMapName">Set diffuse map name</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2D.#ctor(Delta.Graphics.BaseTexture)">
+            <summary>
+            Create material from image, currently only needed for displaying
+            RenderToTexture and a video frame.
+            </summary>
+            <param name="setTexture">The diffuse texture to assign.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2D.Draw(Delta.Utilities.Datatypes.Rectangle)">
+            <summary>
+            Draw this 2D material at the specified rectangle location.
+            Note: This is just rendering in 2D, 3D rendering is not used, thus
+            3D camera movement will not affect this material draw. Use Meshes and
+            <see cref="T:Delta.Rendering.Basics.Drawing.BillboardManager"/> to accomplish 3D rendering of surfaces.
+            </summary>
+            <param name="drawArea">
+            Draw area to render to, rendering will be skipped if this is
+            completely outside of the 0-1 quadratic screen space.
+            </param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2D.Draw(Delta.Utilities.Datatypes.Rectangle,System.Single,Delta.Utilities.Datatypes.Point,Delta.Rendering.Enums.FlipMode)">
+            <summary>
+            Draw this 2D material at the specified rectangle location.
+            Note: This is just rendering in 2D, 3D rendering is not used, thus
+            3D camera movement will not affect this material draw. Use Meshes and
+            <see cref="T:Delta.Rendering.Basics.Drawing.BillboardManager"/> to accomplish 3D rendering of surfaces.
+            </summary>
+            <param name="drawArea">
+            Draw area to render to, rendering will be skipped if this is
+            completely outside of the 0-1 quadratic screen space.
+            </param>
+            <param name="rotation">
+            Rotation for this material drawing in degrees. By default unused=0.
+            </param>
+            <param name="rotationCenter">
+            Center for the rotation. If you want it to be centered around the
+            drawArea use drawArea.Center or just use the other Draw overloads.
+            Note: This rotationCenter is always absolute, add drawArea.Center to
+            make it relative to the local drawArea.
+            </param>
+            <param name="flipMode">
+            Flipping is useful to display materials in different ways. Just
+            rotating is often enough, but sometimes flipping is needed (e.g. for
+            RenderTargets or to make non-tileable textures pseudo-tilable).
+            FlipMode.Vertical and FlipMode.Horizontal can be combined (which is
+            FlipMode.VerticalAndHorizontal, the same as rotating 180 degrees).
+            </param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2D.Draw(Delta.Utilities.Datatypes.Rectangle,System.Single,Delta.Rendering.Enums.FlipMode)">
+            <summary>
+            Draw this 2D material at the specified rectangle location.
+            Note: This is just rendering in 2D, 3D rendering is not used, thus
+            3D camera movement will not affect this material draw. Use Meshes and
+            <see cref="T:Delta.Rendering.Basics.Drawing.BillboardManager"/> to accomplish 3D rendering of surfaces.
+            </summary>
+            <param name="drawArea">
+            Draw area to render to, rendering will be skipped if this is
+            completely outside of the 0-1 quadratic screen space.
+            </param>
+            <param name="rotation">
+            Rotation for this material drawing in degrees. By default unused=0.
+            </param>
+            <param name="flipMode">
+            Flipping is useful to display materials in different ways. Just
+            rotating is often enough, but sometimes flipping is needed (e.g. for
+            RenderTargets or to make non-tileable textures pseudo-tilable).
+            FlipMode.Vertical and FlipMode.Horizontal can be combined (which is
+            FlipMode.VerticalAndHorizontal, the same as rotating 180 degrees).
+            </param>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Materials.Material2D.Default">
+            <summary>
+            The default material which is always used if no material is explictly
+            set. Will be created the first time this is used, which is quite
+            likely for unit test code and if some material is missing or wrong,
+            but not so much true for the real games later. Also delayed loading
+            is much better for the application initialization time.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Drawing.Box">
+            <summary>
+            Static box class to draw 3d boxes either with lines or as solid boxes.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Delta.Rendering.Basics.Drawing.Box.DrawOutline(Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Color)" -->
+        <member name="M:Delta.Rendering.Basics.Drawing.Box.DrawOutline(Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Color,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Draws a 3-dimensional box from start to end using "LineColor" as
+            ambient color.
+            </summary>
+            <param name="minimum">Minimum</param>
+            <param name="maximum">Maximum</param>
+            <param name="color">Line color</param>
+            <param name="rotation">Rotation as raw, pitch, roll</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Box.DrawFilled(Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draw a filled box in 3d space.
+            </summary>
+            <param name="minimum">The minimum corner position.</param>
+            <param name="maximum">The maximum corner position.</param>
+            <param name="color">The fill color of the box.</param>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Drawing.DrawManager">
+            <summary>
+            The DrawManager is used by all of the classes in this namespace to do
+            all the line, box, sphere, circle, grid, etc. drawing of all kind of
+            shapes for 2D and 3D drawing. Everything related with primitive drawing
+            will be uniquely handled in here. This class is used as a singleton.
+            Warning: This class is not thread safe, only have one thread draw stuff!
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.DrawManager.InitialNumOfVertices">
+            <summary>
+            Start with max. 120 lines initially (or 80 polygons). If we reach that
+            limit we will increase the Mesh VertexData by 120 more lines.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.DrawManager.MakeScreenshot">
+            <summary>
+            Make a screenshot of the current screen.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.DrawManager.instance">
+            <summary>
+            Private instance
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.DrawManager.screenshotCapturer">
+            <summary>
+            Current screenshot capturer for the application
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.DrawManager.line2DMaterial">
+            <summary>
+            Line material for rendering all lines (2D and 3D), contains the
+            LineShader responsible for drawing everything.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.DrawManager.line3DMaterial">
+            <summary>
+            Line material for rendering all lines (2D and 3D), contains the
+            LineShader responsible for drawing everything.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.DrawManager.line2DMesh">
+            <summary>
+            Line mesh for 2D lines, contains 2D position and color vertex data.
+            Uncompressed this are just 12 bytes (8 for position, 4 for color),
+            compressed this goes down to 8 bytes (4 for position, 4 for color).
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.DrawManager.line3DMesh">
+            <summary>
+            Line mesh for 3D lines, contains 3D position and color vertex data.
+            Uncompressed this are just 16 bytes (12 for position, 4 for color),
+            compressed this goes down to 10 bytes (6 for position, 4 for color).
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.DrawManager.polygon2DMesh">
+            <summary>
+            Polygon mesh for 2D shapes, contains 3 2D position and colors for
+            each polygon. Same vertex data format is used as for line2DMesh!
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.DrawManager.polygon3DMesh">
+            <summary>
+            Polygon mesh for 3D shapes, contains 3 3D position and colors for
+            each polygon. Same vertex data format is used as for line3DMesh!
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.DrawManager.#ctor">
+            <summary>
+            Create draw manager as a child of MaterialManager because we handle
+            all rendering there (even line rendering, which is just meshes with
+            materials too).
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.DrawManager.Run">
+            <summary>
+            Show, just render all lines that have been collected this frame.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.DrawManager.Draw2DLine(Delta.Utilities.Datatypes.Point@,Delta.Utilities.Datatypes.Point@,Delta.Utilities.Datatypes.Color@)">
+            <summary>
+            Draws a 2D line with a start and end point and a line color.
+            </summary>
+            <param name="linePoint1">Start of line</param>
+            <param name="linePoint2">End of line</param>
+            <param name="lineColor">The color of the line</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.DrawManager.DrawPolygon(Delta.Utilities.Datatypes.Point@,Delta.Utilities.Datatypes.Point@,Delta.Utilities.Datatypes.Point@,Delta.Utilities.Datatypes.Color@)">
+            <summary>
+            Draws a polygon.
+            </summary>
+            <param name="polygonPoint1">Polygon point 1</param>
+            <param name="polygonPoint2">Polygon point 2</param>
+            <param name="polygonPoint3">Polygon point 3</param>
+            <param name="polygonColor">The color of the polygon.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.DrawManager.Draw3DLine(Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draws a 3D line with a start and end vector and a line color.
+            </summary>
+            <param name="lineVector1">Start of line</param>
+            <param name="lineVector2">End of line</param>
+            <param name="lineColor">The color of the line.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.DrawManager.Draw3DLine(Delta.Utilities.Datatypes.Vector@,Delta.Utilities.Datatypes.Vector@,Delta.Utilities.Datatypes.Color@)">
+            <summary>
+            Draws a 3D line with a start and end vector and a line color.
+            </summary>
+            <param name="lineVector1">Start of line</param>
+            <param name="lineVector2">End of line</param>
+            <param name="lineColor">The color of the line.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.DrawManager.DrawBox(Delta.Utilities.Datatypes.Vector@,Delta.Utilities.Datatypes.Vector@,Delta.Utilities.Datatypes.Color@)">
+            <summary>
+            Draws a 3D box with a start vector, a size vector and a color.
+            </summary>
+            <param name="minimum">Minimum position of the box.</param>
+            <param name="size">Size of the box.</param>
+            <param name="fillColor">The color of the filled box.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.DrawManager.DrawSphere(Delta.Utilities.Datatypes.Vector@,System.Single,Delta.Utilities.Datatypes.Color@)">
+            <summary>
+            Draws a 3D sphere with a center vector, a radius and a color.
+            </summary>
+            <param name="minimum">Minimum position of the box.</param>
+            <param name="size">Size of the box.</param>
+            <param name="fillColor">The color of the filled box.</param>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Drawing.DrawManager.Instance">
+            <summary>
+            Instance for this Draw manager (handled only here privately)
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Drawing.DrawManager.ScreenshotCapturer">
+            <summary>
+            Screenshot capturer
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Fonts.Font">
+            <summary>
+            That class contains all the logic to render a font <see cref="T:Delta.ContentSystem.Rendering.FontData"/>
+            and will try to request the specified font data (in the constructor). As
+            an extra feature the font will automatically choose one of the available
+            font sizes depending on the current resolution to support a more sharp
+            down- or up-scaling of the originally wished font size. Most fonts you
+            can load from the content system will already provide 4 resolution based
+            fonts fine tuned to work in all possible resolutions (see constructor).
+            <para/>
+            Note: Performance is heavily optimized for render speed. The main idea is
+            to use cached glyphs to avoid recalculating them for each text. This also
+            means all of the properties of this class are read-only. To change
+            anything (including character distances, line spacing, the render color,
+            etc.) you need to create a new Font instance. This way the Geometry
+            can be cached and only calculated once for a text, which then can be
+            rendered many times (even with different positioning, rotation, etc.).
+            In release mode a font rendering can be done up to 1.5 million times/sec
+            (when swapbuffer, clear, geometry rendering is turned off for measuring.)
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.VersionNumber">
+            <summary>
+            The current version of the implementation of this font class.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.DefaultFontName">
+            <summary>
+            The default fallback font name is "DefaultFont". Used in Font.Default!
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.DrawTopLeftInformation(System.String)">
+            <summary>
+            Draws information text on the top left corner of the screen via the
+            default font. Should only be used to display profiling and debug
+            information.
+            </summary>
+            <param name="text">Text to display</param>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.defaultFont">
+            <summary>
+            Default font to render text centered.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.informationFont">
+            <summary>
+            Information font for the DrawTopLeftInformation method.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.renderColor">
+            <summary>
+            Text render color
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.lineSpacingMultiplier">
+            <summary>
+            Line spacing multiplier
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.characterSpacingMultiplier">
+            <summary>
+            Character spacing
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.drawLayer">
+            <summary>
+            Render layer for this font
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.fontDatas">
+            <summary>
+            The available FontData's for the resolutions 480x320, 800x480,
+            1024x768 and 1920x1080, started with the smallest resolution. The
+            correct one will be selected by the 'DetermineBestFont()'.
+            <para/>
+            Note: If only one entry is set, that "auto-selecting" feature is
+            disabled. If more that one is set, every entry is valid (is made sure
+            in the constructor).
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.activeFontData">
+            <summary>
+            The reference to the current selected 'FontData' (from the 'fontDatas'
+            list and based on the current screen resolution) which is used for
+            drawing the text on the screen.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.fontMaps">
+            <summary>
+            Font maps, will be updated as the activeFontData changes (each font can
+            have multiple font maps). Often just has one material that we use for
+            rendering. Each Glyph links to this list and has the UV coordinates for
+            rendering that glyph.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.glyphCache">
+            <summary>
+            The internal cache of drawing information for each text that needs to
+            be handled in a "Draw(...)" or in the <see cref="M:Delta.Rendering.Basics.Fonts.Font.Measure(System.String)"/>
+            method by the current font instance.
+            <para/>
+            <b>Note:</b> The cache is initialized in the constructor. It is also
+            cleared every time we change something important (resolution changed).
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.#ctor(System.String)">
+            <summary>
+            Create a new font for drawing a text from a font content name.
+            Note: You can also search for fonts with the FontData.Get method,
+            but you should use this method normally because it lets you setup
+            and change font settings without having to change the code.
+            </summary>
+            <param name="setFontContentName">Set font content name</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.#ctor(Delta.ContentSystem.Rendering.FontData,Delta.Utilities.Datatypes.Advanced.HorizontalAlignment,Delta.Utilities.Datatypes.Advanced.VerticalAlignment,System.Boolean,System.Single,System.Single,Delta.Rendering.Enums.RenderLayer)">
+            <summary>
+            Create a new font for drawing a text from FontData, which can be loaded
+            from content via FontData.Get or created customly. Please note that
+            each FontData can have children entries for additional font sizes (four
+            children for the 4 default resolutions, see DetermineBestFont, which
+            switches fonts at 480x320, 800x480, 1024x768 and 1920x1080).
+            </summary>
+            <param name="setFontData">
+            Set font data, which can contain 3 children for the other resolutions
+            (always in the same order). If there are no children all 4 fontDatas
+            will be set to the same font size.
+            </param>
+            <param name="setHorizontalAlignment">
+            Set horizontal alignment mode for font rendering, defaults to centered.
+            </param>
+            <param name="setVerticalAlignment">
+            Set vertical alignment mode for font rendering, defaults to centered.
+            </param>
+            <param name="setWordWrapping">Word wrapping mode (usually off).</param>
+            <param name="setLineSpacingMultiplier">
+            Set line spacing multiplier (default to 1.0). Multiplied with the
+            FontData.LineHeight.
+            </param>
+            <param name="setCharacterSpacingMultiplier">
+            Set character spacing multiplier (defaults to 1.0). Multiplied with
+            FontData character render distances.
+            </param>
+            <param name="setDrawLayer">Set draw layer to use for rendering.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.#ctor(Delta.ContentSystem.Rendering.FontData,Delta.Utilities.Datatypes.Color,Delta.Utilities.Datatypes.Advanced.HorizontalAlignment,Delta.Utilities.Datatypes.Advanced.VerticalAlignment,System.Boolean,System.Single,System.Single,Delta.Rendering.Enums.RenderLayer)">
+            <summary>
+            Create a new font for drawing a text from FontData, which can be loaded
+            from content via FontData.Get or created customly. Please note that
+            each FontData can have children entries for additional font sizes (four
+            children for the 4 default resolutions, see DetermineBestFont, which
+            switches fonts at 480x320, 800x480, 1024x768 and 1920x1080).
+            </summary>
+            <param name="setFontData">
+            Set font data, which can contain 3 children for the other resolutions
+            (always in the same order). If there are no children all 4 fontDatas
+            will be set to the same font size.
+            </param>
+            <param name="newFontColor">New font text render color to use.</param>
+            <param name="setHorizontalAlignment">
+            Set horizontal alignment mode for font rendering, defaults to centered.
+            </param>
+            <param name="setVerticalAlignment">
+            Set vertical alignment mode for font rendering, defaults to centered.
+            </param>
+            <param name="setWordWrapping">Word wrapping mode (usually off).</param>
+            <param name="setLineSpacingMultiplier">
+            Set line spacing multiplier (default to 1.0). Multiplied with the
+            FontData.LineHeight.
+            </param>
+            <param name="setCharacterSpacingMultiplier">
+            Set character spacing multiplier (defaults to 1.0). Multiplied with
+            FontData character render distances.
+            </param>
+            <param name="setDrawLayer">Set draw layer to use for rendering.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.#ctor(Delta.Rendering.Basics.Fonts.Font,Delta.Utilities.Datatypes.Color,Delta.Utilities.Datatypes.Advanced.HorizontalAlignment,Delta.Utilities.Datatypes.Advanced.VerticalAlignment,System.Boolean,System.Single,System.Single,Delta.Rendering.Enums.RenderLayer)">
+            <summary>
+            Creates a new font based on an existing font, required for cloning
+            fonts and allows us to change the font render parameters like Color,
+            DrawLayer and Alignment.
+            </summary>
+            <param name="fontToCopy">Font to copy all data from.</param>
+            <param name="newFontColor">New font text render color to use.</param>
+            <param name="setHorizontalAlignment">
+            Set horizontal alignment mode for font rendering, defaults to centered.
+            </param>
+            <param name="setVerticalAlignment">
+            Set vertical alignment mode for font rendering, defaults to centered.
+            </param>
+            <param name="setWordWrapping">Word wrapping mode (usually off).</param>
+            <param name="setLineSpacingMultiplier">
+            Set line spacing multiplier (default to 1.0). Multiplied with the
+            FontData.LineHeight.
+            </param>
+            <param name="setCharacterSpacingMultiplier">
+            Set character spacing multiplier (defaults to 1.0). Multiplied with
+            FontData character render distances.
+            </param>
+            <param name="setDrawLayer">Set draw layer to use for rendering.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.#ctor(Delta.Rendering.Basics.Fonts.Font,Delta.Utilities.Datatypes.Advanced.HorizontalAlignment,Delta.Utilities.Datatypes.Advanced.VerticalAlignment)">
+            <summary>
+            Creates a new font based on an existing font, required for cloning
+            fonts and allows us to change the font Alignment parameters.
+            </summary>
+            <param name="fontToCopy">Font to copy all data from.</param>
+            <param name="setHorizontalAlignment">
+            Set horizontal alignment mode for font rendering, defaults to centered.
+            </param>
+            <param name="setVerticalAlignment">
+            Set vertical alignment mode for font rendering, defaults to centered.
+            </param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.#ctor">
+            <summary>
+            Creates an empty font, required for the <see cref="T:Delta.Engine.Dynamic.Factory"/> if the
+            font will be loaded there by the <see cref="T:Delta.Utilities.ISaveLoadBinary"/>
+            interface (see StreamHelper.LoadWithLength). Note: All values need to
+            be filled in via the Load method.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.Dispose">
+            <summary>
+            Dispose
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.Load(System.IO.BinaryReader)">
+            <summary>
+            Loads all data of the object again which were previously saved.
+            </summary>
+            <param name="dataReader">The data reader.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.Save(System.IO.BinaryWriter)">
+            <summary>
+            Saves all necessary data of the object to a byte array.
+            </summary>
+            <param name="dataWriter">The data writer.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.Draw(System.String,Delta.Utilities.Datatypes.Rectangle)">
+            <summary>
+            Draws a text without any rotation and (scrolling) offset at the
+            specified area.
+            </summary>
+            <param name="text">The text that should be drawn.</param>
+            <param name="drawArea">
+            The area (in Quadratic Space) where the text should be drawn.
+            </param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.Draw(System.String,Delta.Utilities.Datatypes.Rectangle,System.Single,Delta.Utilities.Datatypes.Point)">
+            <summary>
+            Draws a text with the specified rotation (and scrolling offset) at the
+            given area whereby the area defines the available space for the
+            clipping too. Note: Rotation and scroll offset is not supported yet.
+            </summary>
+            <param name="text">The text that should be drawn.</param>
+            <param name="drawArea">
+            The area (in Quadratic Space) where the text should be drawn.
+            </param>
+            <param name="rotation">The rotation the text should have.</param>
+            <param name="scrollOffset">
+            The offset where the text should begin inside the text area which is
+            necessary for scrolled text elements that needs a partial clipping.
+            </param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.Measure(System.String)">
+            <summary>
+            Measures the given text and returns the size that it would need for
+            drawing it in the current resolution of the screen.
+            </summary>
+            <param name="text">Text</param>
+            <returns>
+            Size
+            </returns>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.Measure(Delta.ContentSystem.Rendering.Helpers.GlyphDrawInfo[])">
+            <summary>
+            Measures the given text and returns the size that it would need for
+            drawing it in the current resolution of the screen.
+            </summary>
+            <param name="glyphDrawInfos">Glyph draw info</param>
+            <returns>Size</returns>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.CreateGeometryFromGlyph(Delta.ContentSystem.Rendering.Helpers.GlyphDrawInfo[],System.String)">
+            <summary>
+            Helper method to create geometry per font request, called by the
+            glyphCache delegate inside InitializeGlyphCache.
+            </summary>
+            <param name="glyphs">Glyphs with all the letters</param>
+            <param name="text">Text, just for the geometry name</param>
+            <returns>Geometry that will be used for drawing.</returns>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.DetermineBestFont">
+            <summary>
+            Determines the best matching font depending on the current screen
+            resolution and clears the current glyph cache too.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.ComputeLineHeight(Delta.ContentSystem.Rendering.FontData)">
+            <summary>
+            Computes the current line height in quadratic space, needs to be
+            updated once the active font instance or resolution changes.
+            </summary>
+            <param name="fontData">
+            The <see cref="T:Delta.ContentSystem.Rendering.FontData"/> to compute height from.
+            </param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Fonts.Font.UpdateFontMaps">
+            <summary>
+            Update font maps
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Fonts.Font.Default">
+            <summary>
+            Get the default fallback font, that is usually used for info and
+            debug texts, the FPS counter, profiler and other stuff that does not
+            have a valid font set (or does not want to handle own fonts).
+            All text is displayed
+            UI has its own fallback and is much more sophisticated because
+            we usually need different font sizes depending on the resolution!
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Fonts.Font.FamilyName">
+            <summary>
+            Get the family name of the font (e.g. "Verdana", "Arial", etc.)
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Fonts.Font.CurrentFontSize">
+            <summary>
+            Get the current selected font size based on the current resolution.
+            <para/>
+            Note: This will only change if different font data values were
+            specified in the constructor, else the size will always be the same
+            for the current font instance.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Fonts.Font.LineSpacingMultiplier">
+            <summary>
+            The scale factor which finally defines the total line height based on
+            the font content size (default is '1.0'). Must be set in constructor
+            and is usually set from the font content data. Can be adjusted in the
+            constructor (e.g. 1.5) and will be multiplied with fontData.LineHeight
+            for rendering.
+            <para />
+            LineHeight = 1.0: Normal font height for the characters.
+            <para />
+            LineHeight = 1.5: Bigger font height for the characters with an extra
+            space of 50% between lines.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Fonts.Font.CharacterSpacingMultiplier">
+            <summary>
+            Similar to LineSpacing you can also define how far each font
+            character should be apart. The default value is '1.0' and it already
+            uses the Tracking defined in each of the FontDatas used by this font.
+            2.0 means the same distance a space character holds is added between
+            each letter, but you can use whatever value you like (1.1, 5.0, 0.8).
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Fonts.Font.LineHeight">
+            <summary>
+            The total height of a text line (in quadratic space) based on the set
+            font height (in pixel) and the line spacing multiplier.
+            <para />Note: The value is depending on the current resolution.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Fonts.Font.Color">
+            <summary>
+            Get the color of the displayed text (default is 'White'). Can only be
+            set in the constructor like most of the important font render states.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Fonts.Font.DrawLayer">
+            <summary>
+            Get the render layer where a text will be drawn. Can only be set in the
+            constructor.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Fonts.Font.IsWordWrappingOn">
+            <summary>
+            Is word wrapping on (default is 'false').
+            <para />
+            Note: This feature is still not fully supported yet.
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Fonts.Font.HorizontalAlignment">
+            <summary>
+            Horizontal text alignment (default is 'Centered').
+            </summary>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Fonts.Font.VerticalAlignment">
+            <summary>
+            Vertical text alignment (default is 'Centered').
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Fonts.Font.TextParameters">
+            <summary>
+            Helper for the second input value of glyphCache. These values should
+            not change much, but we still need to check them for every Get.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.TextParameters.Width">
+            <summary>
+            The available width (in Quadratic Space) to draw the related text.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.TextParameters.Height">
+            <summary>
+            The available height (in Quadratic Space) to draw the related text.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.TextParameters.HorizontalAlignment">
+            <summary>
+            The horizontal alignment of the related text.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.TextParameters.LineSpacing">
+            <summary>
+            The set spacing for the text lines of the related text (if there are
+            some lines). This value is FontData.LineHeight * Font.LineHeight.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Fonts.Font.TextDrawInfo">
+            <summary>
+            Helper struct for the cache result of glyphCache.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.TextDrawInfo.GlyphInfos">
+            <summary>
+            That array of glyph info represents the drawing area's of each
+            character in relation to the text. In other words that are NOT the
+            final areas where the text will be drawn on the screen !
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.TextDrawInfo.TextSize">
+            <summary>
+            The measured size of the glyphs (or in other words the text) that
+            will be needed to show it fully on the screen.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.TextDrawInfo.Material">
+            <summary>
+            Material for rendering the Geometry.
+            TODO: Group the glyph geometries by each fontmap
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Fonts.Font.TextDrawInfo.Geometry">
+            <summary>
+            And finally the pre-calculated geometry to render out text quickly.
+            Usually text does not change, thus we can calculate the geometry
+            once and render it many times.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Materials.Material2DColored">
+            <summary>
+            Vertex colored Material 2D, used for particle effects and coloring UI
+            elements in UI screens. Using this class instead of Material2D is a bit
+            slower because we need to send vertex colors to the GPU.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Materials.Material2DColored.defaultMaterial2DColored">
+            <summary>
+            Default material 2D
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2DColored.#ctor(System.String)">
+            <summary>
+            Create material from just a diffuse map image name and a the default
+            blend color. The material will always just use the basic shader with
+            vertex coloring. That is mostly used for UI rendering.
+            </summary>
+            <param name="setDiffuseMapName">
+            The name of the  diffuse map to use.
+            </param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2DColored.#ctor(System.String,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Create material from just a diffuse map image name and a given
+            blend color. The material will always just use the basic shader with
+            vertex coloring. That is mostly used for UI rendering.
+            </summary>
+            <param name="setDiffuseMapName">Diffuse map name.</param>
+            <param name="setColor">The tint color to apply during draw.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2DColored.#ctor(Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Create material from just a diffuse map image name and a the default
+            blend color. The material will always just use the basic shader with
+            vertex coloring. That is mostly used for UI rendering.
+            </summary>
+            <param name="setColor">The color that the material should have.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2DColored.Clone">
+            <summary>
+            Returns a new instance of this Material2DColored, which we can change
+            without modifying the original. Useful for the Default material (see
+            property above) or for different material settings on the same image.
+            </summary>
+            <returns>New Material2DColored with the same settings</returns>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2DColored.Draw(Delta.Utilities.Datatypes.Rectangle)">
+            <summary>
+            Draw this colored 2D material at the specified rectangle location.
+            Use the other overloads for more options (at the cost of performance)
+            like rotation, flipping, overwriting UVs, etc.
+            </summary>
+            <param name="drawArea">
+            Draw area to render to, rendering will be skipped if this is
+            completely outside of the 0-1 quadratic screen space.
+            </param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2DColored.Draw(Delta.Utilities.Datatypes.Rectangle,System.Single,Delta.Rendering.Enums.FlipMode)">
+            <summary>
+            Draw this colored 2D material at the specified rectangle location.
+            Use the other overloads for more options (at the cost of performance)
+            like rotation, flipping, overwriting UVs, etc.
+            </summary>
+            <param name="drawArea">
+            Draw area to render to, rendering will be skipped if this is
+            completely outside of the 0-1 quadratic screen space.
+            </param>
+            <param name="rotation">
+            Rotation for this material drawing in degrees. By default unused=0.
+            </param>
+            <param name="flipMode">
+            Flipping is useful to display materials in different ways. Just
+            rotating is often enough, but sometimes flipping is needed (e.g. for
+            RenderTargets or to make non-tileable textures pseudo-tilable).
+            FlipMode.Vertical and FlipMode.Horizontal can be combined (which is
+            FlipMode.VerticalAndHorizontal, the same as rotating 180 degrees).
+            </param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2DColored.Draw(Delta.Utilities.Datatypes.Rectangle,System.Single,Delta.Utilities.Datatypes.Point,Delta.Rendering.Enums.FlipMode)">
+            <summary>
+            Draw this 2D material at the specified rectangle location and
+            optionally rotating and flipping it.
+            </summary>
+            <param name="drawArea">
+            Draw area to render to, rendering will be skipped if this is
+            completely outside of the 0-1 quadratic screen space.
+            </param>
+            <param name="rotation">
+            Rotation for this material drawing in degrees. By default unused=0.
+            </param>
+            <param name="rotationCenter">
+            Center for the rotation. If you want it to be centered around the
+            drawArea use drawArea.Center or just use the other Draw overloads.
+            Note: This rotationCenter is always absolute, add drawArea.Center to
+            make it relative to the local drawArea.
+            </param>
+            <param name="flipMode">
+            Flipping is useful to display materials in different ways. Just
+            rotating is often enough, but sometimes flipping is needed (e.g. for
+            RenderTargets or to make non-tileable textures pseudo-tilable).
+            FlipMode.Vertical and FlipMode.Horizontal can be combined (which is
+            FlipMode.VerticalAndHorizontal, the same as rotating 180 degrees).
+            </param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Materials.Material2DColored.Draw(Delta.Utilities.Datatypes.Rectangle,Delta.Utilities.Datatypes.Rectangle,System.Single)">
+            <summary>
+            Draw this 2D material at the specified rectangle location and custom
+            UV rectangle and optionally rotating it.
+            </summary>
+            <param name="drawArea">
+            Draw area to render to, rendering will be skipped if this is
+            completely outside of the 0-1 quadratic screen space.
+            </param>
+            <param name="uvAreaOverride">
+            UV area override to render a custom UV rectangle (you must apply all
+            atlas UV remapping yourself).
+            </param>
+            <param name="rotation">
+            Rotation for this material drawing in degrees. By default unused=0.
+            </param>
+        </member>
+        <member name="P:Delta.Rendering.Basics.Materials.Material2DColored.Default">
+            <summary>
+            The default material which is always used if no material is explictly
+            set. Will be created the first time this is used, which is quite
+            likely for unit test code and if some material is missing or wrong,
+            but not so much true for the real games later. Also delayed loading
+            is much better for the application initialization time.
+            </summary>
+        </member>
+        <member name="T:Delta.Rendering.Basics.Drawing.Rect">
+            <summary>
+            Draw 2D rectangles with help of this class. They can be drawn as only
+            outline, filled shape and with rotation. This has the advantage of
+            optimizing it better.
+            </summary>
+        </member>
+        <member name="F:Delta.Rendering.Basics.Drawing.Rect.rotatedEdgePoints">
+            <summary>
+            Helper for the Rectangle method that allows rotated rectangle drawing.
+            </summary>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Rect.DrawOutline(Delta.Utilities.Datatypes.Rectangle,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draws a rectangle box with lines
+            </summary>
+            <param name="rect">Rectangle to draw</param>
+            <param name="lineColor">Line color</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Rect.DrawOutline(Delta.Utilities.Datatypes.Rectangle,Delta.Utilities.Datatypes.Color,System.Single)">
+            <summary>
+            Draws a rotated rectangle box with lines.
+            </summary>
+            <param name="rect">Rectangle to draw</param>
+            <param name="lineColor">Line color</param>
+            <param name="rotation">Rotation of the rectangle</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Rect.DrawFilled(Delta.Utilities.Datatypes.Rectangle,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Draw filled rectangle at the given position with the given color.
+            </summary>
+            <param name="rect">The rect.</param>
+            <param name="color">The color.</param>
+        </member>
+        <member name="M:Delta.Rendering.Basics.Drawing.Rect.DrawFilled(Delta.Utilities.Datatypes.Rectangle,Delta.Utilities.Datatypes.Color,System.Single)">
+            <summary>
+            Draw filled rectangle at the given position with the given color.
+            </summary>
+            <param name="rect">The rect.</param>
+            <param name="color">The color.</param>
+            <param name="rotation">The rotation.</param>
+        </member>
+    </members>
+</doc>

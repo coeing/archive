@@ -1,0 +1,15 @@
+@CHARSET "ISO-8859-1";
+
+html
+{  
+    background-color:#0001ab;
+}
+
+div#bluescreen
+{
+	padding-top: 50px;
+    width: 1024px;
+    height: 768px;
+    background: url('../images/bluescreen.jpg') no-repeat center center; 
+    margin: auto;
+}

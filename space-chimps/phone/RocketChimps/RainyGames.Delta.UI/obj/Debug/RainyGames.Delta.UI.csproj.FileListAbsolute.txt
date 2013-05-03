@@ -1,0 +1,5 @@
+D:\projects\space-chimps\phone\RocketChimps\RainyGames.Delta.UI\Bin\Debug\RainyGames.Delta.UI.dll
+D:\projects\space-chimps\phone\RocketChimps\RainyGames.Delta.UI\Bin\Debug\RainyGames.Delta.UI.pdb
+D:\projects\space-chimps\phone\RocketChimps\RainyGames.Delta.UI\obj\Debug\ResolveAssemblyReference.cache
+D:\projects\space-chimps\phone\RocketChimps\RainyGames.Delta.UI\obj\Debug\RainyGames.Delta.UI.dll
+D:\projects\space-chimps\phone\RocketChimps\RainyGames.Delta.UI\obj\Debug\RainyGames.Delta.UI.pdb

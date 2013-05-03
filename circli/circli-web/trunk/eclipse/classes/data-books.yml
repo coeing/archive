@@ -1,0 +1,34 @@
+models.article.Book(bookA):
+    author: "Napoleon Hill"
+    title: "Denke nach und werde reich"
+    uniqueIdentifier: 9783720526647
+
+models.article.Book(bookB):
+    author: "George Samuel Clason"
+    title: "Der reichste Mann von Babylon"
+    uniqueIdentifier: 9783442163830
+
+models.article.Book(bookC):
+    author: "Guy Kawasaki"
+    title: "The Art Of The Start"
+    uniqueIdentifier: 9781591840565
+
+models.article.Book(bookD):
+    author: "Günter Faltin"
+    title: "Kopf schlägt Kapital"
+    uniqueIdentifier: 9783446415645
+
+models.article.Book(bookE):
+    author: "Tim Ferriss"
+    title: "Die 4-Stunden-Woche"
+    uniqueIdentifier: 9783430200516
+
+models.article.Book(bookF):
+    author: "John Strelecky"
+    title: "The Big Five for Life"
+    uniqueIdentifier: 9783423345286
+
+models.article.Book(bookG):
+    author: "Nick Lötscher"
+    title: "Der Ausstieg aus dem Hamsterrad"
+    uniqueIdentifier: 9783839108222

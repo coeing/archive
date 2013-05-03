@@ -1,0 +1,35 @@
+<mockup version="1.0" skin="sketch" measuredW="687" measuredH="639" mockupW="282" mockupH="510">
+  <controls>
+    <control controlID="160" controlTypeID="com.balsamiq.mockups::iPhone" x="405" y="129" w="-1" h="-1" measuredW="282" measuredH="510" zOrder="0" locked="false" isInGroup="-1"/>
+    <control controlID="161" controlTypeID="com.balsamiq.mockups::IconLabel" x="436" y="257" w="69" h="-1" measuredW="48" measuredH="73" zOrder="1" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>HomeMobileIcon%7Clarge</icon>
+        <text>Home</text>
+      </controlProperties>
+    </control>
+    <control controlID="162" controlTypeID="com.balsamiq.mockups::Label" x="436" y="232" w="-1" h="-1" measuredW="109" measuredH="25" zOrder="2" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>I%20want%20to%20go%20to%3A</text>
+      </controlProperties>
+    </control>
+    <control controlID="170" controlTypeID="com.balsamiq.mockups::IconLabel" x="511" y="256" w="69" h="-1" measuredW="70" measuredH="73" zOrder="3" locked="false" isInGroup="-1">
+      <controlProperties>
+        <icon>HelpIcon%7Clarge</icon>
+        <text>New%20place</text>
+      </controlProperties>
+    </control>
+    <control controlID="171" controlTypeID="com.balsamiq.mockups::Button" x="436" y="522" w="220" h="28" measuredW="76" measuredH="28" zOrder="4" locked="false" isInGroup="-1">
+      <controlProperties>
+        <text>Settings</text>
+      </controlProperties>
+    </control>
+    <control controlID="172" controlTypeID="com.balsamiq.mockups::Canvas" x="436" y="258" w="75" h="70" measuredW="100" measuredH="70" zOrder="5" locked="false" isInGroup="-1">
+      <controlProperties>
+        <backgroundAlpha>0.25</backgroundAlpha>
+        <borderColor>3700253</borderColor>
+        <borderStyle>roundedSolid</borderStyle>
+        <color>3355443</color>
+      </controlProperties>
+    </control>
+  </controls>
+</mockup>

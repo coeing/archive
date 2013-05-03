@@ -1,0 +1,178 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.ContentSystem.Multimedia</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.ContentSystem.Multimedia.SoundData">
+            <summary>
+            Abstract base sound class. Needs to be implemented in the platform
+            multimedia module. Native data and properties are set in the derived
+            classes.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Multimedia.SoundData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Multimedia.SoundData.#ctor(System.String)">
+            <summary>
+            Create base sound class.
+            </summary>
+            <param name="contentName">Name of the content.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Multimedia.SoundData.ToString">
+            <summary>
+            Return an information string about this SoundData instance.
+            </summary>
+            <returns>String containing information about the sound data.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Multimedia.SoundData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Load sound content data, does nothing. Only properties are assigned.
+            No loading happens here (it all happens in Sound), we can obviously
+            clone all SoundDatas with the same name as they are not loaded here.
+            Note: If a class is interested in the content reload functionality,
+            it can just attach itself to the ContentChanged event.
+            </summary>
+            <param name="alreadyLoadedNativeData">If we already have native data
+            loaded, clone it from this instance. Only used if not null. Please
+            note that this is only used for other objects that had the same
+            RawFileId and are already loaded and returned true for this method.
+            </param>
+        </member>
+        <member name="P:Delta.ContentSystem.Multimedia.SoundData.TimeLength">
+            <summary>
+            The length in seconds this sound data plays.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Multimedia.SoundData.Pitch">
+            <summary>
+            The pitch (speed) of the sound.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Multimedia.SoundData.Volume">
+            <summary>
+            The volume of the sound.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Multimedia.SoundData.Pan">
+            <summary>
+            For sound we can specify a panning value which is the balance between
+            left and right speaker.
+            0.0f = center (default)
+            -1.0f = full left
+            1.0f = full right
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Multimedia.MusicData">
+            <summary>
+            Abstract base music class for the Delta.Multimedia.Music class. Needs to
+            be implemented in the platform multimedia module (similar to Graphic
+            classes). Unlike many other data classes this does not contain the data
+            yet as it is highly dependant on the native implementation. For example
+            in XNA we actually do not load a wav file, we just keep a native
+            Sound object, while for OpenTK we load the wav data and set it to a
+            stream before releasing it again.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Multimedia.MusicData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Multimedia.MusicData.#ctor(System.String)">
+            <summary>
+            Create music data
+            </summary>
+            <param name="contentName">Name of the content.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Multimedia.MusicData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Load music content data, does nothing. Only properties are assigned.
+            No loading happens here (it all happens in Sound), we can obviously
+            clone all SoundDatas with the same name as they are not loaded here.
+            Note: If a class is interested in the content reload functionality,
+            it can just attach itself to the ContentChanged event.
+            </summary>
+            <param name="alreadyLoadedNativeData">If we already have native data
+            loaded, clone it from this instance. Only used if not null. Please
+            note that this is only used for other objects that had the same
+            RawFileId and are already loaded and returned true for this method.
+            </param>
+        </member>
+        <member name="P:Delta.ContentSystem.Multimedia.MusicData.TimeLength">
+            <summary>
+            The length in seconds this music data plays.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Multimedia.MusicData.MemorySize">
+            <summary>
+            Change the memory size from the file size to just a small buffer
+            that is used by each native implementation.
+            </summary>
+        </member>
+        <member name="T:Delta.ContentSystem.Multimedia.VideoData">
+            <summary>
+            Video data class, does not contain any native data as this is usually
+            done with some external library or platform module that handles
+            everything from loading to displaying the video for us.
+            </summary>
+        </member>
+        <member name="M:Delta.ContentSystem.Multimedia.VideoData.Get(System.String)">
+            <summary>
+            Get and load content based on the content name. This method makes sure
+            we do not load the same content twice (the constructor is protected).
+            </summary>
+            <param name="contentName">Content name we want to load, this is
+            passed onto the Content System, which will do the actual loading with
+            help of the Load method in this class.</param>
+            <returns>The loaded Content object, always unique for the same
+            name, this helps comparing data.</returns>
+        </member>
+        <member name="M:Delta.ContentSystem.Multimedia.VideoData.#ctor(System.String)">
+            <summary>
+            Create base video
+            </summary>
+            <param name="contentName">Name of the content.</param>
+        </member>
+        <member name="M:Delta.ContentSystem.Multimedia.VideoData.Load(Delta.ContentSystem.Content)">
+            <summary>
+            Load video content data, does nothing. Only properties are assigned.
+            No loading happens here (it all happens in Sound), we can obviously
+            clone all SoundDatas with the same name as they are not loaded here.
+            Note: If a class is interested in the content reload functionality,
+            it can just attach itself to the ContentChanged event.
+            </summary>
+            <param name="alreadyLoadedNativeData">If we already have native data
+            loaded, clone it from this instance. Only used if not null. Please
+            note that this is only used for other objects that had the same
+            RawFileId and are already loaded and returned true for this method.
+            </param>
+        </member>
+        <member name="P:Delta.ContentSystem.Multimedia.VideoData.TimeLength">
+            <summary>
+            The length in seconds this video data plays.
+            </summary>
+        </member>
+        <member name="P:Delta.ContentSystem.Multimedia.VideoData.MemorySize">
+            <summary>
+            Change the memory size from the file size to just a small buffer
+            that is used by each native implementation.
+            </summary>
+        </member>
+    </members>
+</doc>

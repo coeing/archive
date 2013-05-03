@@ -1,0 +1,2199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Delta.InputSystem</name>
+  </assembly>
+  <members>
+    <member name="T:Delta.InputSystem.Devices.GestureData">
+      <summary>
+            Helper struct for gesture data, which holds whatever gesture was
+            performed with all the important data (touch points, how much movement
+            happened, how much time has passed since this gesture was started and
+            of course the gesture type like Tap, Pinch, Drag, Rotate, etc.).
+            In XNA we can copy this data straight over from the GestureSample struct
+            and on the iPhone we capture all gestures and then fill up the
+            GestureQueue in BaseTouch and handle it in the update method.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.GestureData.Gesture">
+      <summary>
+            Type of the gesture, most often a simple gesture like Tap, DoubleTap
+            or Drag, but we got many more like Flick, Pinch, etc. see GestureType.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.GestureData.Position">
+      <summary>
+            Position for this gesture (usually where this gesture started).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.GestureData.OtherPosition">
+      <summary>
+            Other position for this gesture (where it started, only used if this
+            gesture has a second touch point, else it is the same as Position).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.GestureData.Delta">
+      <summary>
+            Delta position of the first touch point, which is how much it was
+            moved for this gesture. Can be used to determinate how far and fast
+            a dragging move was performed (see UpdateTime).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.GestureData.OtherDelta">
+      <summary>
+            Other delta position for the second (optional) touch point.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.GestureData.UpdateTime">
+      <summary>
+            Update time for this gesture in seconds. This is the time since this
+            gesture was started, which is especially important for one-time
+            gestures like Tap or Flick, but also used for most other gestures like
+            Drag or Pinch where we want to know how quick the user is moving.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.GestureData.#ctor(Delta.InputSystem.Devices.GestureType,Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Point,Delta.Utilities.Datatypes.Point,System.Single)">
+      <summary>
+            Create gesture data and fill all fields. For single touch gestures
+            Position is the same as OtherPosition (same for Delta and OtherDelta).
+            </summary>
+      <param name="setGestureType">Type of the set gesture.</param>
+      <param name="setPosition">The set position.</param>
+      <param name="setOtherPosition">The set other position.</param>
+      <param name="setDelta">The set delta.</param>
+      <param name="setOtherDelta">The set other delta.</param>
+      <param name="setUpdateTime">The set update time.</param>
+    </member>
+    <member name="T:Delta.InputSystem.Devices.BaseTouch">
+      <summary>
+            Base class for touch devices. Most important on the iPhone, but also for
+            other mobile platforms and we can even test it on Windows with a touch
+            device. Note unlike the other devices we support here in input, touch
+            events are mostly driven by behavior or gestures by the user, which
+            requires some extra logic, but allows us to use some cool input ways.
+            Note that the Accelerometer is implemented in BaseAccelerometer.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseTouch.MaxNumberOfTouches">
+      <summary>
+            Max. number of touches supported is currently 10, which is the
+            hardware limit on the iPad, the iPhone and iPod touch can only do 5
+            simultaneous touches and most other mobile multi touch device can do
+            the same or a little fewer. Our test monitor device on Windows, the
+            Acer T230H can only do 2 simultaneous touches, but that does not
+            matter for performance because we will always use ActiveTouches to
+            only handle as many active touches we have in each tick. Android and
+            WP7 forces to have at least 2 touches, but most devices can do 4.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseTouch.StartIndexOfTouchButtons">
+      <summary>
+            Constants for the buttons array and easier access in GetState.
+            Note that the InputButton enum indices are not sequential, there
+            are jumps in the list, but the GamePad buttons go from TouchPress (252)
+            to GamePadRightTrigger (262), so we have 11 Touch buttons.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseTouch.NumberOfTouchButtons">
+      <summary>
+            Number of touch buttons used in this class, just TouchPress and
+            TouchDrag, the rest are all gestures, see InputGesture!
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseTouch.tapRecorded">
+      <summary>
+            Here we record all the gesture activities, while the exceedClickSpace
+            will check if the mouse moved more than the allowed distance for a 
+            normal click.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseTouch.buttons">
+      <summary>
+            Hold the state of all Touch buttons and gestures (almost all are
+            gestures). These are exposed in the GetState method and updated
+            in the Update method.
+            TODO: We need this for all touches, it should be inside Touches!
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseTouch.lastFrameTouchPosition">
+      <summary>
+            We need to remember the touch start position for the TouchTap gesture.
+            Also remember the touchDraggingAmount from the initial
+            touchStartPosition and the current Position (if you want the dragging
+            amount since the last frame just use lastFrameTouchPosition-Position).
+            TODO: touchEndPosistion is not used yet!
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseTouch.touchBeginTimeMs">
+      <summary>
+            Remember when the touch was started (for TouchTap) and when
+            the last TouchTab was started (for TouchDoubleTap).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseTouch.Touches">
+      <summary>
+            Touch array, this holds up to ActiveTouches active touches with all
+            their data (id, position, state, etc.). Public for easy access, do
+            not modify (will be overwritten each frame anyway).
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseTouch.GetState(Delta.InputSystem.InputButton)">
+      <summary>
+            Get button state from a specific mouse button. We usually want to know
+            if it is currently being pressed or if PressEnd just happened.
+            </summary>
+      <param name="touchButton">Touch button to check</param>
+      <returns>
+            State of the current button, most likely NotPressed
+            </returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseTouch.GetMovement(Delta.InputSystem.InputButton)">
+      <summary>
+            Get button movement for Mouse movements and dragging (you can also
+            use the properties directly, but this methods helps us to generalize).
+            </summary>
+      <param name="touchButton">The touch button.</param>
+      <returns></returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseTouch.IsPressed(Delta.InputSystem.InputButton)">
+      <summary>
+            Get if a Keyboard key, GamePad button, Mouse button or Touch state
+            is currently pressed, which is the same as checking if GetState
+            is PressBegin or Pressed, but this method makes life easier.
+            </summary>
+      <param name="touchButton">The touch button.</param>
+      <returns>
+        <c>true</c> if the specified touch button is pressed; otherwise, <c>false</c>.
+            </returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseTouch.IsReleased(Delta.InputSystem.InputButton)">
+      <summary>
+            Get if a Touch state is released now, which is the same as checking if
+            GetState is Released, but this method makes life easier.
+            </summary>
+      <param name="touchButton">The touch button.</param>
+      <returns>
+        <c>true</c> if the specified touch button is released; otherwise, <c>false</c>.
+            </returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseTouch.Update">
+      <summary>
+            Update this input device once a frame, done very early in the frame.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseTouch.KillAllInput">
+      <summary>
+            Kill all input, used to clear stuff when opening a new scene, we
+            want to start fresh!
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseTouch.SetInitialTouchPressData(Delta.Utilities.Datatypes.Point)">
+      <summary>
+            Set initial touch press data helper to set some of the touch begin
+            internal variables used for gesture detection.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseTouch.GetOrCreateIndexFromTouchId(System.Int32)">
+      <summary>
+            Get index from touch id helper method. Used to assign native touch ids
+            to our Touches array (see each native Set implementation)
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseTouch.UpdateAndResetTouchStates">
+      <summary>
+            Update and reset touch states helper method used in WindowsTouch and
+            MonoTouchTouch (and probably future platforms too).
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseTouch.HandleStatesAndGestures">
+      <summary>
+            Handle states and gestures
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.IsConnected">
+      <summary>
+            Was a touch device detected? Returns true if the current platform
+            support touches and if we are unsure returns true when the first touch
+            happens. E.g. on Windows we usually have no touch device, but touches
+            can still happen, so we check from time to time if any touch input
+            happened. If true, then this will be set to true.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.HasData">
+      <summary>
+            Returns true if any button or key is pressed (including PressBegin,
+            Pressed or PressEnd state), or for touch screen devices if any touch
+            or gesture is currently active. Usually used as an optimization for
+            detecting buttons, gestures, handling events, etc. because if nothing
+            is pressed, we can skip all the checking! E.g. keyboard keys and their
+            command events only have to be fired if this property is true (which
+            means any key is pressed, including PressEnd states by the way).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.ActiveTouches">
+      <summary>
+            Number of active touches (0-10), this optimizes all access to the
+            Touches array a lot because we only need to check active touches and
+            not the rest of the most likely unused array. Please note even if
+            this goes to 0 (all touches just released), HasData might still return
+            true because there is still some gesture or PressEnd state active for
+            one more frame (or even more for some delayed gestures).
+            </summary>
+      <value>
+            The active touches.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.Orientation">
+      <summary>
+            Get the current orientation mode of the device, defaults to
+            NormalPortrait mode (the normal way the user holds a mobile device),
+            most games will use the LandscapeLeft mode however.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.TouchIsPressed">
+      <summary>
+            Helper to figure out if the touch device is currently being pressed,
+            it does not matter how many fingers are on the screen, this will
+            return true as long as some touch is pressed. This is usually not the
+            way to control touch devices, use gestures and command events instead!
+            </summary>
+      <value>
+        <c>true</c> if [touch is pressed]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.TouchReleased">
+      <summary>
+            Helper to figure out if the touch device was pressed and the touch
+            is now released again. This is usually not the way to control touch
+            devices, use gestures and command events instead!
+            </summary>
+      <value>
+        <c>true</c> if [touch released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.Position">
+      <summary>
+            Returns the last touch position. Only makes sense if Pressed is true
+            and will only return the very first touch position (multiple touches
+            are possible, use the Touches array to get them all). Unlike mouse
+            positions we cannot set the touch position, it will only be updated
+            when an touch is active (usually the first touch is used, except for
+            multi-touch gestures, which will set this to the gesture position,
+            which is the center for the Rotation, Pinch, DualDrag, etc.).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.LastFramePosition">
+      <summary>
+            Get the touch position from the last frame, this is not used often
+            because touches are often released and then we have no more position
+            information (as opposed to the mouse, where we always have its
+            position). But can be used to check if we drag into a UI control or
+            rectangle and should change focus.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.Movement">
+      <summary>
+            Relative movement of the touch this frame (in quadratic space).
+            Because touches can only move when pressed, this is the dragging
+            amount and makes only sense in this context.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.IsDragging">
+      <summary>
+            Is mouse currently being dragged around? This means that the user
+            holds down the left mouse button and is moving the mouse!
+            </summary>
+      <value>
+        <c>true</c> if this instance is dragging; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.DragStart">
+      <summary>
+            Drag start position in case we are dragging the touch around.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.DragStartTimeMs">
+      <summary>
+            Drag start time to figure out when this drag was started and thus how
+            far we are moving. Usually used for gestures to determinate if this
+            was a quick swipe or a slow drag (different code paths could be used).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseTouch.TotalDragAmount">
+      <summary>
+            Drag start position minus the current position to give us the total
+            drag distance as a 2D vector in case we are dragging the mouse around.
+            Use the IsDragging property to check if a drag is currently happening.
+            Note: This only handles the normal drag, for the other drag gestures
+            use the input buttons for them (right drag, double drag, and flick).
+            </summary>
+    </member>
+    <member name="T:Delta.InputSystem.Devices.BaseTouch.OrientationMode">
+      <summary>
+            Orientation modes any mobile device supports by holding the device in
+            different ways. By default the app should just render in a way that
+            the user never sees the app upside down.
+            </summary>
+    </member>
+    <member name="T:Delta.InputSystem.InputButton">
+      <summary>
+            This enum combines all the possible input buttons we support in the
+            Delta Engine. This includes all keyboard keys, all mouse buttons, all
+            gamepad buttons and even touch input devices. Additionally we will even
+            fire events for non-button actions such as MouseMove, MouseScrollWheel,
+            TouchDrag, etc. This way all input changes can be tracked with the same
+            system. For absolute values and current keyboard or mouse states just
+            use the dedicated classes (e.g. Input.Mouse.Position,
+            Input.Mouse.IsLeftButtonPressed, Input.Keyboard.IsKeyPressed(Escape)).
+            </summary>
+      <remarks>
+            Keyboard input is mapped to the character values of each key, which
+            is the way Xna and XInput handle keys as well (so mapping is easy).
+            Note that all the keyboard key values are matched directly with the
+            character values. Mouse buttons follow and will start with "Mouse", then
+            Gamepad buttons are located after this and start with "Gamepad" and
+            finally Touch events starting with "Touch" are at the end of this enum.
+            For example gamepads even allow feedback via ForceFeedback(x, y) and you
+            can also support multiple gamepads via Input.Gamepads[0], [1], etc. but
+            this won't work with the Commands stored in Settings, they are only for
+            the first player (you will need new events for the second player, etc.)
+            <para></para>
+            Keyboard layout:
+            <para></para><img src="http://heightstranslators.com/page11/files/standard-keyboard.png" /><para></para>
+            Note: For keyboard and also for all other input devices the following
+            four keyboard modifiers can be used: Shift, Control, Alt and WindowsKey!
+            For InputCommands just use the notation Modifier+key, e.g. Shift+F1
+            will only be fired if the Shift key is down while F1 is pressed. You can
+            also use multiple modifiers like Ctrl+Alt+X for more advanced bindings.
+            <para></para>
+            Mouse button layout:
+            <para></para><img src="http://gamingweapons.com/image/articles/best-gaming-mouse/logitech-mx518.jpg" /><para></para>
+            For details about GamePad buttons see
+            <a href="http://en.wikipedia.org/wiki/Gamepad">
+            http://en.wikipedia.org/wiki/Gamepad</a>.
+            <para></para>
+            The Xbox 360 Controller looks like this:
+            <para></para><img src="http://www.crazypurchase.com/images/microsoft-xbox-360-wireless-controller.jpg" /><para></para>
+            The PS3 Controller looks like this:
+            <para></para><img src="http://g00248753.com/graphics/SCEE_PS3_controller_top.png" /><para></para>
+            Touch devices are usually an iPhone, the Android Phone, the
+            Windows Phone 7 or some kind of a touch screen device on Windows 7:
+            <para></para><img src="http://assets.gearlive.com/blogimages/gallery/iphone-113-preview/003-iphone-113-drag-mail.jpg" /><para></para>
+            And finally the Delta Engine also supports the Wiimote GamePad
+            controller and Accelerometer on Windows (see WiimoteGamePad and
+            WiimoteAccelerometer classes in Delta.InputSystem.Windows):
+            <para></para><img src="http://www.wiiprojects.org/Bluetooth/WiiMote.jpg" /><para></para>
+            It is important to note that almost all touch events are triggered by
+            gestures, which are usually defined on a framework that is used by
+            the current platform. These are the common gestures:
+            Tap (single short press, simulates left click), Pinch (2 finger zoom),
+            Swipe (quick drag, scroll), Pan (long drags, move), Press-and-Hold (we
+            call this TouchVeryLongClick). Additionally there are some more advanced
+            gestures for rotation, double tap, dual drag and there is also the
+            accelerator support for most mobile touch devices.
+            </remarks>
+    </member>
+    <member name="T:Delta.InputSystem.CommandManager">
+      <summary>
+            Command manager base class, used for the GlobalCommandManager and for
+            commands in scenes. Basically we go through a list of command and check
+            if all the input conditions are fulfilled, if so the command event is
+            fired and all attached delegates will be executed.
+            TODO: add saving into Settings.xml and into the Scene file!
+            TODO: could be a dynamic module maybe?
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.CommandManager.#ctor">
+      <summary>
+            Command Manager constructor will load all the commands (either form 
+            an XML file or a default setting array) to the commands list to prepare 
+            it for the Update.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.CommandManager.Load(Delta.Utilities.Xml.XmlNode)">
+      <summary>
+            Load all input commands from a file, usually InputSettings.xml either
+            from the current directory (user data) or from the content directory!
+            </summary>
+      <param name="rootNode">Xml root node to load all data from</param>
+    </member>
+    <member name="M:Delta.InputSystem.CommandManager.Save">
+      <summary>
+            Save the current command to an xml node for saving it into the
+            InputSettings.xml file (normally in the current directory for user
+            specific settings, but is also used to generate the content directory
+            fallback settings for the current project).
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.CommandManager.DetachAllDelegates(System.Object)">
+      <summary>
+            Detach all delegates
+            </summary>
+      <param name="owner">The owner of the delegate</param>
+    </member>
+    <member name="M:Delta.InputSystem.CommandManager.ResetToDefaults">
+      <summary>
+            Reset to defaults
+            </summary>
+    </member>
+    <member name="T:Delta.InputSystem.InputState">
+      <summary>
+            Enum describing all possible input events that can be raised by the
+            values described in <see cref="T:Delta.InputSystem.InputButton">InputButton</see>.
+            Most InputButtons support all states Pressed, IsPressed for every frame
+            the button is pressed and Released after the button was released again
+            (for one frame, then it is reset to NotPressed again). Some events like
+            MouseTap or TouchTap only support Released because while the gesture is
+            going on we usually don't know if it will be completed or which of the
+            many gesture this is going to be. In GlobalCommandManager you can find
+            many examples of using these InputButtons with certain InputStates. All
+            the native events and state checking is done in each concrete framework
+            code for each device we support: Keyboard, Mouse, GamePad and Touch
+            devices. Note: If InputState is Pressed or higher (IsPressed) then the
+            button is pressed, otherwise it is not pressed (NotPressed or Released).
+            </summary>
+    </member>
+    <member name="T:Delta.InputSystem.CommandTrigger">
+      <summary>
+            Class which takes care about triggering the command specified by the
+            <see cref="F:Delta.InputSystem.CommandTrigger.owner" /> member. Contains all required conditions when a
+            command should executed. Additionally some data is set whenever a
+            delegate is fired like Position, CurrentState (which can be Pressed for
+            IsPressed events too), Movement, DragStart position for dragging and
+            finally an IsHandled flag.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.CommandTrigger.DeviceIndex">
+      <summary>
+            Device index for this device, usually the controller index for
+            GamePads and Mouses (0-3 usually for XnaGamePads or MultiMouse), but
+            also used for Touch devices to get the Touch index, which cannot be
+            used as the player number like the controller index for GamePads.
+            For single player games, UI and whenever we want to ignore this, just
+            don't care about the device index, use whatever is connected! If
+            split screen or local multi player support is important just use this
+            device index to support multiple local players!
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.CommandTrigger.Position">
+      <summary>
+            Position of this command at the time it was fired (usually the Mouse
+            Position or Touch Position, but GamePads and Keyboards and even the
+            Accelerometer input device have positions too, it is your decision if
+            you want to use that data or not).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.CommandTrigger.Movement">
+      <summary>
+            Relative movement since the last frame, is often unused, especially for
+            keyboard events, for most buttons on GamePads and Mouses, but is useful
+            for dragging events. Please note that some gestures like Pinch and
+            Rotate have their own logic for movement and will return different data
+            like X=PinchAmount and Y=RotationAmount (see Touch.GetMovement).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.CommandTrigger.DragStart">
+      <summary>
+            Additional information for drag events, this contains the position
+            where the drag was started. It is also used for many gestures for the
+            original touch start position and thus can be used to figure out how
+            fast this gesture was performed and where it started and what UI
+            element it belongs to. DragAmount is Position - DragStart!
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.CommandTrigger.IsHandled">
+      <summary>
+            Helper variable to indicate if an event was already handled. Can be
+            ignored. Will always be set to false when the event is fired and the
+            callers can choose to set this to true and then skip execution of
+            other callers, which will not be invoked anymore if IsHandled is true.
+            Useful for some UserInterface events where we attach ourselfs to
+            multiple callers, but want to make sure that we already have handled
+            it if a children executed some code already.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.CommandTrigger.#ctor">
+      <summary>
+            Create command trigger
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.CommandTrigger.ToString">
+      <summary>
+            To string
+            </summary>
+      <returns>string</returns>
+    </member>
+    <member name="P:Delta.InputSystem.CommandTrigger.CommandName">
+      <summary>
+            The name of the command where this trigger is attached to because it
+            will be only activated for the related command.
+            </summary>
+      <remarks>
+            This value will be updated every time the 'Owner' property will change.
+            </remarks>
+    </member>
+    <member name="P:Delta.InputSystem.CommandTrigger.Button">
+      <summary>
+            The button which will activate this trigger but only if it is in the
+            correct state (and also if all modifiers are active, if set).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.CommandTrigger.State">
+      <summary>
+            The state for the specified button which defines when this trigger will
+            be activated.
+            </summary>
+      <remarks>
+            This value can be every possible state, inclusive 'NotPressed'
+            </remarks>
+    </member>
+    <member name="P:Delta.InputSystem.CommandTrigger.StartInterval">
+      <summary>
+            Defines the delay (in seconds) that have to be wait before the command
+            will be triggered with specified 'Interval'. If no delay is set it will
+            just use the specified value from 'Interval' instead.
+            <para />
+            Note: Specifying this value makes only sense for the 'IsPressed' state.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.CommandTrigger.Interval">
+      <summary>
+            Defines the time interval (in seconds) between this trigger repeats
+            the activation as long as the button state stays the same.
+            <para />
+            Note: Specifying this value makes only sense for the 'IsPressed' state.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.CommandTrigger.Modifiers">
+      <summary>
+            Each command can have optional modifiers, which are usually not set
+            ('null'). In case they are set, the trigger will only be activated if
+            every modifier button is pressed too. Typical modifier buttons are Alt,
+            Shift, or Ctrl but also any other button is possible.
+            </summary>
+      <remarks>
+            All modifiers have be active to react on the specified button.
+            </remarks>
+    </member>
+    <member name="P:Delta.InputSystem.CommandTrigger.TotalDragAmount">
+      <summary>
+            Drag start position minus the current position to give us the total
+            drag distance as a 2D vector in case we are dragging the mouse around.
+            Use the IsDragging property to check if a drag is currently happening.
+            Note: This only handles the normal drag, for the other drag gestures
+            use the input buttons for them (right drag, double drag, and flick).
+            </summary>
+    </member>
+    <member name="T:Delta.InputSystem.InputSettings">
+      <summary>
+            The InputSettings takes care of all the input commands. (Previously 
+            found in the GlobalCommandManager). each command settings will be loaded 
+            and saved from the InputCommand.xml File.
+            <para />
+            Note: Creating this class is not allowed, use the static methods. All data
+            is filled with the CommandTrigger.LoadXml method.
+            </summary>
+    </member>
+    <member name="T:Delta.InputSystem.Devices.TouchData">
+      <summary>
+            Holds all the data for one touch (no matter if from iPhone or XNA).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.TouchData.Id">
+      <summary>
+            Represents the id of the current unique touch point.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.TouchData.Position">
+      <summary>
+            Position of this touch point in quadratic screen space.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.TouchData.LastDragging">
+      <summary>
+            Last position data, currently has to be updated by caller, also
+            remember the recent dragging, which can be used for drags and flicks.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.TouchData.StartPosition">
+      <summary>
+            Start position of this touch point in quadratic screen space when
+            the touch first was started (when state was just changed to Pressed)
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.TouchData.State">
+      <summary>
+            Input state for this touch, usually Pressed to indicate we are holding
+            down this touch (stationary or moving). Initially when a new touch
+            happens this state is PressBegin and once we release the touch it
+            will be set to PressEnd.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.TouchData.IsDragging">
+      <summary>
+            Extra flag to indicate that this touch is currently being dragged
+            around. When using gestures, this is not very important, but for just
+            handling native data, this information might be useful.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.TouchData.TapCount">
+      <summary>
+            Helper to keep track of how many taps were made, given to us by the
+            native framework (e.g. MonoTouch.UITouch.TapCount).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.TouchData.UpdateTimeMs">
+      <summary>
+            Update time in seconds since the initial touch press. In MonoTouch the
+            value of this property is the time, in seconds, since system startup
+            the touch either originated or was last changed. You can store and
+            compare the initial value of this attribute to subsequent timestamp
+            values of the UITouch instance to determine the duration of the touch
+            and, if it is being swiped, the speed of movement. Note: This is also
+            used to check if we have not received any update to a touch for more
+            than one second. If that is the case the touch will be reseted and
+            released (e.g. if touch system is bugged, unresponsive, or has
+            crashed). Usually all frameworks (MonoTouch, MonoDroid, Windows7, and
+            XNA) will report updates each frame, there is never a delay for one
+            second or more for touches, so this only catches errors.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.TouchData.CurrentlyUsedByGesture">
+      <summary>
+            Helper to indicate if this touch event is currently already fired
+            as a gesture. Note: If this is a one-time gesture like tap or hold
+            this will be false until we actually fire the gesture event (then this
+            will be true for one tick). This is more useful for drag, pinch or
+            rotate events, where we know for a long time that a gesture is used.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.TouchData.Set(System.Int32,Delta.Utilities.Datatypes.Point,Delta.InputSystem.InputState,System.Boolean,System.Int32,System.Int64)">
+      <summary>
+            Set touch data, pretty much like a constructor, but this is faster
+            because we only want to update the BaseTouch.Touches array data.
+            </summary>
+    </member>
+    <member name="T:Delta.InputSystem.Devices.BaseAccelerometer">
+      <summary>
+            Base class for accelerometers in mobile touch devices like the iPhone,
+            Android devices or the Windows Phone 7. Can also be emulated by the
+            Wii controller if you really want to (e.g. on Windows).
+            Note: Currently not used anywhere yet, only tested with Wiimote.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseAccelerometer.StartIndexOfAccelerometerButtons">
+      <summary>
+            Constants for the buttons array and easier access in GetState.
+            Note that the InputButton enum indices are not sequential, there are
+            jumps in the list, but the GamePad buttons go from TouchPress (252)
+            to GamePadRightTrigger (262), so we have 11 Touch buttons.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseAccelerometer.TotalCursorMovementPerSecond">
+      <summary>
+            For the virtual cursor (kind of emulating a mouse cursor)
+            this constant holds how far we move from one side to the other.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseAccelerometer.virtualPosition">
+      <summary>
+            Virtual cursor position for this device. Not useful as an actual
+            screen cursor, but could be useful otherwise like for testing.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseAccelerometer.GetState(Delta.InputSystem.InputButton)">
+      <summary>
+            Get button state, not used for accelerators.
+            </summary>
+      <param name="inputButton"></param>
+      <returns></returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseAccelerometer.IsPressed(Delta.InputSystem.InputButton)">
+      <summary>
+            Is pressed, not used for accelerators.
+            </summary>
+      <param name="inputButton"></param>
+      <returns></returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseAccelerometer.GetMovement(Delta.InputSystem.InputButton)">
+      <summary>
+            Get button movement for the Accelerometer buttons (you can also
+            use the properties directly, but this methods helps us to generalize).
+            Note: Since we can only grab a point with GetMovement, this only
+            returns the X and Y values (mostly the only ones needed anyway). Use
+            AccelerometerZ and AccelerometerRotation if you need events for that.
+            Remember that you can always use the Input.Accelerometer class
+            directly.
+            </summary>
+      <param name="inputButton"></param>
+      <returns></returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseAccelerometer.Update">
+      <summary>
+            Update this input device once a frame, done very early in the frame.
+            All the native keyboard updating happens in the native implementation,
+            this method will just update the virtualPosition.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseAccelerometer.IsConnected">
+      <summary>
+            Was a device with accelerometer detected? Returns true if the current
+            platform supports an accelerometer (like iPhone, Android or Windows
+            Phone 7, but also PlayStation 3). Some platforms like Windows
+            obviously don't support accelerators, but it is possible to connect
+            an extra device like a Wii controller (via bluetooth) and then allow
+            accelerometer support on this platform as well.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseAccelerometer.HasData">
+      <summary>
+            Returns true if any button or key is pressed (including PressBegin,
+            Pressed or PressEnd state), or for touch screen devices if any touch
+            or gesture is currently active. Usually used as an optimization for
+            detecting buttons, gestures, handling events, etc. because if nothing
+            is pressed, we can skip all the checking! E.g. keyboard keys and their
+            command events only have to be fired if this property is true (which
+            means any key is pressed, including PressEnd states by the way).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseAccelerometer.Index">
+      <summary>
+            Controller index for this Accelerometer (0 usually, but can be 0-3 for
+            GamePads in case we use the WiimoteGamePad and WiimoteAccelerometer).
+            Set here instead of in constructor to simplify creation (dynamic
+            creation with constructor parameters is harder).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseAccelerometer.Position">
+      <summary>
+            Returns the virtual cursor position for this device. Not useful as an
+            actual screen cursor, but could be useful otherwise like for testing.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseAccelerometer.Acceleration">
+      <summary>
+            Get the x, y and z acceleration vector, which tells us the current
+            orientation of the device if holding still (e.g. 0, 0, -1 for laying
+            down on the table) and when moving around where the bottom is.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseAccelerometer.Rotation">
+      <summary>
+            Rotation value for this accelerometer (YX axis). This provides an easy
+            way to find out how rotated the device is! 0 means the user holds it
+            steady in the current orientation and we usually want to know if it is
+            tilted more than 10 degrees in either direction to handle some extra
+            movement logic.
+            </summary>
+    </member>
+    <member name="T:Delta.InputSystem.Command">
+      <summary>
+            The command class which is designed as advanced event handler due of the
+            fact we want to know which delegate is connected to which owner and
+            because of the general limitations of .NET events (see more detailed
+            information http://www.codeproject.com/KB/cs/event_fundamentals.aspx).
+            All added delegates to this command will be invoked by the added
+            CommandTrigger's which define at which input state the command will be
+            executed.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.QuitTest">
+      <summary>
+            'QuitTest' is used for unit tests to allow easy and quick quitting them
+            via the Escape keyboard key or the Back button on GamePads. Note: This
+            is not used in normal games, only if you are in unit test mode!
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.MakeScreenshot">
+      <summary>
+            The 'MakeScreenshot' command is invoked via the PrintScreen keyboard
+            key and will make a screenshot of the current screen at the end of the
+            rendering and store it locally in a Screenshot directory.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.UIPositionChange">
+      <summary>
+            The 'UIPositionChange' command is used to track mouse, touch, game pad
+            or keyboard move events in scenes and the UserInterface classes, mostly
+            for hovering and activating UI controls so actions can be performed
+            (UIDragMove, UIClick, etc.). Note: This is fired very often when a mouse
+            is connected, but also for any other supported device because mouse
+            moves happens often (every time the user moves the mouse by at least one
+            pixel). Most actions will use an actual click (e.g. UIDragMove is used
+            way more often to drag values, change values, scroll, etc. than just
+            using this command, which just selects stuff).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.UIClickBegin">
+      <summary>
+            The 'UIClickBegin' command is fired when a click is about to happen.
+            This is triggered by the initial pressed states of mouse (left mouse
+            button click), touch (simple click on screen), game pads (a pressed) or
+            keyboard (space just pressed). For example with keyboard activate an
+            UI element with UIPositionChange and then use UIClickBegin and UIClick
+            (with Space) to do an Click event with keyboard only (same goes for any
+            other supported input device).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.UIClick">
+      <summary>
+            'UIClick' is fired when a mouse, touch, etc. UIClickBegin is done and
+            released so we can finally apply the click action in the UI control.
+            A good and typical example for this is a Button Click event, which gets
+            invoked when this command is fired and the Button is active (activated,
+            mouse over it or at least ClickBegin happened, e.g. with touch).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.UIDoubleClick">
+      <summary>
+            'UIDoubleClick' is useful for selecting and activating UI controls and
+            is usually fired by the mouse or touch input devices.
+            Note: Because of missing gestures for keyboard or game pads this is
+            only implemented for mouse and touch (double click and double tap).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.UIRightClick">
+      <summary>
+            The 'UIRightClick' command is useful for extra context actions or menus
+            for additional functionality. It is not used often for games, but can
+            be useful for menus and context menus showing extra information.
+            Note: Only used for mouse, game pad b buttons or keyboard enter, for
+            touch this is solved differently via the TouchHold gesture (which is
+            the default to open context menus and advanced features on iOS)
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.UIDragBegin">
+      <summary>
+            'UIDragBegin' command, used to indicate a dragging action has started.
+            It will only be fired the first frame when a drag happens (user presses
+            mouse and moves to drag or holds down touch and starts dragging).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.UIDragMove">
+      <summary>
+            The 'UIDragMove' command will be fired every frame a drag is happening.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.UIDragEnd">
+      <summary>
+            The 'UIDragEnd' command is only fired at the very end of a drag move.
+            This is useful because it contains all the information about the drag
+            (started from, speed, time, etc.) and is usually used to complete the
+            drag action.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.CameraZoomIn">
+      <summary>
+            'CameraZoomIn' command for the camera classes.
+            This is usually triggered by PageUp or the MouseScrollWheel.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.CameraZoomOut">
+      <summary>
+            'CameraZoomOut' command for the camera classes.
+            This is usually triggered by PageDown or the MouseScrollWheel.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.CameraMoveLeft">
+      <summary>
+            'CameraMoveLeft' command for the camera classes. This is usually
+            triggered by pressing A on the keyboard, GamePadLeft or
+            GamePadLeftStick.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.CameraMoveRight">
+      <summary>
+            'CameraMoveRight' command for the camera classes. This is usually
+            triggered by pressing D on the keyboard, GamePadRight or
+            GamePadLeftStick.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.CameraMoveUp">
+      <summary>
+            'CameraMoveUp' command for the camera classes. This is usually
+            triggered by pressing W on the keyboard, GamePadUp or
+            GamePadLeftStick.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.CameraMoveDown">
+      <summary>
+            'CameraMoveDown' command for the camera classes. This is usually
+            triggered by pressing S on the keyboard, GamePadDown or
+            GamePadLeftStick.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.CameraRotateLeft">
+      <summary>
+            'CameraRotateLeft' command for the camera classes. This is usually
+            triggered by pressing CursorLeft on the keyboard, MouseMove, TouchDrag
+            or GamePadRightStick.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.CameraRotateRight">
+      <summary>
+            'CameraRotateRight' command for the camera classes. This is usually
+            triggered by pressing CursorRight on the keyboard, MouseMove, TouchDrag
+            or GamePadRightStick.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.CameraRotateUp">
+      <summary>
+            'CameraRotateUp' command for the camera classes. This is usually
+            triggered by pressing CursorUp on the keyboard, MouseMove, TouchDrag
+            or GamePadRightStick.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.CameraRotateDown">
+      <summary>
+            'CameraRotateDown' command for the camera classes. This is usually
+            triggered by pressing CursorDown on the keyboard, MouseMove, TouchDrag
+            or GamePadRightStick.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.ProfilerToggleFps">
+      <summary>
+            For the profiler to Toggle the ProfilerMode if showing Fps. Triggered
+            via the F1 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.ProfilerToggleSimulator">
+      <summary>
+            For the profiler to Toggle the ProfilerMode if showing the simulator
+            HUD. Triggered via the F2 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.ProfilerToggleModules">
+      <summary>
+            For the profiler to Toggle the ProfilerMode if showing the modules
+            profiler overview. Triggered via the F3 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.ProfilerToggleSystem">
+      <summary>
+            For the profiler to Toggle the ProfilerMode if showing the system
+            profiler information. Triggered via the F4 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.ProfilerToggleRendering2D">
+      <summary>
+            For the profiler to Toggle the ProfilerMode if showing the 2D Rendering
+            profiler information. Triggered via the F5 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.ProfilerToggleRendering3D">
+      <summary>
+            For the profiler to Toggle the ProfilerMode if showing the 3D Rendering
+            profiler information. Triggered via the F6 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.ProfilerToggleUI">
+      <summary>
+            For the profiler to Toggle the ProfilerMode if showing the UI
+            profiler information. Triggered via the F7 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.ProfilerTogglePhysics">
+      <summary>
+            For the profiler to Toggle the ProfilerMode if showing the Physics
+            profiler information. Triggered via the F8 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.ProfilerToggleAI">
+      <summary>
+            For the profiler to Toggle the ProfilerMode if showing the AI
+            profiler information. Triggered via the F9 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.ProfilerToggleText">
+      <summary>
+            For the profiler to Toggle the ProfilerMode if showing the Text drawing
+            profiler information. Triggered via the F10 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.ProfilerToggleCustom">
+      <summary>
+            For the profiler to Toggle the ProfilerMode if showing the Custom
+            profiler information. Triggered via the F11 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.DrawDebugInfoToggleRendering2D">
+      <summary>
+            For the profiler and debug view to toggle if showing the 2D rendering
+            debug information. Triggered via the Shift+F5 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.DrawDebugInfoToggleRendering3D">
+      <summary>
+            For the profiler and debug view to toggle if showing the 3D rendering
+            debug information. Triggered via the Shift+F6 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.DrawDebugInfoToggleUI">
+      <summary>
+            For the profiler and debug view to toggle if showing the UI drawing
+            debug information. Triggered via the Shift+F7 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.DrawDebugInfoTogglePhysics">
+      <summary>
+            For the profiler and debug view to toggle if showing the Physics debug
+            information (bounding boxes, collissions, extra information, etc.).
+            Triggered via the Shift+F8 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.DrawDebugInfoInfoToggleAI">
+      <summary>
+            For the profiler and debug view to toggle if showing the AI debug
+            information (pathfinding, AI states, targets, extra information, etc.).
+            Triggered via the Shift+F9 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.DrawDebugInfoInfoToggleText">
+      <summary>
+            For the profiler and debug view to toggle if showing the text debug
+            information (text rendering boxes, extra font information, etc.).
+            Triggered via the Shift+F10 keyboard key by default.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Command.DrawDebugInfoInfoToggleCustom">
+      <summary>
+            For the profiler and debug view to toggle if showing the custom debug
+            information (whatever the user has setup in the Profiler class).
+            Triggered via the Shift+F11 keyboard key by default.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Command.#ctor(System.String)">
+      <summary>
+            Create command, internal because creating commands is only allowed
+            in the CommandManager. Usually they are loaded from Settings.xml or
+            via Scene files.
+            </summary>
+      <param name="setName">Command Name</param>
+    </member>
+    <member name="M:Delta.InputSystem.Command.AddTrigger(Delta.InputSystem.CommandTrigger)">
+      <summary>
+            Adds a new trigger which can activate this command if the current input
+            state matches with its conditions. Usually this should be done with the
+            Input settings editor in the ContentManager.
+            </summary>
+      <param name="newTrigger">New trigger</param>
+    </member>
+    <member name="M:Delta.InputSystem.Command.Add(Delta.InputSystem.CommandDelegate)">
+      <summary>
+            Adds a new (global) delegate to this command.
+            </summary>
+      <param name="newGlobalCommandDelegate">
+            The new global command delegate.
+            </param>
+    </member>
+    <member name="M:Delta.InputSystem.Command.Add(System.Object,Delta.InputSystem.CommandDelegate)">
+      <summary>
+            Adds a new delegate applied to the given owner to this command. By the
+            fact that the owner of the delegate is specified here it makes the
+            later removing of all owner delegates quite easy by the Remove method.
+            </summary>
+      <param name="owner">Owner</param>
+      <param name="newCommandEvent">New command event</param>
+    </member>
+    <member name="M:Delta.InputSystem.Command.Remove(System.Object)">
+      <summary>
+            Removes all delegates from this command that are connected to the
+            given owner.
+            </summary>
+      <param name="owner">Owner</param>
+    </member>
+    <member name="M:Delta.InputSystem.Command.Remove(Delta.InputSystem.CommandDelegate)">
+      <summary>
+            /Removes the (global) delegates from this command.
+            </summary>
+      <param name="addedDelegate">The added delegate</param>
+    </member>
+    <member name="M:Delta.InputSystem.Command.ToString">
+      <summary>
+            To string
+            </summary>
+      <returns>string</returns>
+    </member>
+    <member name="P:Delta.InputSystem.Command.Name">
+      <summary>
+            Name of this command which will be used as identifier in the
+            CommandManager and is also useful for loading and debugging it.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Command.HasDelegates">
+      <summary>
+            This value is 'true' if there are any delegates which are currently
+            added to this command and only in this case the current input state
+            will be checked if it matches with one of the set triggers.
+            </summary>
+    </member>
+    <member name="T:Delta.InputSystem.Input">
+      <summary>
+            All input in the engine is usually handled via events. An event is
+            called <see cref="T:Delta.InputSystem.Command" /> and is bound in the Settings.xml file for
+            global commands and in each Scene for scene specific commands.
+            Input is accepted from the Keyboard and Mouse (mostly Windows,
+            Mac, Linux), but also from Gamepads (Xbox 360 and consoles in general)
+            and Touches plus Accelerometers (most mobile platforms like the iPhone,
+            iPod, iPad, Android or Windows Phone 7). Each supported input device is
+            polled or collected each tick in the Update method via the Mouse,
+            Keyboard, GamePad, Touch and Accelerometer instances. Please note that
+            some classes like GamePad can have multiple GamePad devices attached,
+            even Mouse can be multiple, via a MouseParty like implementation. While
+            you can access each GamePad individually via Input.GamePads(index),
+            command events will be fired for all connected GamePads that fulfill
+            the command condition. You can still find out which GamePad was used
+            at the event delegate or method since each command comes with the input
+            index. This is also used for Touches, so we can track touch ids for
+            TouchPress events (or gestures), this is very important for multiple
+            players on the same touch screen (e.g. iPad Party Games). All devices
+            are defined in abstract classes, the concrete implementation can be
+            found in each framework implementation (Xna, Windows, MonoTouch, etc.).
+            This low level input data can also be used directly if you don't want to
+            use events via adding delegates to the existing or custom commands.
+            </summary>
+      <remarks>
+            All global input command settings are stored in the Settings.xml file of
+            each application. You can use the Delta.Tools.Launcher (Visual Studio
+            addin now) to edit the Settings.xml file. More importantly each scene
+            has its own commands, which can be edited in the SceneEditor or by hand
+            via the SceneName.xml file. For example Profiling events will only be
+            handled by the ProfilingScene, which means if you don't have an active
+            ProfilingScene the events are not caught or handled (see UserInterfaces
+            for details about scenes and input handling for all UI controls).
+            <para></para>
+            The main reason for this implementation is to abstract input from the
+            devices, so it does not matter if you use your keyboard cursor keys to
+            control your game character, or use your mouse to move it around, or you
+            use your Gamepad to directly control him or if you have to drag touches
+            to move him around, all this can be setup and changed in the input
+            settings and the game programmer just has to implement or use a Command
+            itself, not how it is triggered (this is the job of the scene designer,
+            but it can also be done by the programmer and later changed by the
+            designer to allow more input)! Sometimes input is however linked to UI
+            elements (like buttons, sliders, check boxes, etc.) which should only be
+            modified if they are selected (e.g. by selecting it with up/down with
+            the Keyboard or Gamepad, or by hovering with the mouse over it, or by
+            pressing a touch screen). In such cases we still use events, but only
+            the currently selected UI element will actually catch the Command, all
+            the other UI elements are currently not receiving input! For more
+            details about input and command handling see the UIScene class in
+            Delta.Scenes.UserInterfaces.
+            <para></para>
+            Commands are stored in xml files (e.g. Settings.xml) and have these tags:
+            - Name: The name of this command, can be any string. For global commands
+            we already got a list of predefined names (see Constants of the Commands
+            class). Each of the predefined commands has an event you can attach to,
+            which makes using global commands very easy and fast. For scene commands
+            the name is just used for generating the OnCommand method names and is
+            obviously useful for debugging and testing, but the name itself is not
+            used as we can directly check for the conditions and fire the event.
+            - Button: One of the many defined buttons for all devices we support:
+            Keyboard, Mouse, Gamepads, Touch (<see cref="T:Delta.InputSystem.InputButton">see
+            InputButton for	all	button types</see>). InputButtons also include
+            gestures and commands like dragging. Gestures are especially important
+            for touch devices because controlling everything with just touches is
+            a little dull, its better to have some gestures for different actions.
+            You can also add modifiers or any key combinations for that matter, just
+            combine them with + like Control+F1, Alt+S, MouseLeft+MouseRight. Because
+            it would be very hard to make sure the user presses both buttons at the
+            exact same time (e.g. releasing Alt and S in the same frame is not
+            easily possible ) only the last InputButton is compared with State!
+            All buttons before that just have to be pressed for the command to be
+            fired (e.g. Control must be down, F1 must be PressEnd for Control+F1
+            PressEnd or MouseLeft must be down for a MouseLeft+MouseRight command).
+            - State (optional, defaults to PressEnd): State the button must be in
+            for this event to be fired (<see cref="T:Delta.InputSystem.InputState">see InputState for
+            details</see>). States like PressBegin or PressEnd are only fired once
+            for each key press while states like Pressed will be fired every frame
+            as long as the button is pressed (which means PressBegin or Pressing).
+            For all input commands using positions the position is sent along (which
+            is usually the mouse or touch position) and for all dragging commands
+            the dragging amount is sent along with the event (as the movement
+            parameter). So you cannot specify GamePadStickLeft.X smaller than 0.75
+            in the command settings, but you can check that yourself in your code
+            just as easily.	Some special buttons for gestures only support PressEnd
+            (like TouchTap, MouseTap, MouseDoubleTap, AccelerometerShake, etc.), but
+            most other normal buttons support all states (buttons, keys, touches,
+            clicks, but also dragging, pinching and rotation gestures). Native mouse,
+            keyboard or touch events can occur more often than the current frame
+            rate. In such cases events are still collected and then fired once the
+            Update method of the InputSystem is called. This way the behavior is the
+            same way for polling frameworks like XNA and for event driven input
+            events from Windows or mobile devices like the iPhone.
+            </remarks>
+    </member>
+    <member name="F:Delta.InputSystem.Input.MaxNumberOfGamePads">
+      <summary>
+            Maximum number of <see cref="M:Delta.InputSystem.Input.GamePads(System.Int32)" /> supported, usually only used
+            on consoles (but works also on Windows). Only interesting for games
+            supporting multiple players playing together on the same screen.
+            Now also used for the max. number of mouses (see the Mouses method).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Input.MaxNumberOfMice">
+      <summary>
+            Maximum number of supported mouses that can be connected and managed by
+            the engine for multiple mouse support. Only interesting for games
+            supporting multiple players playing together on the same screen.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Input.Mice(System.Int32)">
+      <summary>
+            Since it is very unlikely that we have multiple mice connected
+            usually only the Mouse property is used, which will be the same as
+            using Mice(0). In case we have more mouses connected and really want
+            to use them in our application, you can access them here (make sure to
+            call Mice(1).IsConnected to see if we have a second mouse and also
+            to initialize using it). Like GamePads each connected mouse sends out
+            the same events, but you can use the inputIndex on the command event
+            receiver to check out which player this click, etc. belongs to. We can
+            have as many as 50 mouses connected, but currently we only support 4!
+            </summary>
+      <param name="index">The index.</param>
+      <returns>Returns the Base mouse device</returns>
+    </member>
+    <member name="M:Delta.InputSystem.Input.GamePads(System.Int32)">
+      <summary>
+            All the game pads that could be connected. Even when using GamePad
+            support on Windows we usually just have one <see cref="P:Delta.InputSystem.Input.GamePad" />
+            connected, on the Xbox 360 console it is however more common to have
+            multiple game controllers connected and allow game play with up to 4
+            players simultaneously.
+            </summary>
+      <param name="index">The index for the game pad to grab</param>
+      <returns>
+            Game pad with the index number, either initialized or not connected.
+            </returns>
+    </member>
+    <member name="M:Delta.InputSystem.Input.GetState(Delta.InputSystem.InputButton)">
+      <summary>
+            Helper method to quickly evaluate if any InputButton from any device
+            is currently in any of the InputStates (PressBegin, Pressed or
+            PressEnd. InputButton can be a mouse button, a keyboard key, any of
+            the possibly connected game pads buttons or triggers, and even touch or
+            accelerometer devices data including presses and gestures. Used very
+            similar in command checking too. Use this method in case you ever
+            want to know a device independent button state. Please note that you
+            will initialize whatever device or gesture is specified as the button.
+            If you need to specify the DeviceIndex use
+            GetState(InputButton button, int deviceIndex); instead.
+            </summary>
+      <param name="button">Button to check</param>
+      <returns>Returns the currnet input state</returns>
+    </member>
+    <member name="M:Delta.InputSystem.Input.GetState(Delta.InputSystem.InputButton,System.Int32)">
+      <summary>
+            Helper method to quickly evaluate if any InputButton from any device
+            is currently in any of the InputStates (PressBegin, Pressed or
+            PressEnd. InputButton can be a mouse button, a keyboard key, any of
+            the possibly connected game pads buttons or triggers, and even touch or
+            accelerometer devices data including presses and gestures. Used very
+            similar in command checking too. Use this method in case you ever
+            want to know a device independent button state. Please note that you
+            will initialize whatever device or gesture is specified as the button.
+            </summary>
+      <param name="button">Button to check</param>
+      <param name="deviceIndex">Optional: Device index, usually 0 for the
+            first connected device, but can be 0, 1, 2 or 3 for GamePads or
+            Mouses (unused for all other devices). The caller should check if this
+            is necessary and only call GetState for connected devices!</param>
+      <returns></returns>
+    </member>
+    <member name="M:Delta.InputSystem.Input.KillAllInput">
+      <summary>
+            Kill all input, used to clear stuff when opening a new scene, we
+            want to start fresh!
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Input.#ctor">
+      <summary>
+            Create input module, with Time as a parent to be at the top of the
+            game logic execution in the game loop (first we need input, than use
+            it to execute the game code). Rendering happens delayed and will be
+            done at the start of next frame (so GPU and CPU can work side by side)
+            This constructor does nothing, just some checking, all the work is
+            done by the properties above and the Run method below, which calls
+            Update for all devices that have been called.
+            <para />
+            This constructor is called through the Factory creation of any input
+            class (see Require attribute there). All other input classes depend on
+            this dynamic module. It is important to note that input devices
+            themselves are only initialized when they are accessed first.
+            <para></para>
+            For example if you never use Input.Accelerameter, it will never
+            be initialized or updated, which is good for performance! In addition
+            to that only features for input commands (devices and capabilities of
+            each device) specified in Input.xml are used. E.g. only if we have
+            a Touch input command the touch device will be initialized and only
+            if there is a TouchRotate gesture input command, grabbing rotate
+            gestures will be enabled (takes some time to detect), else not.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Input.Run">
+      <summary>
+            Run and update all the input devices that have been initialized/used.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Input.Mouse">
+      <summary>
+            Mouse instance, used mostly on Windows, not used at all for mobile
+            platforms and also not used on consoles (there just dummy
+            implementations are used that will just return empty values).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Input.ConnectedMice">
+      <summary>
+            Number of connected Mice.
+            This checks IsConnected for all mice once, and returns this number.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Input.Keyboard">
+      <summary>
+            Keyboard support, mostly used on Windows, but we also have support
+            for it on consoles and even mobile devices can have keyboards and
+            even if they don't we can use OnScreen keyboards to enter text into
+            text-boxes on demand (see ShowOnScreenKeyboard method).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Input.GamePad">
+      <summary>
+            Game pad support, mostly used on consoles (e.g. Xbox 360). Supports
+            many buttons and some analog triggers and thumb sticks. Most games
+            that want to support game pads should implement support for it
+            explicitly, especially since we can have up to 4 <see cref="M:Delta.InputSystem.Input.GamePads(System.Int32)" />
+            the input system cannot know which one you want to use for what.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Input.InitializedGamePads">
+      <summary>
+            Existing GamePad devices, will be set in the GamePads method once
+            a new GamePad is initialized and used somewhere.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Input.Touch">
+      <summary>
+            Touch support. Most important on the iPhone, but also for other mobile
+            platforms and we can even test it on Windows with a touch device. Note
+            unlike the other devices we support here in input, touch events are
+            mostly driven by behavior or gestures by the user, which requires some
+            extra logic, but allows us to use some cool input ways.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Input.Accelerometer">
+      <summary>
+            Accelerometer support for mobile touch devices like the iPhone,
+            Android devices or the Windows Phone 7. Can also be emulated by the
+            Wii controller if you really want to (e.g. on Windows).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Input.Gestures">
+      <summary>
+            Gestures support all the gestures that could be performed by either the 
+            mouse or a touch device. Instance will detect and record each gesture 
+            as it happens, as well it has some useful information concerning the  
+            attributes of certain gestures such as the time when they happened, 
+            position (e.g. Drag). 
+            Note please that some of the gestures that support the Touch devices  
+            does not support the mouse device gesture. 
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Input.Commands">
+      <summary>
+            Global input commands, which are loaded from the Settings.xml file and
+            handled in the CommandManager class for us. There are usually not many
+            command events defined globally because each Scene has its own
+            command binding and handling.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Input.IgnoreDeviceOrientation">
+      <summary>
+            Ignore the orientation of the current device (like portrait,
+            landscape on iPad).
+            </summary>
+    </member>
+    <member name="T:Delta.InputSystem.InputGestures">
+      <summary>
+            InputGestures is a combination of all the gestures that could be 
+            performed by the mouse or touch devices. Gesture are unique, in other 
+            words we can not have two gestures active at the same time, therefore 
+            unlike normal input buttons were there can be multiple input buttons 
+            pressed at the same time.
+            </summary>
+      <remarks>
+            Its important to note that we CAN NOT have both inputs (Touch and Mouse)
+            active at the same time, therefore the gestures will be checked only in 
+            one of them depending if there is any touch input.
+            </remarks>
+    </member>
+    <member name="F:Delta.InputSystem.InputGestures.GesturesStartIndex">
+      <summary>
+            This is needed to get the first gesture in the buttons list. All these 
+            gestures buttons will be stored in an array (gestures) which will be 
+            updated normally as a button - state to be featured in commands. 
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.InputGestures.NumberOfGestureButtons">
+      <summary>
+            The number of gesture buttons stored in the gestures array to be 
+            updated.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.InputGestures.gesturesButtons">
+      <summary>
+            Hold the state of all gesture buttons, which are exposed in the
+            GetState method and updated in the Update method.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.InputGestures.GetState(Delta.InputSystem.InputButton)">
+      <summary>
+            Get button state for all the gesture buttons.
+            </summary>
+      <param name="button">The Gesture button.</param>
+      <returns></returns>
+    </member>
+    <member name="P:Delta.InputSystem.InputGestures.IsTap">
+      <summary>
+            IsTap will be true if a mouse click (mouse pressed and released) or a
+            touch and release happened. Otherwise it might be recorded as any other 
+            gesture such as a hold or a drag.
+            </summary>
+      <remarks> 
+            Taps can not exceed the 0.5 seconds, therefore it becomes a Hold.
+            </remarks>
+    </member>
+    <member name="P:Delta.InputSystem.InputGestures.IsDoubleTap">
+      <summary>
+            This event is fired after 2 short tap click PressEnds happened in less
+            than 0.5 second (for mice) or 1 second (for Touch devices). 
+            Very useful to bind functionality to double clicking
+            (or tapping as it is named on the iPhone) without having to track
+            clicks yourself. This also will only fire the PressEnd event and it
+            will suppress the second TouchJustTapClick PressEnd.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.InputGestures.IsHold">
+      <summary>
+            This gesture will be fired after 1 seconds of pressing at the same
+            location and when this is certainly not a TouchTap event. This will
+            fire only once (as most gestures, just a PressEnd state happens) after
+            1 second, no matter if the touch is released or not (see TouchPress to
+            check if the touch is still being pressed).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.InputGestures.IsDrag">
+      <summary>
+            Whenever the touch screen is pressed and the finger at pressed position
+            is dragged around or a mouse button Left was pressed and moved around.
+            this event is fired. Usually only one finger is used to fire this
+            gesture. 
+            </summary>
+      <remarks>
+            for multiple touches use TouchPinch (2 fingers, for zooming),
+            TouchRotate (2 fingers rotating) or TouchDualDrag (2 fingers dragging
+            in one direction). You also can have TouchDrag events while other
+             events like TouchLongClick or TouchDoubleTapClick happen at the same
+             time. Please also note that this TouchDrag behavior is pretty much the
+             same as MouseDrag, which allows us to make mouse and touch input
+             handling very similar.
+            </remarks>
+    </member>
+    <member name="P:Delta.InputSystem.InputGestures.IsDaulDrag">
+      <summary>
+            This event is fired when two fingers are dragged along the screen
+            in the same direction, or it could be simulated by pressing both 
+            mouse buttons down while changing their location.
+            The drag position will be the center of the
+            two touch points for touch devices or the mouse position in case of a 
+            mouse device, while the dragAmount is the combined dragAmount divided
+            by two (so it does not matter if one finger is slightly faster or
+            slower) or the distance the mouse moves while dragging.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.InputGestures.IsHorizontalDrag">
+      <summary>
+            Drag left to right or right to left, only gestures in this direction
+            are accepted unlike Drag, which will give us all drag events.
+            </summary>
+      <remarks> This is not supported for any mouse devices</remarks>
+    </member>
+    <member name="P:Delta.InputSystem.InputGestures.IsVerticalDrag">
+      <summary>
+            Drag up and down vertically, only these movements are collected as an
+            gesture unlike Drag, which allows all drag directions.
+            </summary>
+            /// <remarks> This is not supported for any mouse devices</remarks></member>
+    <member name="P:Delta.InputSystem.InputGestures.IsFlick">
+      <summary>
+            The user just flicked (very quick swipe) in one direction. Usually
+            used to kick things around (which will the move on its own after
+            the flick is done).
+            Flick was designed for Touch devices, however it is also supported 
+            for mouse input as a very fast drag
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.InputGestures.IsRotate">
+      <summary>
+            Gesture rotate is fired when two fingers are Gesturing the screen and
+            are rotated clockwise or counter clockwise, the dragAmount.X represents
+            the angle of the rotation change (in whatever direction, + or -) and
+            the .Y value is the pinching value (which will usually not be used,
+            just use GesturePinch for that, but sometimes we need it combined).
+            The center for the rotation is the center between the two Gesture 
+            points.
+            </summary>
+      <remarks>
+            Rotation gesture only supports touch input.
+            </remarks>
+    </member>
+    <member name="P:Delta.InputSystem.InputGestures.IsPinch">
+      <summary>
+            If two fingers are used and are currently pinching, we will fire this
+            event, which is usually used for zooming (e.g. pictures, or zooming
+            into 3D scenes). Note that normal GestureDrag events will not be fired
+            if we detect that this might be a GesturePinch, GestureRotate or
+            GestureDualDrag event (basically whenever we got 2 fingers on the screen
+            and they are both dragging). The position for GesturePinch is the center
+            of both Gesture points, which is usually used to indicate what we want
+            to pinch. Usually ignored because there is only one pinch-able object.
+            </summary>
+            /// <remarks>
+            Pinch gesture only supports touch input.
+            </remarks></member>
+    <member name="T:Delta.InputSystem.Devices.BaseMouse">
+      <summary>
+            Base class for Mouse devices, most important input device on Windows,
+            but not used on consoles like Xbox 360 or mobile devices like the iPhone
+            at all. Most important properties here are Position and LeftJustPressed,
+            which alone is enough to navigate through all menus and UI.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseMouse.StartIndexOfMouseButtons">
+      <summary>
+            Constants for the buttons array and easier access in GetState.
+            Note that the InputButton enum indices are not sequential, there
+            are jumps in the list, but the Mouse buttons go from MouseLeft (228)
+            to MouseMiddleDrag (242), so we have 15 Mouse buttons and gestures.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseMouse.NumberOfMouseButtons">
+      <summary>
+            The number of mouse buttons inside of the InputButton enum, this also 
+            include the number of gestures we have as mouse buttons.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseMouse.buttons">
+      <summary>
+            Hold the state of all Mouse buttons, which are exposed in the
+            GetState method and updated in the Update method.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseMouse.mousePosition">
+      <summary>
+            Cached mouse position in quadratic space and the position from last
+            frame and their difference expressed as movement, see Position,
+            LastFramePosition and Movement properties! We also need to remember
+            the mouse start click position for the MouseTap gesture. The rest can
+            be calculated on the fly (like the total dragging amount or the
+            dragging amount this frame, which is just mouseMovement).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseMouse.lastFrameMousePosition">
+      <summary>
+            Last frame mouse position, useful for comparing and mouseMovement.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseMouse.lastClickBeginTimeMs">
+      <summary>
+            Used to record the time when the dragging started
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseMouse.mouseScrollDelta">
+      <summary>
+            How much was the mouse wheel changed this frame.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.GetState(Delta.InputSystem.InputButton)">
+      <summary>
+            Get button state for all the Mouse buttons or gestures.
+            </summary>
+      <param name="mouseButton">The mouse button.</param>
+      <returns></returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.GetMovement(Delta.InputSystem.InputButton)">
+      <summary>
+            Get button movement for Mouse movements and dragging (you can also
+            use the properties directly, but this methods helps us to generalize).
+            </summary>
+      <param name="mouseButton">The mouse button.</param>
+      <returns></returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.IsPressed(Delta.InputSystem.InputButton)">
+      <summary>
+            Get if a Mouse button is currently pressed, which is the same as
+            checking if GetState is PressBegin or Pressed, but this method makes
+            life easier.
+            </summary>
+      <param name="mouseButton">The mouse button.</param>
+      <returns>
+        <c>true</c> if the specified mouse button is pressed; otherwise, <c>false</c>.
+            </returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.IsReleased(Delta.InputSystem.InputButton)">
+      <summary>
+            Get if a Mouse button is released now, which is the same as checking if
+            GetState is Released, but this method makes life easier.
+            </summary>
+      <param name="mouseButton">The mouse button.</param>
+      <returns>
+        <c>true</c> if the specified mouse button is released; otherwise, <c>false</c>.
+            </returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.SetPosition(Delta.Utilities.Datatypes.Point)">
+      <summary>
+            Set mouse position in pixel space natively if this mouse implementation
+            supports it.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.InBox(Delta.Utilities.Datatypes.Rectangle)">
+      <summary>
+            Is the current mouse position in the given box (in quadratic space)?
+            </summary>
+      <param name="box">The box.</param>
+      <returns></returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.InBoxLastFrame(Delta.Utilities.Datatypes.Rectangle)">
+      <summary>
+            Was the mouse position of last frame in the given quadratic space box?
+            </summary>
+      <param name="box">The box.</param>
+      <returns></returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.EnteredBox(Delta.Utilities.Datatypes.Rectangle)">
+      <summary>
+            Did the mouse position enter the given quadratic space box this frame?
+            This means it was not in this box the last frame, but now it is.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.LeftBox(Delta.Utilities.Datatypes.Rectangle)">
+      <summary>
+            Did the mouse position leave the given quadratic space box this frame?
+            This means it was in this box last frame and now is not longer in it.
+            </summary>
+      <param name="box">The box.</param>
+      <returns></returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.Update">
+      <summary>
+            Update this input device once a frame, done very early in the frame.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.KillAllInput">
+      <summary>
+            Kill all input, used to clear stuff when opening a new scene, we
+            want to start fresh!
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.UpdateGestureButton(System.Boolean,Delta.InputSystem.InputButton)">
+      <summary>
+            Update mouse gesture state based on the update data
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseMouse.UpdateMouseGestures(System.Boolean,System.Boolean,System.Boolean)">
+      <summary>
+            Since all the mouse gesture handling is the same for all frameworks,
+            do it in BaseMouse, but give it some hints from the events we caught.
+            Note: All parameters here can be false, we will still be able to
+            figure out which mouse gesture happened from all the input states of
+            the mouse buttons, but it is obviously more precise if we had some
+            event that caught a mouse click or a dragging event if possible e.g.
+            on Windows we can use events, on XNA we just have polling. Please note
+            that since Xna is not event based we could miss some gestures like
+            DoubleTap and even Tap in low framerate situations. But we will do our
+            best to handle them and as long the mouse was down for at least one
+            frame we will be able to fire MouseTap and MouseDoubleTap if the mouse
+            was down at least one frame, then up for another frame and then down
+            again. Use the WindowsMouse implementation if you want higher accuracy!
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.IsConnected">
+      <summary>
+            Was a mouse detected? Returns true if the user moves the mouse and
+            the current platform even supports mouse input (e.g. Xbox 360 or the
+            iPhone does not support any mouse device). For platforms were we are
+            unsure if a mouse is used and we should display the mouse cursor,
+            this property can return false until there is mouse movement at all.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.HasData">
+      <summary>
+            Returns true if any button or key is pressed (including PressBegin,
+            Pressed or PressEnd state), or for touch screen devices if any touch
+            or gesture is currently active. Usually used as an optimization for
+            detecting buttons, gestures, handling events, etc. because if nothing
+            is pressed, we can skip all the checking! E.g. keyboard keys and their
+            command events only have to be fired if this property is true (which
+            means any key is pressed, including PressEnd states by the way).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.Index">
+      <summary>
+            Mouse controller index (0 usually, higher indices are supported in the
+            MultiMouse implementation, but rarely used for games). Set here
+            instead of in constructor to simplify creation (dynamic creation with
+            constructor parameters is harder).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.Position">
+      <summary>
+            Get the current mouse position in quadratic space. We are usually just
+            interested in getting the mouse position, but setting the mouse
+            position is possible too (e.g. limiting the area where the mouse
+            position can be in). If IsConnected is false, this will just return
+            Point.Zero. Not updated via events because XNA only supports polling,
+            so this mouse position is only updated once a tick via Mouse.GetState
+            in our Update method.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.LastFramePosition">
+      <summary>
+            Get the mouse position from the last frame, this is usually only used
+            to check if we moved outside some rectangle and should change focus.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.Movement">
+      <summary>
+            Relative movement of the mouse this frame (in quadratic space).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.IsAnyButtonActive">
+      <summary>
+            Returns 'true' if any mouse button is pressed (or still releasing now).
+            </summary>
+      <value>
+        <c>true</c> if this instance is any button active; otherwise, <c>false</c>.
+            </value>
+      <returns>Bool</returns>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.ScrollWheelDelta">
+      <summary>
+            The scroll wheel change value for this tick. Since there is usually no
+            scrolling, this value is 0 most of the time. Needs to be checked each
+            tick if you want to use this value (e.g. for scrolling), use the
+            TotalScrollWheel value to get an absolute value that will be
+            accumulated each tick (you can also need reset that value if you
+            handled it to make sure to not apply it again). Use this value for
+            updating each tick and the TotalScrollWheel value to update only from
+            time to time. A value of 1.0 means we have scrolled one unit down
+            (some platforms return 120 for 1 unit, which is converted to the same
+            units on all platforms, 5.0 always means 5 scroll wheel steps have been
+            scrolled).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.TotalScrollWheel">
+      <summary>
+            Total scroll wheel value to get an absolute value that will be
+            accumulated each tick (you can also need reset that value if you
+            handled it to make sure to not apply it again). Use ScrollWheelDelta
+            for updating each tick and the TotalScrollWheel value to update only
+            from time to time.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.LeftButtonIsPressed">
+      <summary>
+            Is the left mouse button currently pressed?
+            </summary>
+      <value>
+        <c>true</c> if [left button is pressed]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.RightButtonIsPressed">
+      <summary>
+            Is the right mouse button currently pressed?
+            </summary>
+      <value>
+        <c>true</c> if [right button is pressed]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.MiddleButtonIsPressed">
+      <summary>
+            Is the middle mouse button currently pressed?
+            </summary>
+      <value>
+        <c>true</c> if [middle button is pressed]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.LeftButtonReleased">
+      <summary>
+            Was the left mouse button just released?
+            </summary>
+      <value>
+        <c>true</c> if [left button released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.RightButtonReleased">
+      <summary>
+            Was the right mouse button just released?
+            </summary>
+      <value>
+        <c>true</c> if [right button released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.MiddleButtonReleased">
+      <summary>
+            Was the middle mouse button just pressed (using PressEnd)?
+            </summary>
+      <value>
+        <c>true</c> if [middle button released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.DragStartPosition">
+      <summary>
+            Gets the start position of a drag.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.DragStartTime">
+      <summary>
+            Gets the time when the click pressed, therefore we can also know when
+            the process of dragging started through this property.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseMouse.TotalDragAmount">
+      <summary>
+            Gets the total amount of drag in terms of points on the screen
+            </summary>
+    </member>
+    <member name="T:Delta.InputSystem.Devices.BaseKeyboard">
+      <summary>
+            Base class for the Keyboard, usually only used on Windows, but this
+            class is also implemented for other platforms if they have an on screen
+            keyboard (e.g. the iPhone, the Android or other mobile platforms).
+            The fastest Keyboard implementation can be found in Delta.Input.Windows
+            because it is event driven (Delta.Input.Xna is only using polling).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseKeyboard.NumberOfKeyboardKeys">
+      <summary>
+            Constants for the keys array and easier access in GetState.
+            Note that the InputButton enum indices are not sequential, there are
+            jumps in the list, which are especially important for the keys because
+            we just want to map them 1:1 to XNA and Windows Input for better
+            performance (there are quite a lot of keys). We don't really have 228
+            keys (last key is KeyboardCursor = 227), but we have this array size
+            to make access easier and faster (it has unused indices in it).
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseKeyboard.TotalCursorMovementPerSecond">
+      <summary>
+            For the virtual keyboard cursor (kind of emulating a mouse cursor)
+            this constant holds how far we move from one side to the other.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.KillAllInput">
+      <summary>
+            Kill all input, used to clear stuff when opening a new scene, we
+            want to start fresh!
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseKeyboard.keys">
+      <summary>
+            Hold the state of all Keyboard keys, which are exposed in the
+            GetState method and updated in the Update method.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseKeyboard.usedKeyIndices">
+      <summary>
+            Helper array to only process keys that are used and have any
+            interesting information. Many keys are undefined because they
+            don't exist in the InputButton enumeration and because we have
+            to check all keys in each Update method anyway we can optimize
+            this list even further to only check keys that are pressed.
+            Use the numberOfKeyIndices for the fluctuating size of this array,
+            the maximum size is never really used.
+            </summary>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseKeyboard.numberOfKeyIndices">
+      <summary>
+            This variable holds how many usedKeyIndices we are actually using.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.AddKeyIndex(System.Int32)">
+      <summary>
+            Helper method to add a new keyIndex to the usedKeyIndices list, but
+            first checking if we already have that key in the list.
+            </summary>
+      <param name="keyIndex">New key index to add</param>
+    </member>
+    <member name="F:Delta.InputSystem.Devices.BaseKeyboard.cursorMovement">
+      <summary>
+            Helper to remember virtual keyboard cursor movement for the
+            GetButtonMovement method.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.GetState(Delta.InputSystem.InputButton)">
+      <summary>
+            Get button state for all the Keyboard keys we handle here. We usually
+            want to know if it is currently being pressed, the PressBegin and
+            PressEnd events are more useful for the HandleInput method.
+            </summary>
+      <param name="key">Key to check</param>
+      <returns>
+            State of the current key, most likely NotPressed
+            </returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.GetMovement(Delta.InputSystem.InputButton)">
+      <summary>
+            Get button movement for Keyboard keys. None of the keys support any
+            movement, but the special KeyboardCursor input button supports
+            simplified movements and is useful to control stuff around (AWSD could
+            be possible too, but that needs to be customized more, if you want to
+            support that, please implement it yourself via the 4 keys, which then
+            can be changed easily be the user).
+            </summary>
+      <param name="onlyKeyboardCursorButtonWorks">
+            The only keyboard cursor button works (KeyboardCursor and the Cursors)
+            </param>
+      <returns></returns>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.IsPressed(Delta.InputSystem.InputButton)">
+      <summary>
+            Get if a Keyboard key is currently pressed, which is the same as
+            checking if GetState is PressBegin or Pressed, but this method makes
+            life easier.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.IsReleased(Delta.InputSystem.InputButton)">
+      <summary>
+            Get if a Keyboard key is released now, which is the same as checking if
+            GetState is Released, but this method makes life easier.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.HandleInput(System.String@)">
+      <summary>
+            Handle keyboard input helper method to catch keyboard input
+            for an input text. Used to enter the player name in the game.
+            Some of the code here could be shared, but since keyboard
+            implementations are fundamentally different (event based or using
+            polling), it is easier just to implement it for each framework.
+            </summary>
+      <param name="inputText">Input text</param>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.HandleCombinedKeys(System.Int32)">
+      <summary>
+            We need to handle combined keys too (Control makes LeftControl and
+            RightControl key states to also be set, which is important for
+            Windows input, but then again LeftControl from Xna needs also to
+            set the Control key state in XnaKeyboard).
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.Update">
+      <summary>
+            Update this input device once a frame, done very early in the frame.
+            All the native keyboard updating happens in the native implementation,
+            this method is called afterwards and will update some of the extra
+            variables like cursorMovement and totalCursorPosition.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.ShowOnScreenKeyboard">
+      <summary>
+            Show the OnScreen Keyboard if there is no keyboard connected.
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.ForceShowOnScreenKeyboard">
+      <summary>
+            Force showing the OnScreen keyboard (no matter if we already have a
+            connected keyboard or not).
+            </summary>
+    </member>
+    <member name="M:Delta.InputSystem.Devices.BaseKeyboard.HideOnScreenKeyboard">
+      <summary>
+            Hide the OnScreen keyboard (will do nothing if it was not shown).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.IsConnected">
+      <summary>
+            Is a keyboard available and can be used? Mostly true because on mobile
+            devices we can use an on screen keyboard and on windows we always have
+            a keyboard. Only on consoles keyboards are optional and usually unused.
+            However on the Xbox XNA does not report if a USB keyboard is connected
+            or not, so this will always return true there, but no keys will be
+            pressed. This property is still useful for mobile platforms however.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.HasData">
+      <summary>
+            Returns true if any button or key is pressed (including PressBegin,
+            Pressed or PressEnd state), or for touch screen devices if any touch
+            or gesture is currently active. Usually used as an optimization for
+            detecting buttons, gestures, handling events, etc. because if nothing
+            is pressed, we can skip all the checking! E.g. keyboard keys and their
+            command events only have to be fired if this property is true (which
+            means any key is pressed, including PressEnd states by the way).
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.Position">
+      <summary>
+            Get the absolute button position. It is the same position for all
+            buttons types, used mostly for mouse and touch devices. Not used for
+            any keys or buttons on a non-mouse or non-touch device, but for mouse
+            events this holds the current mouse position or the position for the
+            gesture. More importantly for touch input this holds the position for
+            the touch gesture, which is not necessarily the same as the current or
+            last touch position. Not used for GamePads (this will just return a
+            total value between 0 and 1 like a mouse simulator), use GetMovement
+            for the current triggers and thumb sticks values instead!
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.CursorMovement">
+      <summary>
+            Combines all the cursor keys together for the combined movement of all
+            cursor keys (left, up, down and right) each tick. For example if you
+            have a game that allows TouchDrag input for controlling the player you
+            could easily add the same command with KeyboardCursor to allow
+            controlling it with the keyboard cursor keys as well and the same way.
+            </summary>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.SpaceReleased">
+      <summary>
+            Check if the Space key was just released.
+            </summary>
+      <value>
+        <c>true</c> if [space released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.SpaceIsPressed">
+      <summary>
+            Check if the space key is currently pressed (true until it is released
+            again, if you just want the initial pressed state change use
+            GetState(InputButton.Space) == InputState.Pressed).
+            </summary>
+      <value>
+        <c>true</c> if [space is pressed]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.ShiftIsPressed">
+      <summary>
+            Is the shift key currently pressed? Mainly used for HandleInput on
+            polling frameworks like Xna to check if we should use lower or upper
+            case letters, etc.
+            </summary>
+      <value>
+        <c>true</c> if [shift is pressed]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.EnterReleased">
+      <summary>
+            Check if the Enter key was just released
+            </summary>
+      <value>
+        <c>true</c> if [enter released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.F1Released">
+      <summary>
+            Check if the F1 key was just released
+            </summary>
+      <value>
+        <c>true</c> if [f1 released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.EscapeReleased">
+      <summary>
+            Check if the Escape key was just released
+            </summary>
+      <value>
+        <c>true</c> if [escape released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.CursorLeftReleased">
+      <summary>
+            Check if the left cursor key was just released.
+            </summary>
+      <value>
+        <c>true</c> if [cursor left released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.CursorRightReleased">
+      <summary>
+            Check if the right cursor key was just released.
+            </summary>
+      <value>
+        <c>true</c> if [cursor right released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.CursorUpReleased">
+      <summary>
+            Check if the up cursor key was just released.
+            </summary>
+      <value>
+        <c>true</c> if [cursor up released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.CursorDownReleased">
+      <summary>
+            Check if the up cursor key was just released.
+            </summary>
+      <value>
+        <c>true</c> if [cursor down released]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.CursorLeftIsPressed">
+      <summary>
+            Check if the left cursor key is currently pressed.
+            </summary>
+      <value>
+        <c>true</c> if [cursor left is pressed]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.CursorRightIsPressed">
+      <summary>
+            Check if the right cursor key is currently pressed.
+            </summary>
+      <value>
+        <c>true</c> if [cursor right is pressed]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.CursorUpIsPressed">
+      <summary>
+            Check if the up cursor key is currently pressed.
+            </summary>
+      <value>
+        <c>true</c> if [cursor up is pressed]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.InputSystem.Devices.BaseKeyboard.CursorDownIsPressed">
+      <summary>
+            Check if the down cursor key is currently pressed.
+            </summary>
+      <value>
+        <c>true</c> if [cursor down is pressed]; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="T:Delta.InputSystem.Devices.GestureType">
+      <summary>
+            Supported gesture types for touch events. Note: These are in addition to
+            the touch states, which are still valid even when gestures are
+            calculated and used, so make sure in your app that you only handle touch
+            input once from either the touch states or from the gestures (or mix
+            them), but do not fire a clicked for a Tap gesture and for a PressEnd,
+            that would fire two events. Use whatever is more comfortable, both are
+            always implemented and always work! All tap events except Drag, Pinch
+            and Rotate are only one-time events.
+            </summary>
+      <remarks>
+            Passed on by the framework (XNA or MonoTouch) and calculated by the
+            platform usually (iPhone, Android or Windows Phone 7). In XNA there are
+            10 different gestures: Tap, DoubleTap, Flick, FreeDrag, DragComplete,
+            HorizontalDrag, VerticalDrag, Pinch, PinchComplete, Hold, but we combine
+            some of them together (all dragging and the Pinch and PinchComplete).
+            Some events like rotation are missing and we have to re-calculate them
+            ourselves from the Pinch event when the Touch.Update is called. On the
+            iPhone UIGestureRecognizer and UIGestureRecognizerDelegate are used for
+            detection and have several implementations for each possible gesture:
+            UITapGestureRecognizer, UISwipeGestureRecognizer,
+            UIRotationGestureRecognizer, UIPinchGestureRecognizer,
+            UILongPressGestureRecognizer, UIPanGestureRecognizer.
+            </remarks>
+    </member>
+  </members>
+</doc>

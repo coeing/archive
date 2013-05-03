@@ -1,0 +1,258 @@
+#root {
+	background: #8A8F82;
+	font-family: 'VT323';
+	font-size: 24px;
+}
+
+#wrapper {
+	width: 500px;
+	height: 600px;
+	margin: 0 auto;
+	position: relative;
+	top: 266px;
+	left: -39px;
+	overflow: hidden;
+	z-index: 2;
+}
+
+#wrapper canvas {
+	position: absolute;
+}
+.pixelborder {
+	-moz-border-image: url(../sprites/border.png) 9 9 9 9 repeat;
+	-webkit-border-image: url(../sprites/border.png) 9 9 9 9 repeat;
+	border-width: 9px;
+}
+#editor {
+	width: 202px;
+	height: 600px;
+	position: absolute;
+	right: 0;
+	z-index: 5;
+	background: url('../sprites/editor_bg.png') 0 0 no-repeat;
+}
+#parts {
+	list-style-type: none;
+	margin: 30px 4px 0 14px;
+	padding: 0;
+	max-height: 340px;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+#info {
+	margin: 30px 4px 0 14px;
+}
+
+#editor li {
+	position: relative;
+	display: block;
+	margin: 1px 3px;
+	padding: 3px;
+}
+
+#editor li * {
+	-moz-user-select: none;
+}
+
+#editor li.selected{
+	opacity: .5;
+}
+
+#editor li a:visited,
+#editor li a:active,
+#editor li a{
+	display: block;
+	color:#000;
+	text-decoration: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+#editor li div{
+	margin: 5px;
+}
+
+#editor li:hover{
+	display: block;
+	background: #6f6f6f;
+}
+
+#editor .part-descr{
+	font-size: 14px;
+	padding: 0 5px;
+	margin: 0;
+	border-top: 2px solid #000;
+	cursor: default;
+}
+
+#editor h4.part-type{
+	padding: 0;
+	margin: 0;
+	font-size: 14px;
+}
+
+.money-icon{
+	padding: 0 26px 0 0;
+	background: url('../sprites/coin.png') center right no-repeat;
+	cursor: default;
+	text-align: right;
+}
+.money-icon.not-enough{
+	color: #f00;
+}
+.icon {
+	background: url('../sprites/icons.png') 0 0;
+	width: 28px;
+	height: 28px;
+	right: -36px;
+	top: -10px;
+	position: absolute;
+}
+#thrust .icon {
+	background-position: 0 -28px;
+}
+#fuel .icon {
+	background-position: 0 -56px;
+}
+
+#editor .part-cost{
+	position: absolute;
+	right: 2px;
+	top: 2px;
+}
+#editor .part-cost.not-enough-money{
+	color: #f00;
+}
+
+.bar {
+	margin: 16px 0;
+	position: relative;
+	background: url('../sprites/bar_bg.png');
+	height: 14px;
+	width: 128px;
+}
+
+.bar-bar{
+	height: 10px;
+	position: absolute;
+	left: 2px;
+	top: 2px;
+	width: 50px;
+	background: #fc6 url('../sprites/bar.png') 0 0;
+	-moz-transition: all 0.5s linear 0s;
+}
+#start {
+	width: 500px;
+	height: 600px;
+	background: url("../images/title_screen.png");
+}
+
+#start a.faction {
+	width: 108px;
+	height: 116px;
+	position: absolute;
+}
+#start #russians {
+	height: 116px;
+	top: 244px;
+	left: 110px;
+}
+#start #russians:hover {
+	background: url("../images/russian_active.png");
+}
+#start #americans {
+	height: 112px;
+	top: 248px;
+	left: 292px;
+}
+#start #americans:hover {
+	background: url("../images/american_active.png");
+}
+
+#start #select_faction {
+	position: absolute;
+	top: 390px;
+	left: 137px;
+}
+
+#arcade_machine {
+	background: url("../images/arcade_machine.png");
+	width: 1251px;
+	height: 1137px;
+/*	position: absolute;
+	left: -337px;*/
+/*	top: -266px;*/
+	margin: 0 auto;
+	z-index: 1;
+}
+
+.gui {
+	background: url('../images/gui.png');
+}
+
+#altitude {
+	position: absolute;
+	background-position: -196px 0;
+	height: 36px;
+	width: 90px;
+	z-index: 2;
+	top: 2px;
+	left: 2px;
+	display: block;
+	line-height: 30px;
+	text-align: right;
+	padding: 0 6px 0 50px;
+        opacity: 0;
+}
+
+#info-bars {
+	position: absolute;
+	height: 56px;
+	width: 196px;
+	z-index: 2;
+	bottom: 2px;
+	left: 2px;
+	display: block;
+        opacity: 0;
+}
+#fuel-bar{
+	background-position: -196px -36px;
+	height: 10px;
+	width: 158px;
+	position: absolute;
+	top:10px;
+	left: 30px;
+}
+#life-bar{
+	background-position: -196px -46px;
+	height: 10px;
+	width: 158px;
+	position: absolute;
+	top: 36px;
+	left: 30px;
+}
+
+#scoreboard {
+	position: absolute;
+	top: 85px;
+	left: 80px;
+	width: 342px;
+	height: 166px;
+	z-index: 1;
+	text-align: center;
+}
+#scoreboard.russians {
+	background: url("../images/score_russians.png");
+}
+#scoreboard.americans {
+	background: url("../images/score_americans.png");
+}
+#scoreboard #altitude_score {
+	margin-top: 61px;
+}
+#scoreboard #money_score {
+	margin-top: -10px;
+}

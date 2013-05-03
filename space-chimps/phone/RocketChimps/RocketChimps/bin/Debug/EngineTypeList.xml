@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TypeList>
+  <Type Name="Delta.Engine.Dynamic.DynamicModule" Assembly="Delta.Engine">
+    <Implementation Name="Delta.InputSystem.Input" Assembly="Delta.InputSystem" />
+    <Implementation Name="Delta.Engine.Time" Assembly="Delta.Engine" />
+    <Implementation Name="Delta.ContentSystem.ContentManager" Assembly="Delta.ContentSystem" />
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKGraphic" Assembly="Delta.Graphics.OpenTK" />
+    <Implementation Name="Delta.Multimedia.MediaManager" Assembly="Delta.Multimedia" />
+    <Implementation Name="Delta.Platforms.Windows.WindowsApplication" Assembly="Delta.Platforms.Windows" />
+  </Type>
+  <Type Name="Delta.ContentSystem.Content" Assembly="Delta.ContentSystem">
+    <Implementation Name="Delta.ContentSystem.Xml.XmlData" Assembly="Delta.ContentSystem" />
+    <Implementation Name="Delta.ContentSystem.EmptySceneData" Assembly="Delta.ContentSystem" />
+    <Implementation Name="Delta.ContentSystem.Multimedia.SoundData" Assembly="Delta.ContentSystem.Multimedia" />
+    <Implementation Name="Delta.ContentSystem.Multimedia.MusicData" Assembly="Delta.ContentSystem.Multimedia" />
+    <Implementation Name="Delta.ContentSystem.Multimedia.VideoData" Assembly="Delta.ContentSystem.Multimedia" />
+    <Implementation Name="Delta.ContentSystem.Rendering.EffectData" Assembly="Delta.ContentSystem.Rendering" />
+    <Implementation Name="Delta.ContentSystem.Rendering.MaterialData" Assembly="Delta.ContentSystem.Rendering" />
+    <Implementation Name="Delta.ContentSystem.Rendering.ImageData" Assembly="Delta.ContentSystem.Rendering" />
+    <Implementation Name="Delta.ContentSystem.Rendering.ImageAnimationData" Assembly="Delta.ContentSystem.Rendering" />
+    <Implementation Name="Delta.ContentSystem.Rendering.FontData" Assembly="Delta.ContentSystem.Rendering" />
+    <Implementation Name="Delta.ContentSystem.Rendering.ModelData" Assembly="Delta.ContentSystem.Rendering" />
+    <Implementation Name="Delta.ContentSystem.Rendering.ShaderData" Assembly="Delta.ContentSystem.Rendering" />
+    <Implementation Name="Delta.ContentSystem.Rendering.LevelData" Assembly="Delta.ContentSystem.Rendering" />
+    <Implementation Name="Delta.ContentSystem.Rendering.MeshData" Assembly="Delta.ContentSystem.Rendering" />
+    <Implementation Name="Delta.ContentSystem.Rendering.CameraData" Assembly="Delta.ContentSystem.Rendering" />
+    <Implementation Name="Delta.ContentSystem.Rendering.MeshAnimationData" Assembly="Delta.ContentSystem.Rendering" />
+  </Type>
+  <Type Name="Delta.ContentSystem.Xml.XmlData" Assembly="Delta.ContentSystem">
+    <Implementation Name="Delta.ContentSystem.Rendering.FontData" Assembly="Delta.ContentSystem.Rendering" />
+  </Type>
+  <Type Name="Delta.Graphics.BaseOpenGL.BaseOpenGLShader" Assembly="Delta.Graphics.BaseOpenGL">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKShader" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.Basics.Shader" Assembly="Delta.Graphics.Basics">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKShader" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.BaseShader" Assembly="Delta.Graphics">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKShader" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.BaseOpenGL.BaseOpenGLGraphic" Assembly="Delta.Graphics.BaseOpenGL">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKGraphic" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.Graphic" Assembly="Delta.Graphics">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKGraphic" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Engine.Dynamic.IGraphic" Assembly="Delta.Engine">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKGraphic" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.ScreenshotCapturer" Assembly="Delta.Graphics">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKScreenshotCapturer" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.BaseOpenGL.BaseOpenGLGeometry" Assembly="Delta.Graphics.BaseOpenGL">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKGeometry" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.Basics.Geometry" Assembly="Delta.Graphics.Basics">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKGeometry" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.BaseGeometry" Assembly="Delta.Graphics">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKGeometry" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.BaseOpenGLTexture" Assembly="Delta.Graphics.BaseOpenGL">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKTexture" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.Basics.Texture" Assembly="Delta.Graphics.Basics">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKTexture" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.BaseTexture" Assembly="Delta.Graphics">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKTexture" Assembly="Delta.Graphics.OpenTK" />
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKRenderToTexture" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.BaseOpenGL.BaseOpenGLBinding" Assembly="Delta.Graphics.BaseOpenGL">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKBinding" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.BaseOpenGL.BaseOpenGLRenderToTexture" Assembly="Delta.Graphics.BaseOpenGL">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKRenderToTexture" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.Basics.RenderToTexture" Assembly="Delta.Graphics.Basics">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKRenderToTexture" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.Graphics.BaseRenderToTexture" Assembly="Delta.Graphics">
+    <Implementation Name="Delta.Graphics.OpenTK.OpenTKRenderToTexture" Assembly="Delta.Graphics.OpenTK" />
+  </Type>
+  <Type Name="Delta.InputSystem.Devices.BaseTouch" Assembly="Delta.InputSystem">
+    <Implementation Name="Delta.InputSystem.Windows.WindowsTouch" Assembly="Delta.InputSystem.Windows" />
+  </Type>
+  <Type Name="Delta.InputSystem.Devices.IInputDevice" Assembly="Delta.InputSystem">
+    <Implementation Name="Delta.InputSystem.Windows.WindowsTouch" Assembly="Delta.InputSystem.Windows" />
+    <Implementation Name="Delta.InputSystem.Windows.WindowsKeyboard" Assembly="Delta.InputSystem.Windows" />
+    <Implementation Name="Delta.InputSystem.Windows.WindowsMouse" Assembly="Delta.InputSystem.Windows" />
+    <Implementation Name="Delta.InputSystem.Windows.WindowsGamePad" Assembly="Delta.InputSystem.Windows" />
+    <Implementation Name="Delta.InputSystem.Windows.WindowsAccelerometer" Assembly="Delta.InputSystem.Windows" />
+  </Type>
+  <Type Name="Delta.InputSystem.Devices.BaseKeyboard" Assembly="Delta.InputSystem">
+    <Implementation Name="Delta.InputSystem.Windows.WindowsKeyboard" Assembly="Delta.InputSystem.Windows" />
+  </Type>
+  <Type Name="Delta.InputSystem.Devices.BaseMouse" Assembly="Delta.InputSystem">
+    <Implementation Name="Delta.InputSystem.Windows.WindowsMouse" Assembly="Delta.InputSystem.Windows" />
+  </Type>
+  <Type Name="Delta.InputSystem.Devices.BaseGamePad" Assembly="Delta.InputSystem">
+    <Implementation Name="Delta.InputSystem.Windows.WindowsGamePad" Assembly="Delta.InputSystem.Windows" />
+  </Type>
+  <Type Name="Delta.InputSystem.Devices.BaseAccelerometer" Assembly="Delta.InputSystem">
+    <Implementation Name="Delta.InputSystem.Windows.WindowsAccelerometer" Assembly="Delta.InputSystem.Windows" />
+  </Type>
+  <Type Name="Delta.Multimedia.NativeSound" Assembly="Delta.Multimedia">
+    <Implementation Name="Delta.Multimedia.BaseOpenAL.BaseOpenALSound" Assembly="Delta.Multimedia.BaseOpenAL" />
+    <Implementation Name="Delta.Multimedia.OpenTK.OpenTKSound" Assembly="Delta.Multimedia.OpenTK" />
+  </Type>
+  <Type Name="Delta.Multimedia.SoundChannel" Assembly="Delta.Multimedia">
+    <Implementation Name="Delta.Multimedia.BaseOpenAL.BaseOpenALChannel" Assembly="Delta.Multimedia.BaseOpenAL" />
+    <Implementation Name="Delta.Multimedia.OpenTK.OpenTKChannel" Assembly="Delta.Multimedia.OpenTK" />
+  </Type>
+  <Type Name="Delta.Multimedia.BaseOpenAL.BaseOpenALChannel" Assembly="Delta.Multimedia.BaseOpenAL">
+    <Implementation Name="Delta.Multimedia.OpenTK.OpenTKChannel" Assembly="Delta.Multimedia.OpenTK" />
+  </Type>
+  <Type Name="Delta.Multimedia.BaseOpenAL.BaseOpenALSound" Assembly="Delta.Multimedia.BaseOpenAL">
+    <Implementation Name="Delta.Multimedia.OpenTK.OpenTKSound" Assembly="Delta.Multimedia.OpenTK" />
+  </Type>
+  <Type Name="Delta.Multimedia.NativeMusic" Assembly="Delta.Multimedia">
+    <Implementation Name="Delta.Multimedia.OpenTK.OpenTKMusic" Assembly="Delta.Multimedia.OpenTK" />
+  </Type>
+  <Type Name="Delta.Engine.SystemInformation" Assembly="Delta.Engine">
+    <Implementation Name="Delta.Platforms.Windows.WindowsSystemInformation" Assembly="Delta.Platforms.Windows" />
+  </Type>
+  <Type Name="Delta.Engine.Application" Assembly="Delta.Engine">
+    <Implementation Name="Delta.Platforms.Windows.WindowsApplication" Assembly="Delta.Platforms.Windows" />
+  </Type>
+  <Type Name="Delta.Engine.Dynamic.IWindow" Assembly="Delta.Engine">
+    <Implementation Name="Delta.Platforms.Windows.Window" Assembly="Delta.Platforms.Windows" />
+  </Type>
+</TypeList>

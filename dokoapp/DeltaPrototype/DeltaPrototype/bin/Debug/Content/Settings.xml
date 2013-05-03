@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Settings>
+  <Language>English</Language>
+  <Resolution>1024, 768</Resolution>
+  <Extra>
+    <LogServerIp>DeltaEngine.net</LogServerIp>
+    <IsFullscreen>False</IsFullscreen>
+    <DepthBuffer>BitDepth24</DepthBuffer>
+    <AntiAliasing>None</AntiAliasing>
+    <MultithreadedModules>False</MultithreadedModules>
+    <GameLogicUpdatesPerSec>5</GameLogicUpdatesPerSec>
+    <LimitFramerate></LimitFramerate>
+    <AllowDelayedTextureLoading>False</AllowDelayedTextureLoading>
+    <ReduceInputLag>False</ReduceInputLag>
+  </Extra>
+  <Modules>
+    <GraphicModule>OpenTK</GraphicModule>
+    <EmulatorName></EmulatorName>
+    <InputModule>Windows</InputModule>
+    <AudioModule>OpenTK</AudioModule>
+    <VideoModule></VideoModule>
+    <PhysicsModule></PhysicsModule>
+    <IsSoundEnabled>True</IsSoundEnabled>
+    <IsMusicEnabled>True</IsMusicEnabled>
+    <IsVideoEnabled>True</IsVideoEnabled>
+    <IsTouchEnabled>True</IsTouchEnabled>
+  </Modules>
+  <Debug>
+    <ProfilingModes>Fps</ProfilingModes>
+    <DrawDebugInfoModes>None</DrawDebugInfoModes>
+    <LogFramerateWhenQuitting>False</LogFramerateWhenQuitting>
+    <AllowDuplicateLogChecking>True</AllowDuplicateLogChecking>
+    <AllowDevelopmentAssemblyUpdating>True</AllowDevelopmentAssemblyUpdating>
+    <OptionalAssemblyPath></OptionalAssemblyPath>
+  </Debug>
+  <Optional />
+</Settings>

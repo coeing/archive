@@ -1,0 +1,281 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.Graphics.Basics</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.Graphics.Basics.Shader">
+            <summary>
+            Shader base class, defines all the public methods we can call from the
+            outside, mostly done from the material class or some render classes.
+            Most importantly each platform implements all the platform dependant
+            render code (which can be both fixed function or shader based if the
+            hardware supports it).
+            <para />
+            You can use this class to extend shader functionality for all platforms.
+            If you just change OpenTKShader, your game will not be able to use that
+            changes on any other graphic platform.
+            <para />
+            Note: Please check the wiki for help and ask in the forum on how to
+            extend the Shader class and add more uniforms and features.
+            </summary>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Shader.Create(System.String)">
+            <summary>
+            Create shader from the shader content name if that is known. Note that
+            there is also a Create overload just from the shader feature flags.
+            </summary>
+            <param name="shaderName">Shader content name</param>
+            <returns>Shader</returns>
+        </member>
+        <member name="F:Delta.Graphics.Basics.Shader.shaderCache">
+            <summary>
+            Global shader cache, makes sure that every shader is only loaded once.
+            </summary>
+        </member>
+        <member name="F:Delta.Graphics.Basics.Shader.shaderFlagsCache">
+            <summary>
+            Global shader flags cache, makes sure that every dynamically requested
+            shader via shader flags is only loaded once.
+            </summary>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Shader.#ctor(System.String)">
+            <summary>
+            Creates a base shader, this constructor will grab the ShaderData and
+            then setup the native shader objects (the graphics device needs to be
+            up). When the device is lost or the window gets resized the matrices
+            are updated, we reload everything and grab the shader parameters again.
+            The Load method also checks if we are loading the same shader again
+            and caches the results, so we never create two instances of the same
+            shader! If we do a warning is outputted to prevent bad performance
+            of using multiple shaders with the exact same internal data.
+            </summary>
+            <param name="setShaderName">Set shader name for loading the ShaderData
+            from the content system, which is used to create the shader</param>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Shader.#ctor(Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags)">
+            <summary>
+            Create shader from shader flags instead of the content name.
+            </summary>
+            <param name="setShaderFlags">Shader flags to search for a shader
+            content entry with this flags</param>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Shader.Create(Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags)">
+            <summary>
+            Create shader dynamically from shader flags. Will just return the
+            first shader we can find from the content system that uses those flags.
+            For more control use the Create method with the shader content name!
+            Note: Only allowed internally for fallback, normally in applications
+            shaders are created by the MaterialData.ShaderName string value!
+            </summary>
+            <param name="shaderFlags">Shader flags combination</param>
+            <returns>Shader we found that matches this flags</returns>
+        </member>
+        <member name="T:Delta.Graphics.Basics.Geometry">
+            <summary>
+            Geometry mesh implementation class, each graphic framework has its own
+            implementation (own drawing logic, optimizations, vertex buffers, etc.).
+            <para />
+            You can use this class to extend geometry mesh functionality for all
+            platforms. If you just change OpenTKGeometry, your game will not be able
+            to use that changes on any other graphic platform.
+            </summary>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Geometry.Create(Delta.ContentSystem.Rendering.GeometryData)">
+            <summary>
+            Create geometry from geometry mesh data, used to generate meshes
+            instead of loading them from content, but can be used for that too.
+            </summary>
+            <param name="createFromGeometryData">The create from geometry data.</param>
+            <returns>Geometry that was created from GeometryData</returns>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Geometry.#ctor(Delta.ContentSystem.Rendering.GeometryData)">
+            <summary>
+            Create geometry from already created GeometryData (from content or for
+            creating dynamic meshes, like for Lines, UI rendering or Effects).
+            </summary>
+            <param name="setMeshData">Geometry mesh data</param>
+        </member>
+        <member name="T:Delta.Graphics.Basics.Texture">
+            <summary>
+            Based on the Content class, this is a specific implementation for
+            images with some extra data like PixelSize, BlendMode, UseFiltering, UV
+            and NumberOfAnimatedImages (all from the ContentData meta data).
+            <para />
+            You can use this class to extend texture functionality for all platforms.
+            If you just change OpenTKTexture, your game will not be able to use that
+            changes on any other graphic platform.
+            </summary>
+        </member>
+        <member name="F:Delta.Graphics.Basics.Texture.DefaultTextureDimension">
+            <summary>
+            The dimension size (in both directions) of the default texture.
+            </summary>
+        </member>
+        <member name="F:Delta.Graphics.Basics.Texture.DefaultTextureShouldUseLinearFiltering">
+            <summary>
+            The default texture should not use linear filtering (it is just 4x4).
+            </summary>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Texture.Create(System.Byte[],Delta.Utilities.Datatypes.Size,Delta.Utilities.Graphics.BlendMode,System.Boolean,System.Boolean)">
+            <summary>
+            Create texture with given RGB or RGBA data, this can be used to create
+            textures programmatically (e.g. mini-maps). You can also use
+            RenderToTexture to render onto textures, which can also be used in
+            Materials and Shaders. RenderToTexture is much more efficient if you
+            want to change the texture data and should always be used for post
+            screen shaders. This method is only useful for static data.
+            <para />
+            Note: This method creates the texture dynamically, each graphics
+            implementation must provide this constructor, else this will fail.
+            </summary>
+            <param name="setByteData">RGB (24 bit per pixel, no alpha) or RGBA 
+            (32 bit per pixel, with alpha) data, you can use the ConvertColorToRgb
+            or ConvertColorToRgba to get byte data from colors.</param>
+            <param name="setSize">Size of the texture in pixels,
+            Width * Height must match rgbData.Length / 3</param>
+            <param name="setMode">Blend mode to use for this created texture
+            </param>
+            <param name="setUseLinearFiltering">True if we want the normal linear
+            filtering enabled or false for sharp blocky looking textures.</param>
+            <param name="setIsRgba">Set true whether setByteData is RGBA or RGB.
+            </param>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Texture.Create(System.Byte[],Delta.Utilities.Datatypes.Size,Delta.Utilities.Graphics.BlendMode,System.Boolean)">
+            <summary>
+            Create texture with given RGB data, this can be used to create
+            textures programmatically (e.g. mini-maps). You can also use
+            RenderToTexture to render onto textures, which can also be used in
+            Materials and Shaders. RenderToTexture is much more efficient if you
+            want to change the texture data and should always be used for post
+            screen shaders. This method is only useful for static data.
+            <para />
+            Note: This method creates the texture dynamically, each graphics
+            implementation must provide this constructor, else this will fail.
+            </summary>
+            <param name="setRgbData">RGB data (24 bit per pixel, no alpha), you
+            can use the ConvertColorToRgb to get byte data from colors.</param>
+            <param name="setSize">Size of the texture in pixels,
+            Width * Height must match rgbData.Length / 3</param>
+            <param name="setMode">Blend mode to use for this created texture
+            </param>
+            <param name="setUseLinearFiltering">True if we want the normal linear
+            filtering enabled or false for sharp blocky looking textures.</param>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Texture.ConvertColorToRgb(Delta.Utilities.Datatypes.Color[])">
+            <summary>
+            Helper method to convert color information into a RGB byte array.
+            </summary>
+            <param name="pixelColors">Pixel colors, just RGB values are used
+            </param>
+            <returns>Byte array with the RGB data (24 bits per pixel)</returns>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Texture.ConvertColorToRgba(Delta.Utilities.Datatypes.Color[])">
+            <summary>
+            Helper method to convert color information into a RGBA byte array.
+            </summary>
+            <param name="pixelColors">Pixel colors in the RGBA format.</param>
+            <returns>Byte array with the RGBA data (32 bits per pixel)</returns>
+        </member>
+        <member name="F:Delta.Graphics.Basics.Texture.generatedTextureNumber">
+            <summary>
+            Helper for the generated texture name for dynamically created textures.
+            </summary>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Texture.#ctor(System.String)">
+            <summary>
+            Create an image, will just pass the image name on to the Texture
+            class, which will load the image content. Use Get to create and load
+            images (this makes sure we only create one instance per image).
+            </summary>
+            <param name="imageContentName">Image content name to load. If this is
+            empty no content will be loaded (just fallback data will be set).
+            </param>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Texture.#ctor(System.Byte[],Delta.Utilities.Datatypes.Size,Delta.Utilities.Graphics.BlendMode,System.Boolean,System.Boolean)">
+            <summary>
+            Create texture with given RGB or RGBA data, this can be used to create
+            textures programmatically (e.g. mini-maps). You can also use
+            RenderToTexture to render onto textures, which can also be used in
+            Materials and Shaders. RenderToTexture is much more efficient if you
+            want to change the texture data and should always be used for post
+            screen shaders. This constructor is only useful for static data.
+            </summary>
+            <param name="setByteData">
+            RGB (24 bit per pixel, no alpha) or RGBA (32 bit per pixel, with alpha) 
+            data.
+            </param>
+            <param name="setSize">Size of the texture in pixels,
+            Width * Height must match rgbData.Length / 3</param>
+            <param name="setMode">Blend mode to use for this texture</param>
+            <param name="setUseLinearFiltering">True if we want the normal linear
+            filtering enabled or false for sharp blocky looking textures.</param>
+            <param name="setIsRgba">Set true whether setByteData is RGBA or RGB.</param>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Texture.Create(System.String)">
+            <summary>
+            Create and load texture dynamically, this is important because in the
+            platform independent rendering system does not know about each texture
+            implementation. Internal because only used in Delta.Rendering, which
+            is our friend :)
+            </summary>
+            <param name="imageName">Image content name we want for creation</param>
+            <returns>Loaded texture from the internal ImageData (or the created
+            fallback texture if that failed)</returns>
+        </member>
+        <member name="M:Delta.Graphics.Basics.Texture.CreateDefaultTexture">
+            <summary>
+            Helper method to create the default texture with help of the abstract
+            CreateTexture2D method that is implemented in each implementation.
+            </summary>
+        </member>
+        <member name="T:Delta.Graphics.Basics.RenderToTexture">
+            <summary>
+            Render To Texture class for rendering into textures. This is needed
+            mostly for shadow mapping and post screen shader techniques.
+            <para />
+            You can use this class to extend render to texture functionality for all
+            platforms. If you just change OpenTKRenderToTexture, your game will not
+            be able to use that changes on any other graphic platform.
+            </summary>
+        </member>
+        <member name="M:Delta.Graphics.Basics.RenderToTexture.Create(Delta.Utilities.Datatypes.Size,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Create render to texture instance dynamically.
+            </summary>
+            <param name="setPixelSize">Pixel size of the target texture</param>
+            <param name="setIsDepthTexture">Should this be a depth texture?</param>
+            <param name="setIsShadowProjected">
+            Should this be used for projected shadow map texture techniques?
+            </param>
+            <param name="setUseStencilBuffer">
+            Use the stencil flag for this RenderToTexture instance?
+            </param>
+            <returns>Created RenderToTexture instance</returns>
+        </member>
+        <member name="F:Delta.Graphics.Basics.RenderToTexture.instanceNumber">
+            <summary>
+            Static integer value for generating unique name of every created
+            RenderToTexure.
+            </summary>
+        </member>
+        <member name="M:Delta.Graphics.Basics.RenderToTexture.#ctor(System.String,Delta.Utilities.Datatypes.Size,System.Boolean,System.Boolean,System.Boolean)">
+            <summary>
+            Creates an instance of render to texture. Please note that calling
+            Render will initialize this instance (with the
+            MakeSureRenderTargetIsInitialized helper method), this constructor
+            does nothing here yet.
+            </summary>
+            <param name="setTextureName">Name for the RenderToTexture</param>
+            <param name="setPixelSize">Pixel size of the target texture</param>
+            <param name="setIsDepthTexture">If set to <c>true</c> the texture
+            target is a depth texture</param>
+            <param name="setIsShadowProjected">If set to <c>true</c> the texture
+            target is projected shadow texture to be used in shadow mapping.
+            </param>
+            <param name="setUseStencilBuffer">
+            Use the stencil flag for this RenderToTexture instance?
+            </param>
+        </member>
+    </members>
+</doc>

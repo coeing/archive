@@ -1,0 +1,1014 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.Utilities.Networking</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.Utilities.Networking.BaseServer">
+            <summary>
+            Tcp Server base class. Provides useful functionality for server programs
+            like the Log server or the Content and Build Server. Basically listens
+            for clients with a TcpListener and manages a list of Sockets for
+            connected clients. Build on top of the SocketHelper and StreamHelper
+            functionality of the Delta.Utilities.Helpers assembly. Also provides
+            compression functionality automatically for all messages with a payload
+            of over 1024 bytes (like files). Additionally all network traffic can
+            be encrypted with AES cryptography and the initial seed value can even
+            be decrypted with a secret RSA key using a public RSA key on the clients.
+            <para />
+            Please keep in mind that a server usually has many clients that can
+            connect and send data. All client methods like OnClientLogin and
+            OnMessageReceived can be called from different data receiving threads
+            and should be made thread safe (put a lock around critical code blocks).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseServer.privateKey">
+            <summary>
+            Private key for encryption, see Cryptography class for details, by
+            default this is null and unused. Please note that for encryption the
+            first message send from the client to the server must be the Connect
+            message (message type 0) and it contains the random seed (optionally
+            even encrypted with a public RSA key from the server). See the
+            <see cref="!:HandleConnectDecryption"/> method for details.
+            <para/>
+            Note: The AES decryption instance can be found in each client.
+            Most importantly the Client must also have the same privateKey, which
+            should be kept secret (but even if it is known by an attacker, if you
+            encrypted the random seed with RSA, the transmission is still secure).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseServer.rsa">
+            <summary>
+            You can even use an secret RSA key to decrypt incoming client requests
+            (that must have been signed with the matching public RSA key). If this
+            variable is null, no RSA cryptography is used.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseServer.numOfMessageTypes">
+            <summary>
+            Number of message types this server supports. Derived classes set this
+            in the constructor and handle each message type in OnMessageReceived.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseServer.clients">
+            <summary>
+            List of client sockets current connected, will be enumerated in the
+            HandleClients method, which handles all the connection, disconnection
+            and receiving data logic.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseServer.shutdownServer">
+            <summary>
+            Set this variable to true to shutdown all threads and pending
+            operations on this server. Done in the Close method.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseServer.listenerThreads">
+            <summary>
+            Helper threads for running the TcpServer in a different thread (because
+            it is blocking in ListenForClients). This starts the data receiving
+            as well (which works completely asynchrony so we don't need an extra
+            thread for that). Multiple threads are used for each listener port.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseServer.clientDisconnectThread">
+            <summary>
+            Because tcpServerThread just listens for clients and adds new ones
+            into the clients list, we need this extra thread to remove disconnected
+            clients again when the underlying socket is not longer connected.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseServer.#ctor(System.String[],System.Int32[],System.Byte,System.Byte[],Delta.Utilities.Xml.XmlNode)">
+            <summary>
+            Create TCP server, which will immediately start to listen on the
+            specified TCP port. Listening actually happens in a separate thread
+            and handling all the clients and receiving their messages happens in
+            another thread (because the listening thread blocks). This constructor
+            will return right away and you can continue with your code. Use the
+            delegates to be notified when clients connect or disconnect or new
+            data arrives. Note: All messages are automatically compressed if they
+            have above 1024 bytes of payload (see Delta.Utilities.Compression.Zip).
+            <para/>
+            Encryption is also optionally possible and can be enabled by using a
+            private key (null by default, which means unused) and you can even
+            use an secret RSA key to decrypt incoming client requests (that must
+            have been signed with the matching public RSA key).
+            </summary>
+            <param name="setIPAddressesToListenOn">Optional list of IP addresses
+            to listen on (one for each port). Can be null for IPAddress.Any</param>
+            <param name="setListenerPorts">Lists of ports to listen on for
+            incoming clients.</param>
+            <param name="setNumberOfMessageTypes">
+            Set number of message types to be used in all network communications
+            with clients (any incoming data with a message type value above this
+            is not allowed and will be rejected).
+            </param>
+            <param name="setPrivateKey">
+            Private key for encryption, see Cryptography class for details, by
+            default this is null and unused. Please note that for encryption the
+            first message send from the client to the server must be the Connect
+            message (message type 0) and it contains the random seed (optionally
+            even encrypted with a public RSA key from the server).
+            Most importantly the ClientData must also have the same privateKey,
+            which should be kept secret (but even if it is known by an attacked
+            if you encrypted the random seed with RSA, the transmission is still
+            secure).
+            </param>
+            <param name="secretRsaKey">Secret RSA key on the server (2048 bits)
+            that is used to decrypt incoming Connect messages from clients, which
+            encrypt their seed value in the Connect message with the matching
+            public RSA key that only the server can decrypt. Note: To generate
+            a secret and public RSA key pair use the CryptographyTests.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            Thrown if no ports are specified. The BaseServer needs at least one
+            port to listen to!
+            </exception>
+            <exception cref="T:System.Exception">
+            Thrown if we failed to initialize the TcpListener on given ports.
+            </exception>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseServer.#ctor(System.Int32,System.Byte,System.Byte[],Delta.Utilities.Xml.XmlNode)">
+            <summary>
+            Create TCP server, which will immediately start to listen on the
+            specified TCP port. Listening actually happens in a separate thread
+            and handling all the clients and receiving their messages happens in
+            another thread (because the listening thread blocks). This constructor
+            will return right away and you can continue with your code. Use the
+            delegates to be notified when clients connect or disconnect or new
+            data arrives. Note: All messages are automatically compressed if they
+            have above 1024 bytes of payload (see Delta.Utilities.Compression.Zip).
+            <para />
+            Encryption is also optionally possible and can be enabled by using a
+            private key (null by default, which means unused) and you can even
+            use an secret RSA key to decrypt incoming client requests (that must
+            have been signed with the matching public RSA key).
+            </summary>
+            <param name="setListenerPort">
+            Port to listen on for incoming clients.
+            </param>
+            <param name="setNumberOfMessageTypes">
+            Set number of message types to be used in all network communications
+            with clients (any incoming data with a message type value above this
+            is not allowed and will be rejected).
+            </param>
+            <param name="setPrivateKey">
+            Private key for encryption, see Cryptography class for details, by
+            default this is null and unused. Please note that for encryption the
+            first message send from the client to the server must be the Connect
+            message (message type 0) and it contains the random seed (optionally
+            even encrypted with a public RSA key from the server).
+            Most importantly the ClientData must also have the same privateKey,
+            which should be kept secret (but even if it is known by an attacked
+            if you encrypted the random seed with RSA, the transmission is still
+            secure).
+            </param>
+            <param name="secretRsaKey">Secret RSA key on the server (2048 bits)
+            that is used to decrypt incoming Connect messages from clients, which
+            encrypt their seed value in the Connect message with the matching
+            public RSA key that only the server can decrypt. Note: To generate
+            a secret and public RSA key pair use the CryptographyTests.
+            </param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseServer.Finalize">
+            <summary>
+            ~Base server
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseServer.Dispose">
+            <summary>
+            Stop tcp server, should be called at the end of the application.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseServer.SendTextToAllClients(System.String)">
+            <summary>
+            Send text message with the predefined TextMessage type.
+            </summary>
+            <param name="textMessage">Text Message</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseServer.CreateClient(System.Net.Sockets.Socket)">
+            <summary>
+            Create client data helper method to allow creating derived client data
+            classes in derived BaseServer classes.
+            </summary>
+            <param name="clientSocket">Client Socket</param>
+            <returns>Client instance for keeping the socket and all client data
+            around as long as the server needs this.</returns>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseServer.ListenForClients(System.Object)">
+            <summary>
+            Listen for clients. Note: This method will block in an extra thread
+            while waiting for client connections and run forever in an endless
+            listening mode. To abort kill the whole thread, which will be catched
+            here and the listener will be killed in the finally block.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseServer.HandleClientDisconnects">
+            <summary>
+            Handle client disconnects, loops through all clients and checks if
+            they are still connected. Currently just handles disconnects, but
+            reconnects could be made possible and Peer-To-Peer logic would be
+            more complex, but for now this does not much.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseServer.OnClientLogin(Delta.Utilities.Networking.BaseClient,System.IO.BinaryReader)">
+            <summary>
+            Event that is fired every time a new client connects and has send the
+            Login message (after the Connect message), see
+            <see cref="!:Client.OnRawMessageReceived"/> for details.
+            <para/>
+            This gives us a chance to handle the Login request here and reject
+            clients if anything is wrong (wrong password, ip is banned, etc.).
+            Return false if you want to reject the client, you can also send out
+            a Login message to the client first with the reason for rejecting him.
+            If this method returns true you also must send out a Login message to
+            notify the client that he is now connected and logged in.
+            </summary>
+            <param name="client">Client that send the Login message</param>
+            <param name="data">Data the client send for this Login message
+            (already decrypted and uncompressed). This is by default just
+            the username, but you can send whatever login information you need.
+            </param>
+            <returns>True if the client is successfully logged in or false if we
+            had to reject this client (see Login message for reject reasons).
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseServer.OnClientDisconnected(Delta.Utilities.Networking.BaseClient)">
+            <summary>
+            Event that is fired every time a client disconnects to inform the
+            server about the not longer connected client. This can happen on
+            purpose by either side or because the connection was disconnected.
+            <para />
+            Note: Does just call client.Dispose, if you need more server side logic
+            implement it in derived classes.
+            </summary>
+            <param name="client">Client that has been connected. Please note that
+            this could even happen before OnClientConnected is even called (but
+            this is very unlikely, then the Connect message must be messed up).
+            </param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseServer.OnMessageReceived(Delta.Utilities.Networking.BaseClient,System.Byte,System.IO.BinaryReader)">
+            <summary>
+            Event that is fired every time a full message is received, called by
+            <see cref="M:Delta.Utilities.Networking.BaseClient.OnRawMessageReceived(System.Byte,System.IO.BinaryReader,System.Boolean)"/>. Note: This is not the
+            same as receiving raw network data as a new data package might not
+            contain a full message yet, or even contain multiple message for that
+            matter. Additionally decompression and decryption is already handled.
+            <para/>
+            Each message consists of a message type (byte) and the data (bytes).
+            Note: OnPreCheckMessage is not supported by default in
+            BaseServer, but you can easily add it if needed (for checking big
+            messages) or just use the Client.OnPreCheckMessage method.
+            </summary>
+            <param name="client">Client we are receiving data for</param>
+            <param name="messageType">Message type we received</param>
+            <param name="data">Data we have received for this message type
+            (already uncompressed and decrypted)</param>
+        </member>
+        <member name="T:Delta.Utilities.Networking.BasicMessageTypes">
+            <summary>
+            Basic message types. Used for unit tests and even for the LogServer.
+            Please note that you need to implement this in the ClientData class
+            that is being used by the BaseServer and Client you are using. It could
+            be easier to create types dynamically like for BaseControl in Scenes,
+            but performance is very important for network messages and this types
+            are extremely compact (just 1 byte) and very fast and still easy enough
+            to use and extend for all kinds of networking code.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BasicMessageTypes.Connect">
+            <summary>
+            Connect message from the client to the server once we connected. This
+            does not contain any data by default, but if you enable cryptography
+            this contains the random seed value for all decryption (can be resent
+            by the server from time to time). For really secure transmissions you
+            can optionally also use RSA cryptography by sending the AES seed value
+            encrypted with a public RSA key that only the server can decrypt.
+            Derived classes can also provide extra functionality if needed.
+            Some servers like the log server just need a username, nothing else.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BasicMessageTypes.Login">
+            <summary>
+            After the server has received the Connect message from the client, it
+            should respond with the Login message telling the client if the login
+            succeeded and any other data required for the login. This is the first
+            message send from the server to the client and if the server rejects
+            it, we are usually disconnected right away again (user not found,
+            password wrong, decryption failed).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BasicMessageTypes.TextMessage">
+            <summary>
+            Text message by the connected user, will be displayed together with the
+            current time in this format: Time: Username: Message. Only used by
+            simple services like the log server, usually overwritten with some
+            other message types for more advanced servers.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Networking.BaseClient">
+            <summary>
+            Base class for connected clients. Contains most importantly the
+            connected socket, but also some extra information like the username.
+            Used both on the BaseServer side (then we just care about the socket
+            and the basic data and networking functionality) and in the Client
+            that connects to the BaseServer (then all features are used). Derive
+            from this to add more functionality. If you just want to use this
+            class the MessageReceived is the easiest way to receive network data.
+            <para />
+            This class also support encryption with AES and RSA to make network
+            transmissions really secure. See the constructors for details.
+            <para />
+            Internally also used as a receiving data helper class by defining
+            buffers for receiving data. Thanks to the IAsyncState passed around in
+            StartReceivingMessages this data will be preserved as long as the client
+            is connected. RememberLastData is important for partial message we might
+            receive (if incoming data is bigger than receivedData can hold or if we
+            get multiple messages at once or strange packet sizes, which is very
+            normal for TCP packets).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.DefaultConnectionTimeoutMs">
+            <summary>
+            Default time to wait until we timeout a connection attempt. Since this
+            runs in an extra thread we do not actually have to wait this long.
+            The default wait time is 3 seconds, which should be enough for most
+            users (even if a timeout happens, the user can try again).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.WaitTimeTillNextConnectionAttemptMs">
+            <summary>
+            Wait time in ms until we try to connect again if the connection failed.
+            We wait for 1 seconds (3 in release mode) and then try again.
+            More is too annoying when developing and this happens (because we
+            might just started the server or just fixed our connection problems).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.NumberOfBasicMessageTypes">
+            <summary>
+            Number of basic message types (add this if you are planing to use
+            the BasicMessageTypes plus own types in derived classes).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.Username">
+            <summary>
+            Username for this client. We mostly only care on the server what the
+            name of each connected client is (for identification and debugging).
+            This is set after receiving the Connect message from the client in
+            the OnConnected method and used quite a bit on servers and clients.
+            More complex clients with username, passwords, emails, etc. obviously
+            have more data and you don't have to use this at all (just override
+            the Login methods).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.OnDisconnected">
+            <summary>
+            Delegate to be notified when we lose the connection to the server.
+            Note: This is only called when the server disconnects us (or we lose
+            the network connection somehow), this is not called when we dispose
+            the BaseClient via the Dispose method (which you can override if you
+            want to handle normal disposes).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.connected">
+            <summary>
+            Helper flag to remember if we have successfully connected (for server
+            side client connections). Initially this is false and only after
+            receiving the Connect (on the server) message with success we are
+            fully connected (or once we established the connection on the client
+            side). When not connected any attempt to receive any other message will
+            result in failure and the client will immediately disconnect in the
+            <see cref="M:Delta.Utilities.Networking.BaseClient.OnRawMessageReceived(System.Byte,System.IO.BinaryReader,System.Boolean)"/> method.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.loggedIn">
+            <summary>
+            Is the client logged in? Initially false and will be set to true if
+            the Login message has been received and is successful (both on the
+            client and the server side). Any attempt to receive or send messages
+            to a non connected and not loggedIn client will immediately result in 
+            a failure and the client will be disconnected.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.maxNumOfMessageTypes">
+            <summary>
+            Maximum number of message types, set in constructor. Only used to
+            provide checks if incoming data is valid and can be converted into
+            a known message type with data.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.clientBufferData">
+            <summary>
+            Client buffer data, internal to allow SocketHelper access to this
+            and protected to allow derived classes to override the
+            StartReceivingMessagesAndSendConnectMessage method.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.rememberLastData">
+            <summary>
+            Remember last data, also only used for the SocketHelper class.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.connectionThread">
+            <summary>
+            Helper thread to make connection initialization go as smoothly as
+            possible. Note: This is only used on the client side (server already
+            has a connected socket when creating a new Client instance).
+            If we are still connecting sending out messages is delayed. If the
+            connection is already established, we can send out messages directly
+            (which is easier and quicker and this thread is not longer needed).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.aes">
+            <summary>
+            Remember AES cryptography if this is wanted for the client server
+            communication. Both the client and the server instance must be
+            initialized with the same private AES key. The server has to wait
+            until the Connected message arrives from the client to setup the
+            Cryptography class with this same private key and seed value.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.rsa">
+            <summary>
+            You can even use an public RSA key to encrypt Connect messages, which
+            can be decrypted the matching secret RSA key on the server. If this
+            variable is null, no RSA cryptography is used.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.linkToServer">
+            <summary>
+            Link to the BaseServer if this is a connected client on the server.
+            Needed to check if cryptography data is valid and to decrypt it.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.remToSendMessageType">
+            <summary>
+            Helper list to send out messages in case we are not connected yet!
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.remToSendMessageData">
+            <summary>
+            Helper list for the data of messages to be send out.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.BaseClient.remToSendMessageCompression">
+            <summary>
+            Helper list for the data of messages to be send out if compression
+            should be enabled or not (default is true).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.#ctor(System.Net.Sockets.Socket,System.Byte,Delta.Utilities.Networking.BaseServer)">
+            <summary>
+            Create client instance with an already known connected socket. Only
+            used on the server side for client connections. The client side has to
+            use the other constructor to get connected to the server.
+            This constructor will cause the ClientSide property to return false.
+            </summary>
+            <param name="setMaxNumOfMessageTypes">Set max number of message types,
+            which is the same value as the server uses.</param>
+            <param name="setClientSocket">Get client socket</param>
+            <param name="setLinkToServer">
+            Link to the BaseServer if this is a connected client on the server.
+            Needed to check if cryptography data is valid and to decrypt.
+            </param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.#ctor(System.String,System.Int32[],System.Byte,System.Boolean,System.String,System.Byte[],Delta.Utilities.Xml.XmlNode)">
+            <summary>
+            Create a new tcp client and connect to a remote BaseServer instance.
+            </summary>
+            <param name="setServerAddress">Set server address</param>
+            <param name="setServerPorts">
+            List of server ports we can use to connect, they will be tried in this
+            order (useful in case some ports are blocked, e.g. in company networks).
+            </param>
+            <param name="setMaxMessageTypes">Set max number of message types,
+            which is the same value as the server uses.</param>
+            <param name="keepTryingToConnectEndlessly">Keep trying to connect
+            endlessly, which should only be used when you also call Dispose
+            (e.g. from Application.Close or when closing the window). If this is
+            done without calling Dispose and no server connect is possible, the
+            connectionThread is never quit and you need to kill the process.
+            </param>
+            <param name="setUsername">Username for the Login method,
+            can be overwritten, but this is the default value for it.</param>
+            <param name="privateKey">
+            Private key for encryption, see Cryptography class for details, by
+            default this is null and unused. Please note that for encryption the
+            first message send from the client to the server must be the Connect
+            message (message type 0) and it contains the random seed (optionally
+            even encrypted with a public RSA key from the server).
+            Most importantly the ClientData must also have the same privateKey,
+            which should be kept secret (but even if it is known by an attacked
+            if you encrypted the random seed with RSA, the transmission is still
+            secure).
+            </param>
+            <param name="publicRsaKey">
+            Public RSA key, which must match the secret RSA key on the server
+            (2048 bits) that is used to decrypt incoming Connect messages from
+            clients, which encrypt their seed value in the Connect message.
+            Note: This is ignored if privateKey is null (works only together).
+            </param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.#ctor(System.String,System.Int32,System.Byte,System.Boolean,System.String,System.Byte[],Delta.Utilities.Xml.XmlNode)">
+            <summary>
+            Create a new tcp client and connect to a remote BaseServer instance.
+            </summary>
+            <param name="setServerAddress">Set server address</param>
+            <param name="setServerPort">Set server port</param>
+            <param name="setMaxNumOfMessageTypes">Set max number of message types,
+            which is the same value as the server uses.</param>
+            <param name="keepTryingToConnectEndlessly">Keep trying to connect
+            endlessly, which should only be used when you also call Dispose
+            (e.g. from Application.Close or when closing the window). If this is
+            done without calling Dispose and no server connect is possible, the
+            connectionThread is never quit and you need to kill the process.
+            </param>
+            <param name="setUsername">Username for the Login method,
+            can be overwritten, but this is the default value for it.</param>
+            <param name="setPrivateKey">
+            Private key for encryption, see Cryptography class for details, by
+            default this is null and unused. Please note that for encryption the
+            first message send from the client to the server must be the Connect
+            message (message type 0) and it contains the random seed (optionally
+            even encrypted with a public RSA key from the server).
+            Most importantly the ClientData must also have the same privateKey,
+            which should be kept secret (but even if it is known by an attacked
+            if you encrypted the random seed with RSA, the transmission is still
+            secure).
+            </param>
+            <param name="publicRsaKey">
+            Public RSA key, which must match the secret RSA key on the server
+            (2048 bits) that is used to decrypt incoming Connect messages from
+            clients, which encrypt their seed value in the Connect message.
+            Note: This is ignored if privateKey is null (works only together).
+            </param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.ConnectSocketAndStartReceivingMessages(System.String,System.Int32[],System.Boolean)">
+            <summary>
+            Helper method to connect to the server in an extra thread.
+            </summary>
+            <param name="serverAddress">Server address to connect to</param>
+            <param name="serverPorts">Server port(s) to connect to</param>
+            <param name="keepTryingToConnectEndlessly">Keep trying to connect
+            endlessly, which should only be used when you also call Dispose
+            (e.g. from Application.Close or when closing the window). If this is
+            done without calling Dispose and no server connect is possible, the
+            connectionThread is never quit and you need to kill the process.
+            </param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.Dispose">
+            <summary>
+            Dispose the client, will kill the threads and sockets. Also called if
+            the host disconnects us and in BaseServer.OnClientDisconnects.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.Finalize">
+            <summary>
+            Destructor, will just call Dispose to kill the threads and sockets.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.StartReceivingMessages">
+            <summary>
+            Start receiving messages, which will use the SocketHelper functionality
+            by default, but you can override this to get different behavior.
+            All you need for that is a message received delegate, which will be
+            called whenever a full message arrives to one of the clients. This
+            method is all you need after you have a connected socket (either when
+            you connected to a server or a server that listened for clients). By
+            default messageReceived is handled by the SocketHelper automatically.
+            Optionally you can also get notified whenever data arrives in case you
+            want to update progress bars for big data packages.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.HandleConnectEncryption(System.IO.BinaryWriter)">
+            <summary>
+            Write encryption information for the Connect message, see the
+            ClientData.SendConnectMessage method for details. This message starts
+            with a helper byte to mark if we use encryption and then adds the
+            seed value (either as a plain byte array or encrypted with RSA).
+            </summary>
+            <param name="writer">Writer to store binary data to</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.SendConnectMessageToServer">
+            <summary>
+            Send out the Connect message from the client to the server with the
+            optional encryption seed value (which might even be RSA encrypted) for
+            secure network transmissions. This information must always be send via
+            the <see cref="M:Delta.Utilities.Networking.BaseClient.HandleConnectEncryption(System.IO.BinaryWriter)"/> method. Additional user
+            information (username, password, etc.) can also be send with help of
+            the Login message (see <see cref="M:Delta.Utilities.Networking.BaseClient.SendLoginMessageToServer"/>).
+            <para/>
+            Called by <see cref="M:Delta.Utilities.Networking.BaseClient.ConnectSocketAndStartReceivingMessages(System.String,System.Int32[],System.Boolean)"/>
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.SendLoginMessageToServer">
+            <summary>
+            Send out the Login message from the client to the server (after the
+            Connect message has been set and everything is setup). By default only
+            the username is sent, override this method for more functionality.
+            Note: There are two reasons why Connect and Login is separated. First
+            it makes deriving this method easier as we do not need to handle the
+            Connect and encryption logic here. And it also makes sending,
+            encrypting and receiving and decrypting the Login message easier and
+            more secure (all data in Login is already encrypted and cannot be
+            decrypted without a successful Connect message was processed first).
+            <para/>
+            Called by <see cref="M:Delta.Utilities.Networking.BaseClient.ConnectSocketAndStartReceivingMessages(System.String,System.Int32[],System.Boolean)"/>
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.OnLogin(System.IO.BinaryReader)">
+            <summary>
+            On login helper method, will be called once the connection has been
+            established and we got the Login message from the server. Does nothing
+            here, but derived classes can extend this functionality to receive the
+            login status, username and extra login information from the server.
+            </summary>
+            <param name="data">Data we received from the network</param>
+            <returns>True if we are still connected and are successfully logged in
+            or false otherwise if the server rejected us and we need to reconnect.
+            </returns>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.OnMessageReceived(System.Byte,System.IO.BinaryReader)">
+            <summary>
+            When a message arrived from the server and has been processed, this
+            method will be called from OnRawMessageReceived (if everything is ok).
+            Override for more functionality, this method will however not report
+            the Connect (0) and Login (1) BasicMessageTypes functionality and
+            encryption and decryption is done automatically in the caller for us.
+            <para />
+            Note: This is the only method here you must implement in derived
+            classes to make sense of client server communication. It is however
+            not used if this is a server side client connection (see first
+            constructor).
+            </summary>
+            <param name="messageType">Type of message received (byte)</param>
+            <param name="data">Data we received from the network (uncompressed
+            and un-encrypted, all handled by OnRawMessageReceived)</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.HandleConnectDecryption(System.IO.BinaryReader)">
+            <summary>
+            Helper method to decrypt incoming Connect messages from clients in
+            case they are encrypted (done on the server side). Will only work if
+            both the client and the server use the same AES cryptography private
+            keys and if used matching  secret and public RSA keys for the AES seed
+            value. If no cryptography is used just a byte with the value 0 is read
+            from the data stream and the OnConnected method will handle all the
+            rest (Username, etc.)
+            <para/>
+            This method will disconnect the client right away if anything is wrong
+            like different encryption modes on the server or client.
+            Note: Called only from <see cref="M:Delta.Utilities.Networking.BaseClient.OnRawMessageReceived(System.Byte,System.IO.BinaryReader,System.Boolean)"/> for servers.
+            </summary>
+            <param name="data">Data we received from the network</param>
+            <returns>True if we could connect successfully, false otherwise
+            (invalid connection attempt, encryption data invalid, etc.)</returns>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.OnRawMessageReceived(System.Byte,System.IO.BinaryReader,System.Boolean)">
+            <summary>
+            When a message arrived from the server this method will be called from
+            <see cref="M:Delta.Utilities.Networking.SocketHelper.ReceiveMessageData(Delta.Utilities.Networking.BaseClient,System.Int32)"/> with the raw message type
+            and data. The data can be compressed and encrypted, this method will
+            handle all the decryption and decompression automatically for us and
+            also handles all the Connect (0) and Login (1) functionality.
+            <para/>
+            Note: This method does all the heavy lifting including Connection and
+            Login logic plus decompression and decryption of network data. Read
+            it carefully if you want to understand how the underlying message
+            system works. See the Delta.Utilities.Tests for lots of examples.
+            </summary>
+            <param name="messageType">Type of message received (byte)</param>
+            <param name="data">Data we received from the network (can be
+            encrypted and compressed, see the Send methods for encryption)</param>
+            <param name="isCompressed">Is the incoming data compressed and need
+            to be decompressed?</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.OnPreCheckMessage(System.Byte,System.Single)">
+            <summary>
+            On pre check message is fired when a message is incoming, but not
+            complete yet (should only happen for big messages like file
+            transfers). This way we can update status bars and show percentages.
+            Not used by default, override to do something with this information.
+            <para/>
+            Please note that this message does not actually read or provide any
+            of the payload data, all we know is the message type and the
+            percentage of the message that already has been transmitted. None of
+            the decryption, decompression or data reading logic happens here
+            (unlike <see cref="M:Delta.Utilities.Networking.BaseClient.OnRawMessageReceived(System.Byte,System.IO.BinaryReader,System.Boolean)"/>). If you want to provide
+            additional meta data like a file size or how many MB have been
+            transfered, please just send an extra message before this big one to
+            show this information to the user (TotalMB * percentageComplete).
+            </summary>
+            <param name="messageType">Type of message we are currently receiving
+            (as a byte)</param>
+            <param name="percentageComplete">Percentage complete (0.0-1.0)</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.Send(System.Byte)">
+            <summary>
+            Send an empty message with just a message type to the server.
+            </summary>
+            <param name="messageType">Message Type</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.Send(System.Byte,System.IO.MemoryStream)">
+            <summary>
+            Send a message with a message type and some data in a MemoryStream
+            to the server.
+            </summary>
+            <param name="messageType">Message Type</param>
+            <param name="data">Data for this message</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.Send(System.Byte,System.String)">
+            <summary>
+            Send a message with a message type and a string as data to the server.
+            </summary>
+            <param name="messageType">Message Type</param>
+            <param name="data">Data as a string, will be converted to bytes</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.Send(System.Byte,System.Single)">
+            <summary>
+            Send a message with a message type and a float as data to the server.
+            </summary>
+            <param name="messageType">Message Type</param>
+            <param name="data">Data as float, will be converted to bytes</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.SendBytes(System.Byte,System.Byte[],System.Boolean)">
+            <summary>
+            Send the byte array to the server with the specified message type.
+            Note: Can be overwritten to catch all sends and do some extra logic
+            like collecting statistics.
+            </summary>
+            <param name="messageType">Type of message (as byte)</param>
+            <param name="data">Data</param>
+            <param name="allowToCompressMessage">Allow to automatically compress
+            the message payload data if it is above 1024 bytes (otherwise nothing
+            will happen), on by default. Please note an extra byte with 0xFF (255)
+            is sent to mark that the incoming message is compressed.</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.SendTextMessage(System.String)">
+            <summary>
+            Send text message with the predefined TextMessage type (type=2).
+            </summary>
+            <param name="textMessage">Text message</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.BaseClient.ToString">
+            <summary>
+            To string method to display some debug information about this client.
+            </summary>
+            <returns>String with detailed client and socket information</returns>
+        </member>
+        <member name="P:Delta.Utilities.Networking.BaseClient.Socket">
+            <summary>
+            Client socket if we are the server. If we are the client this is the
+            server connection socket we send all data to.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Networking.BaseClient.SuccessfullyLoggedIn">
+            <summary>
+            Helper method to check if we are successfully logged in. Please do not
+            use this one to check if we have received the login message because
+            this will not be true if the server rejected us and disconnects us.
+            Instead override the OnLogin method to see when we are connected or
+            when we might be disconnected before this ever gets true.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Networking.BaseClient.ServerAddress">
+            <summary>
+            Address to the server. Only set in constructor, cannot be changed.
+            Not used for BaseServer clients.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Networking.BaseClient.ServerPorts">
+            <summary>
+            List of server ports we can use to connect, they will be tried in this
+            order (useful in case some ports are blocked, e.g. in company networks).
+            Only set in constructor, cannot be changed. Not used for BaseServer
+            clients.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Networking.BaseClient.IsClientSide">
+            <summary>
+            Is the connection made on the client side or is this just the
+            connection from the server to the client (then this returns false).
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Networking.BaseClient.DisconnectDelegate">
+            <summary>
+            Delegate for the BaseClient.OnDisconnected event.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Networking.SocketHelper">
+            <summary>
+            SocketHelper class, stuff used wherever network stuff is needed!
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.SocketHelper.ReceiveBufferSize">
+            <summary>
+            Receive up to 8 low level packets with 1440 (1500 is MTU -40 bytes for
+            TCP/IP -20 bytes for different needs (e.g. VPN uses some bytes)) data.
+            Bigger messages than this will be put together inside the
+            OnReceivedDataAsyncCallback method with multiple calls to Receive.
+            Most messages will be way smaller (few bytes).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.SocketHelper.MaxMessageLength">
+            <summary>
+            Maximum message size for one packet should not go beyond 128 MB!
+            Usually there is something wrong if we get messages this big.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.SocketHelper.CompressionIndicatorByteValue">
+            <summary>
+            Indicator for compressed messages (done before encryption). This will
+            be saved as an extra byte right before the message type (this message
+            type number is not allowed).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.OnReceivedDataAsyncCallback(System.IAsyncResult)">
+            <summary>
+            On received data async callback. Public to allow overridden 
+            ClientData.StartReceivingMessagesAndSendConnectMessage to use this.
+            </summary>
+            <param name="ar">AsyncState, which holds the BaseClient</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.OnReceivedDataAsyncCallbackWP7(System.Net.Sockets.SocketAsyncEventArgs)">
+            <summary>
+            Note: This is used with WP7 rules and is excluded in the public repo!
+            </summary>
+            <param name="args">Socket event arguments</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.SendMessageBytes(System.Net.Sockets.Socket,System.Byte,System.Byte[],System.Boolean,Delta.Utilities.Cryptography.AES)">
+            <summary>
+            Send data to socket, will build packet with length of message, and then
+            add the type and message data (if there is any). A message has a
+            minimum size of 2 bytes (length and type, e.g. 1,10 indicates there is
+            a message with 1 bytes: message type = 10 with no extra data).
+            <para/>
+            This method does handle all the compression and optionally encryption
+            logic that can be enabled on the Server and Client side. The receiving
+            side is handled in <see cref="M:Delta.Utilities.Networking.BaseClient.OnRawMessageReceived(System.Byte,System.IO.BinaryReader,System.Boolean)"/>.
+            </summary>
+            <param name="socket">Socket to send the data to</param>
+            <param name="messageType">Type of message (as byte)</param>
+            <param name="data">Data to send</param>
+            <param name="allowToCompressMessage">
+            Allow to automatically compress the message payload data if it is above
+            1024 bytes (otherwise nothing will happen), on by default. An extra
+            byte with 0xFF (255) is sent to mark that the incoming message is
+            compressed.
+            </param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.SendMessageBytesWP7(System.Net.Sockets.Socket,System.Byte,System.Byte[],System.Boolean,Delta.Utilities.Cryptography.AES)">
+            <summary>
+            Note: This is used with WP7 rules and is excluded in the public repo!
+            </summary>
+            <param name="socket">Socket to send the data to</param>
+            <param name="messageType">Type of message (as byte)</param>
+            <param name="data">Data to send</param>
+            <param name="allowToCompressMessage">
+            Allow to automatically compress the message payload data if it is above
+            1024 bytes (otherwise nothing will happen), on by default. An extra
+            byte with 0xFF (255) is sent to mark that the incoming message is
+            compressed.
+            </param>
+            <param name="encryptMessage">AES provider for encryption</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.ConnectTcpSocket(System.String,System.Int32)">
+            <summary>
+            Helper method to simply connect a socket to a specific server
+            by the given address and port number. Used mainly for unit tests, but
+            thanks to the timeout parameter also really useful in applications!
+            </summary>
+            <param name="address">The server address</param>
+            <param name="port">The servers port number</param>
+            <returns>The connected socket or null if anything failed (timeout or
+            some other failure, which will be logged btw).</returns>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.ConnectTcpSocket(System.String,System.Int32[],System.Int32,System.Boolean)">
+            <summary>
+            Connect a socket to the specified address and port and abort if
+            the specified timeout exceeded.
+            </summary>
+            <param name="address">
+            The IP or DNS name of the host we want to connect to.
+            </param>
+            <param name="ports">
+            The port numbers of the host, usually just a single port.
+            </param>
+            <param name="timeoutMs">The timeout in milliseconds after which
+            we abort the connecting process if nothing happened yet.</param>
+            <param name="warnIfConnectFailed">Warn if the connection failed,
+            which is on by default, but sometimes we don't care.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.ConnectTcpSocketWP7(System.String,System.Int32)">
+            <summary>
+            Helper method to simply connect a socket to a specific server
+            by the given address and port number. Used mainly for unit tests, but
+            thanks to the timeout parameter also really useful in applications!
+            Note: This is used with WP7 rules and is excluded in the public repo!
+            </summary>
+            <param name="address">The server address</param>
+            <param name="port">The servers port number</param>
+            <returns>The connected socket or null if anything failed (timeout or
+            some other failure, which will be logged btw).</returns>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.ConnectTcpSocketWP7(System.String,System.Int32[],System.Int32,System.Boolean)">
+            <summary>
+            Connect a socket to the specified address and port and abort if
+            the specified timeout exceeded.
+            Note: This is used with WP7 rules and is excluded in the public repo!
+            </summary>
+            <param name="address">
+            The IP or DNS name of the host we want to connect to.
+            </param>
+            <param name="ports">
+            The port numbers of the host, usually just a single port.
+            </param>
+            <param name="timeoutMs">The timeout in milliseconds after which
+            we abort the connecting process if nothing happened yet.</param>
+            <param name="warnIfConnectFailed">Warn if the connection failed,
+            which is on by default, but sometimes we don't care.</param>
+            <returns>Connected socket if this method succeeded</returns>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.WriteClientInfo(System.Net.Sockets.Socket)">
+            <summary>
+            Write client info helper to get more details about a client socket.
+            This is basically the RemoteEndPoint (IP and port) if available,
+            otherwise "&lt;null&gt;" or an error is returned.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.GetIP(System.Net.Sockets.Socket)">
+            <summary>
+            Basically the same as WriteClient, but will just return the remote IP
+            without the used remote port.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Networking.SocketHelper.LastConnectionError">
+            <summary>
+            Last connection error we got in ConnectTcpSocket (if we got any).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.SetupReceiveCallback(System.Net.Sockets.Socket,System.Byte[],System.AsyncCallback,System.Object)">
+            <summary>
+            Setup the receive callback stuff. Used to initially setup the
+            receive callback and then every time in GetReceivedData!
+            </summary>
+            <param name="clientSocket">Client socket for receiving data</param>
+            <param name="buffer">Client buffer for the data to receive</param>
+            <param name="receiveCallback">
+            Receive callback, which is executed once we receive some data on this
+            socket.
+            </param>
+            <param name="obj">
+            Object for custom user data (usually BaseClient).
+            </param>
+            <returns>True if we received something, false otherwise</returns>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.SetupReceiveCallbackWP7(System.Net.Sockets.Socket,System.Byte[],Delta.Utilities.Networking.SocketHelper.SocketAsyncDelegate,System.Object)">
+            <summary>
+            Helper method to handle SetupReceiveCallback on Windows Phone 7.
+            Note: This is used with WP7 rules and is excluded in the public repo!
+            </summary>
+            <param name="clientSocket">Client socket for receiving data</param>
+            <param name="buffer">Client buffer for the data to receive</param>
+            <param name="receiveCallback">
+            Receive callback, which is executed once we receive some data on this
+            socket.
+            </param>
+            <param name="obj">
+            Object for custom user data (usually BaseClient).
+            </param>
+            <returns>True if we received something, false otherwise</returns>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.ReceiveMessageData(Delta.Utilities.Networking.BaseClient,System.Int32)">
+            <summary>
+            Handle all the receive data issues, extract the message length and
+            determines if we need more data and will wait for next call
+            in this case. Will also read type of message and check if its
+            valid. You can use preCheckMessage to perform some operations while
+            message is still not complete. Finally use handleMessage to
+            perform the message action, etc.
+            </summary>
+            <param name="data">Client for data to be received</param>
+            <param name="numOfReceivedBytes">num of received bytes</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.SendCallback(System.IAsyncResult)">
+            <summary>
+            Call back method to handle outgoing data, used for SendMessageData
+            </summary>
+            <param name="ar">Asynchronous state, which holds the socket</param>
+        </member>
+        <member name="M:Delta.Utilities.Networking.SocketHelper.SendCallbackWP7(System.Net.Sockets.SocketAsyncEventArgs)">
+            <summary>
+            Note: This is used with WP7 rules and is excluded in the public repo!
+            </summary>
+            <param name="args">Asynchronous state, which holds the socket</param>
+        </member>
+        <member name="T:Delta.Utilities.Networking.SocketHelper.SocketAsyncDelegate">
+            <summary>
+            Delegate for SetupReceiveCallbackWP7
+            Note: This is used with WP7 rules and is excluded in the public repo!
+            </summary>
+            <param name="args">Arguments to pass into SetupReceiveCallback</param>
+        </member>
+    </members>
+</doc>

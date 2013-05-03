@@ -1,0 +1,775 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Delta.Graphics</name>
+  </assembly>
+  <members>
+    <member name="T:Delta.Graphics.BaseGeometry">
+      <summary>
+            Abstract Geometry mesh implementation class, each graphic framework has
+            its own implementation (own drawing logic, optimizations, vertex buffers,
+            etc.). Use the derived Geometry class to extend functionality.
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseGeometry.FinalBoneMatrices">
+      <summary>
+            Represents the final computed bone matrices (of the current animation
+            state) for the shader. Can be overwritten from rendering code.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseGeometry.#ctor(Delta.ContentSystem.Rendering.GeometryData)">
+      <summary>
+            Create geometry from already created GeometryData (from content or for
+            creating dynamic meshes, like for Lines, UI rendering or Effects).
+            </summary>
+      <param name="setMeshData">Geometry mesh data</param>
+    </member>
+    <member name="M:Delta.Graphics.BaseGeometry.Dispose">
+      <summary>
+            Dispose Native stuff like VAO/VBO/IBO etc. Always must be implemented.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseGeometry.ToString">
+      <summary>
+            To string helper method to print out the geometry data and bones.
+            </summary>
+      <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
+    </member>
+    <member name="M:Delta.Graphics.BaseGeometry.Create(Delta.Graphics.BaseShader)">
+      <summary>
+            Create native mesh data (vertex buffers, vertex array objects, etc.)
+            This is done when Drawing for the first time.
+            </summary>
+      <param name="shader">Shader used for rendering, also helpful when
+            generating this geometry for the vertex format, etc.</param>
+    </member>
+    <member name="P:Delta.Graphics.BaseGeometry.Data">
+      <summary>
+            GeometryData object that holds all the information for this geometry,
+            the vertices, indices and the material id.
+            </summary>
+    </member>
+    <member name="T:Delta.Graphics.BaseRenderToTexture">
+      <summary>
+            Render To Texture class for rendering into textures. This is needed
+            mostly for shadow mapping and post screen shader techniques.
+            </summary>
+    </member>
+    <member name="T:Delta.Graphics.BaseTexture">
+      <summary>
+            Based on the Content class, this is a specific implementation for
+            images with some extra data like PixelSize, BlendMode, UseFiltering, UV
+            and NumberOfAnimatedImages (all from the ContentData meta data).
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseTexture.UV">
+      <summary>
+            The texture coordinates of this image. Normally (0, 0, 1, 1)
+            But necessary when using atlas textures (what we are mostly doing).
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseTexture.InnerDrawArea">
+      <summary>
+            Helper for the inner rectangle for rendering, which will reduce any
+            draw rectangle by this to make it fit in case there were empty pixels
+            around this image.
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseTexture.useInnerDrawArea">
+      <summary>
+            Usually innerUV is unused, when it used all drawing needs to be
+            reduced to innerUV (which costs some performance but saves a lot of
+            memory for textures, especially in animations).
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseTexture.image">
+      <summary>
+            Link to image meta data, only used internally here to grab the image
+            data and to allow reloading the texture when it changes. Unused for
+            generated textures (via Create with RGB data or RenderToTextures).
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseTexture.#ctor(System.String)">
+      <summary>
+            Create an image, will just pass the image name on to the Texture
+            class, which will load the image content. Use Get to create and load
+            images (this makes sure we only create one instance per image).
+            </summary>
+      <param name="imageName">Image content name to load. If this is empty
+            no content will be loaded (just fallback data will be set).</param>
+    </member>
+    <member name="M:Delta.Graphics.BaseTexture.#ctor(System.Boolean,System.String)">
+      <summary>
+            Helper constructor to just create an empty texture. Used for the
+            BaseRenderToTexture constructor and for Texture.Create.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseTexture.HasSameAtlasImage(Delta.Graphics.BaseTexture)">
+      <summary>
+            Has this texture the same atlas image data as another texture? This
+            check is important for merging draw calls and changing shaders around.
+            It just uses the image meta data to figure out if different images and
+            thus native texture objects have been created.
+            </summary>
+      <param name="other">Other texture</param>
+      <returns>
+        <c>true</c> if both textures have the same atlas image,
+            otherwise <c>false</c> (not loaded via content or in different images).
+            </returns>
+    </member>
+    <member name="M:Delta.Graphics.BaseTexture.Load">
+      <summary>
+            Load texture native data with help of the LoadNativeData method. This
+            method prepares all the fields, handles the cloning and also provides
+            error handling if anything goes wrong (then a fallback texture is
+            created). It only provides the common functionality for all derived
+            classes that actually contain the image data, pointers and handles.
+            </summary>
+      <exception cref="T:System.NullReferenceException">This method should not be 
+            called for dynamically created texture. It only makes sense when the 
+            underlying image content is set!</exception>
+    </member>
+    <member name="M:Delta.Graphics.BaseTexture.Dispose">
+      <summary>
+            Textures contain native data that needs to be disposed again. This
+            can be done by the top level (e.g. from a material or 3D model), but
+            also from the content pipeline (e.g. all used images in a scene are
+            disposed when the current scene is closed).
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseTexture.CreateDefaultTexture">
+      <summary>
+            Helper method to create the default texture with help of the abstract
+            CreateTexture2D method that is implemented in each implementation.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseTexture.CloneNativeData(Delta.Graphics.BaseTexture)">
+      <summary>
+            Clone method, which is called from Texture.Load if the native data
+            is supposed to be the same atlas image. Then we will just set all the
+            internal handles (OpenGL texture id, Xna Texture, etc.) to the already
+            created ones.
+            </summary>
+      <param name="textureToCloneFrom">Specific texture object we can
+            clone all data from, can be casted to the type of the implementation.
+            </param>
+    </member>
+    <member name="M:Delta.Graphics.BaseTexture.LoadNativeData(System.String)">
+      <summary>
+            Load native image texture with OpenGL and return the integer instance.
+            </summary>
+      <param name="filename">Filename to load</param>
+      <returns>True if the texture was successfully loaded and can be used
+            and cloned (e.g. atlas textures) from now on.</returns>
+    </member>
+    <member name="M:Delta.Graphics.BaseTexture.FillTextureData(Delta.Utilities.Datatypes.Size,System.Byte[],System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
+      <summary>
+            Fill texture with given RGB data. This method is called both from
+            LoadNativeData on some implementations, but it is also used to create
+            textures programmatically (e.g. maps) and for fallback textures.
+            Note: Size of the texture in pixels (pixelSize) must be set before and
+            Width * Height must match rgbData.Length / 3. Also blend mode and if
+            linear filtering should be enabled must be set for this texture.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseTexture.DisposeNativeData">
+      <summary>
+            Dispose native texture data method, which is called from Dispose if
+            the native data is supposed to be released if atlas image is not
+            longer referenced by any textures or images. Also always called for
+            dynamically created textures.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseTexture.ToString">
+      <summary>
+            To string, will display the texture class name and some extra data.
+            </summary>
+      <returns>
+            A <see cref="T:System.String" /> that represents this Texture instance
+            with the used image name, pixel size, blend mode and uv meta data.
+            </returns>
+    </member>
+    <member name="P:Delta.Graphics.BaseTexture.Name">
+      <summary>
+            Texture name, set from the image content name. Never actually used
+            except for debugging purposes.
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseTexture.PixelSize">
+      <summary>
+            The size of the image in pixels (NOT in quadratic space and also NOT
+            necessarily the size of the real bitmap from disk, which might be
+            an atlas texture that is much bigger than this image size). Either set
+            by the image content or by the Texture.Create method for dynamically
+            created textures.
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseTexture.BlendMode">
+      <summary>
+            Blend mode used for this image, set in constructor and can't be
+            changed. This is important for the MaterialManager sorting logic!
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseTexture.HasAlpha">
+      <summary>
+            Has this image an alpha channel? This is not true for Opaque,
+            Additive, Subtractive and Light effect images.
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseTexture.UseLinearFiltering">
+      <summary>
+            Helper property to determinate if we need to enable filtering for
+            rendering this image (usually in a shader). True is the default and
+            means we are going to use Trilinear filtering, false means no
+            filtering, which is often called Nearest or Point filtering.
+            Note: For fonts and the default image (4x4 pixels) this is
+            automatically set to false for more accurate and sharp rendering.
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseTexture.AllowTiling">
+      <summary>
+            Allow tiling for this texture? By default this is off and using this
+            prevents us from using atlas textures and many optimizations, so it
+            should be avoided as much as possible.
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseTexture.IsCubeMap">
+      <summary>
+            True if this texture is a CubeMap, always set if the name contains Sky
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseRenderToTexture.#ctor(System.String,Delta.Utilities.Datatypes.Size,System.Boolean,System.Boolean,System.Boolean)">
+      <summary>
+            Creates an instance of render to texture. Please note that calling
+            Render will initialize this instance (with the
+            MakeSureRenderTargetIsInitialized helper method), this constructor
+            does nothing here yet.
+            TODO: we should only use name and pixel size here, rest can be set via properties above and force a recreation (CreateFbo is only called when first used)
+            </summary>
+      <param name="setName">Name for this RenderToTexture</param>
+      <param name="setPixelSize">Pixel size of the target texture</param>
+      <param name="setIsDepthTexture">If set to <c>true</c> the texture
+            target is a depth texture</param>
+      <param name="setIsShadowProjected">If set to <c>true</c> the texture
+            target is projected shadow texture to be used in shadow mapping.
+            </param>
+      <param name="setUseStencilBuffer">
+            Use the stencil flag for this RenderToTexture instance?
+            </param>
+    </member>
+    <member name="M:Delta.Graphics.BaseRenderToTexture.Render(Delta.Engine.Dynamic.RunDelegate)">
+      <summary>
+            Draw something on the texture. Please note that all rendering
+            managers (draw manager, material manager, etc.) will be flushed to
+            this texture at the end of this Render class. So do it at the very
+            beginning of a new frame to avoid draw issues from other draw calls.
+            </summary>
+      <param name="renderDelegate">The render delegate.</param>
+    </member>
+    <member name="M:Delta.Graphics.BaseRenderToTexture.Bind">
+      <summary>
+            Bind our RenderToTexture to device. This is called immediately before
+            executing the renderDelegate in Render. Unbind is called after that.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseRenderToTexture.Unbind">
+      <summary>
+            Unbind our RenderToTexture from device. This is called immediately
+            after executing the renderDelegate in Render.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseRenderToTexture.MakeSureRenderTargetIsInitialized">
+      <summary>
+            Makes the sure render target is initialized.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseRenderToTexture.CreateDefaultTexture">
+      <summary>
+            Create default texture (not supported by RenderToTexture).
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseRenderToTexture.CloneNativeData(Delta.Graphics.BaseTexture)">
+      <summary>
+            CloneNativeData (not supported by RenderToTexture).
+            </summary>
+      <param name="textureToCloneFrom"></param>
+    </member>
+    <member name="M:Delta.Graphics.BaseRenderToTexture.LoadNativeData(System.String)">
+      <summary>
+            LoadNativeData (not supported by RenderToTexture).
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseRenderToTexture.FillTextureData(Delta.Utilities.Datatypes.Size,System.Byte[],System.Int32,System.Int32,System.Int32,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
+      <summary>
+            FillTexture data (not supported by RenderToTexture).
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseRenderToTexture.IsDepthTexture">
+      <summary>
+            Is this RenderTexture a depth texture (mostly used for shadow or
+            depth texture compares)? Must be set in constructor.
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseRenderToTexture.IsShadowProjected">
+      <summary>
+            Is this RenderTexture projected as a shadow texture and going to be
+            used in a shader with some shadow mapping technique? Must be set in
+            constructor.
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseRenderToTexture.UseStencilBuffer">
+      <summary>
+            Does this RenderTexture use a stencil buffer? Must be set in
+            constructor.
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseRenderToTexture.StencilColor">
+      <summary>
+            The mask color used for the stencilbuffer, will be used when clearing.
+            </summary>
+    </member>
+    <member name="T:Delta.Graphics.BaseShader">
+      <summary>
+            Shader base class, defines all the public methods we can call from the
+            outside, mostly done from the material class or some render classes.
+            Most importantly each platform implements all the platform dependant
+            render code (which can be both fixed function or shader based if the
+            hardware supports it).
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.diffuseMapHandle">
+      <summary>
+            Diffuse map handle for SetUniform
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.detailMapHandle">
+      <summary>
+            Detail map handle for SetUniform
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.normalMapHandle">
+      <summary>
+            Normal map handle for SetUniform
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.lightMapHandle">
+      <summary>
+            Light map handle for SetUniform
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.specularMapHandle">
+      <summary>
+            Specular map handle for SetUniform
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.heightMapHandle">
+      <summary>
+            Height map handle for SetUniform
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.reflectionCubeMapHandle">
+      <summary>
+            Light map handle for SetUniform
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.shaderLutTextureHandle">
+      <summary>
+            Shader Lut BaseTexture SetUniform handle for optimizations
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.shadowMapTextureHandle">
+      <summary>
+            Shadow map BaseTexture SetUniform handle for optimizations
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.data">
+      <summary>
+            Shader data that is loaded from content in the constructor. This is
+            only kept around to allow delayed loading (we don't need it all until
+            the properties are accessed).
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.worldViewProjectionHandle">
+      <summary>
+            World view projection handle
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.skinnedMatricesHandle">
+      <summary>
+            Skinned Matrices handle. There is no property for this shader parameter
+            because it is set directly in the Set3DRenderMatrixWithBones method!
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.in2DMode">
+      <summary>
+            Helper to figure out if we called Set2DRenderMatrix or
+            Set3DRenderMatrix last for special optimizations.
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.BaseShader.worldViewProjection">
+      <summary>
+            World view projection (cached for Set3DRenderMatrix), this one is
+            the cached matrix value just for this shader (needs to be set for
+            each shader that uses Set3DRenderMatrix, so it cannot be static).
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.#ctor(Delta.ContentSystem.Rendering.ShaderData)">
+      <summary>
+            Creates a base shader, this constructor will grab the ShaderData and
+            then setup the native shader objects (the graphics device needs to be
+            up). When the device is lost or the window gets resized the matrices
+            are updated, we reload everything and grab the shader parameters again.
+            The Load method also checks if we are loading the same shader again
+            and caches the results, so we never create two instances of the same
+            shader! If we do a warning is outputted to prevent bad performance
+            of using multiple shaders with the exact same internal data.
+            </summary>
+      <param name="setShaderData">
+            Set shader meta data for loading and creating the Shader from the
+            content system data (.DeltaShader). See ShaderData for details.
+            </param>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.Load">
+      <summary>
+            Load shader method, which is triggered by using the ShaderHandle!
+            The Load method also checks if we are loading the same shader again
+            and caches the results, so we never create two instances of the same
+            shader! If we do a warning is outputted to prevent bad performance
+            of using multiple shaders with the exact same internal data.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.LoadShaderCode(System.String)">
+      <summary>
+            Native load shader code method, will load the shader code into a
+            shader handle, which can even be reused if the same content is
+            requested again.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.UpdateShaderHandleAndUniforms(System.Object)">
+      <summary>
+            Get all uniform handles from the shader and resets all default values.
+            This also sets the native shader handle, which is needed for the
+            GetUniformHandle methods used here.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.GetUniformHandle(Delta.ContentSystem.Rendering.Helpers.ShaderUniformNames)">
+      <summary>
+            Get uniform handle. This method must always return null or some
+            valid handle (can be an object, an integer, does not matter, but if
+            the uniform does not exist, this MUST return null, not 0 or -1).
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.SetUniform(System.Object,System.Single)">
+      <summary>
+            Set uniform float (for some special settings, e.g. fog, time, etc.)
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.SetUniform(System.Object,Delta.Utilities.Datatypes.Vector)">
+      <summary>
+            Set uniform Vector (for some advanced shaders)
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.SetUniform(System.Object,Delta.Utilities.Datatypes.Matrix@)">
+      <summary>
+            Set uniform Matrix (for world, viewInverse and worldViewProj).
+            A boxed reference value is used here to increase performance.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.SetUniform(System.Object,Delta.Utilities.Datatypes.Matrix[])">
+      <summary>
+            Set uniform Matrix array (for skinning)
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.SetUniform(System.Object,Delta.Utilities.Datatypes.Color)">
+      <summary>
+            Set uniform Color (for material colors)
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.SetUniform(System.Object,Delta.Graphics.BaseTexture)">
+      <summary>
+            Set uniform Image (for texturing)
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.SetUniform(System.Object,Delta.Utilities.Datatypes.Point)">
+      <summary>
+            Set uniform Point (rarely used (PostScreenWindowSize for example))
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.Set2DRenderMatrix">
+      <summary>
+            Set 2D render matrix, will set the worldHandle and
+            worldViewProjectionHandle for shaders that support it. Otherwise the
+            derived class needs to override this method and provide alternate
+            ways to set the world, view and projection matrices.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.Update2DWorldViewProjectionMatrix(Delta.Utilities.Datatypes.Matrix@)">
+      <summary>
+            Update 2D Render Matrix helper method to update the
+            worldViewProjection matrix in the shader for 2D rendering. Very
+            rarely used (only if some offset is needed for 2D drawing, like for
+            font geometry positioning or rotation).
+            </summary>
+      <param name="viewMatrix">The view matrix.</param>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.Set3DRenderMatrix(Delta.Utilities.Datatypes.Matrix@)">
+      <summary>
+            Set 3D render matrix, will set the worldHandle, viewInverseHandle and
+            worldViewProjectionHandle for shaders that support it. Otherwise the
+            derived class needs to override this method and provide alternate
+            ways to set the world, view and projection matrices.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.Set3DRenderMatrix(Delta.Utilities.Datatypes.Matrix@,Delta.Utilities.Datatypes.Matrix[])">
+      <summary>
+            Set 3D render matrix with bones, same as Set3DRenderMatrix, but also
+            updates the bones for animated meshes.
+            </summary>
+      <param name="worldMatrix">Object world matrix for 3D rendering</param>
+      <param name="skinnedBoneMatrices">Optional skinned matrices</param>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.ApplyUniforms">
+      <summary>
+            Apply uniforms, which is needed for some platforms (Xna and SlimDX)
+            to apply the shaders or even start the shader pass (for Xna).
+            Not used at all on OpenGL platforms, all uniforms are set directly.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.Render(Delta.Engine.Dynamic.RunDelegate)">
+      <summary>
+            Draw something in 2D or 3D with this shader, should be called as few
+            times as possible (rendering is much faster without many shader
+            switches). This is currently ONLY used from the MaterialManager!
+            </summary>
+      <param name="renderDelegate">This is the delegate we pass from the
+            MaterialManager, which will render all RenderGeometries with the
+            pre-calculated geometries and their materials (we don't know anything
+            about that here, it is all handled and sorted over there).</param>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.Dispose">
+      <summary>
+            Dispose this shader. This will make the shader unusable for rendering.
+            If you need to recreate it, just create a new instance for this shader.
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.BaseShader.ToString">
+      <summary>
+            To string
+            </summary>
+      <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.Name">
+      <summary>
+            Content name of this shader (from the Content System ShaderData).
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.Flags">
+      <summary>
+            Shader flags from the content (ShaderData).
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.VertexFormat">
+      <summary>
+            The vertex format that is required for a mesh that should be rendered
+            with this shader.
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.DiffuseMap">
+      <summary>
+            DiffuseMap (keyword in shader 'DiffuseMap')
+            TODO: re-enable same atlas warning, currently disabled because optimizations are disabled and this warning comes often
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.DetailMap">
+      <summary>
+            DetailMap (keyword in shader 'DetailMap')
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.NormalMap">
+      <summary>
+            NormalMap (keyword in shader 'NormalMap')
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.LightMap">
+      <summary>
+            LightMap (keyword in shader 'LightMap')
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.SpecularMap">
+      <summary>
+            SpecularMap (keyword in shader 'SpecularMap')
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.HeightMap">
+      <summary>
+            HeightMap (keyword in shader 'HeightMap')
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.ReflectionCubeMap">
+      <summary>
+            ReflectionCubeMap (keyword in shader 'ReflectionCubeMap')
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.ShaderLutTexture">
+      <summary>
+            SpecularMap (keyword in shader 'SpecularMap')
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.ShadowMapTexture">
+      <summary>
+            ShadowMap (keyword in shader 'ShadowMap')
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.AmbientColor">
+      <summary>
+            AmbientColor (keyword in shader 'AmbientColor'). This only has an
+            effect if this shader parameter is used.
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.DiffuseColor">
+      <summary>
+            DiffuseColor (keyword in shader 'DiffuseColor'). This only has an
+            effect if this shader parameter is used. If just vertex colors are
+            used, you must color them instead.
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.LightDirection">
+      <summary>
+            LightDirection (keyword in shader 'LightDirection').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.LightPosition">
+      <summary>
+            LightPosition (keyword in shader 'LightPosition').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.LightRadius">
+      <summary>
+            LightRadius (keyword in shader 'LightRadius').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.LightColor">
+      <summary>
+            LightColor (keyword in shader 'LightColor').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.LightTwoPosition">
+      <summary>
+            LightTwoPosition (keyword in shader 'LightTwoPosition').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.LightTwoRadius">
+      <summary>
+            LightTwoRadius (keyword in shader 'LightTwoRadius').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.LightTwoColor">
+      <summary>
+            LightTwoColor (keyword in shader 'LightTwoColor').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.PostScreenWindowSize">
+      <summary>
+            PostScreenWindowSize (keyword in shader 'PostScreenWindowSize').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.PostScreenMap">
+      <summary>
+            PostScreenMap (keyword in shader 'PostScreenMap').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.PostScreenBorderFadeoutMap">
+      <summary>
+            PostScreenBorderFadeoutMap
+            (keyword in shader 'PostScreenBorderFadeoutMap').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.PostScreenNoiseMap">
+      <summary>
+            PostScreenNoiseMap (keyword in shader 'PostScreenNoiseMap').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.ShadowMapTransform">
+      <summary>
+            ShadowMapTransform (keyword in shader 'ShadowMapTransform').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.ShadowMapLightWorldViewProj">
+      <summary>
+            ShadowMapLightWorldViewProj
+            (keyword in shader 'ShadowMapLightWorldViewProj').
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.Is2D">
+      <summary>
+            Is 2D
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.IsCompressed">
+      <summary>
+            Is Vertex Data compressed for this shader?
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.HasNoTexturing">
+      <summary>
+            Has this shader no texturing?
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.HasDynamicLighting">
+      <summary>
+            Has dynamic lighting? If AmbientDiffuse is used we assume that
+            lighting is used somehow (directional, point lights, colors, etc.)
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.IsAlphaTest">
+      <summary>
+            Is alpha test used for this shader? Only materials that have alpha
+            transparency and alpha testing enabled should be used for this shader
+            (others will work too, but this shader is bad for performance).
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.BaseShader.LightViewProjectionBiasMatrix">
+      <summary>
+            LightViewProjectionBias
+            (keyword in shader 'LightViewProjectionBias').
+            </summary>
+    </member>
+    <member name="T:Delta.Graphics.ScreenshotCapturer">
+      <summary>
+            Base screenshot capturer, concrete implementation can be found in each
+            graphics framework.
+            </summary>
+    </member>
+    <member name="F:Delta.Graphics.ScreenshotCapturer.CapturingAllowed">
+      <summary>
+            If capturing is allowed
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.ScreenshotCapturer.#ctor">
+      <summary>
+            Create base screenshot capturer
+            </summary>
+    </member>
+    <member name="M:Delta.Graphics.ScreenshotCapturer.MakeScreenshot">
+      <summary>
+            Make screenshot.
+            This needs to be implemented in the platform modules.
+            </summary>
+      <returns>Returns the path to the created screenshot.</returns>
+    </member>
+    <member name="M:Delta.Graphics.ScreenshotCapturer.GetNextFilename">
+      <summary>
+            Get next filename
+            </summary>
+    </member>
+    <member name="P:Delta.Graphics.ScreenshotCapturer.ScreenshotPath">
+      <summary>
+            Screenshot path
+            </summary>
+    </member>
+  </members>
+</doc>

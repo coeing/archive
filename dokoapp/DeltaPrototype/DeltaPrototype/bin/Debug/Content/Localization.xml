@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Localization>
+  <LanguageEntry>
+    <Key>Go</Key>
+    <Scene>TestScene</Scene>
+    <English>Go</English>
+    <German>Los</German>
+    <French>hardi</French>
+    <Spanish>Empezar</Spanish>
+    <Italian>Via</Italian>
+  </LanguageEntry>
+  <LanguageEntry>
+    <Key>Yo</Key>
+    <Scene>TestScene</Scene>
+    <English>Yo</English>
+    <German>Jo</German>
+  </LanguageEntry>
+  <LanguageEntry>
+    <Key>Description</Key>
+    <Scene>TestScene</Scene>
+    <English>Description of this application ...</English>
+    <German>Beschreibung dieser Applikation ...</German>
+  </LanguageEntry>
+</Localization>

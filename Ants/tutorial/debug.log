@@ -1,0 +1,64 @@
+TurnTime 1000ms, LoadTime 3000ms
+Seeds: 1
+################################################################
+NEW TURN 1
+Own Ant (91, 59, T0) was added.
+Duration Parse Update: 4ms.
+################################################################
+NEW TURN 1
+Own Ant (67, 35, T0) was added.
+Duration Parse Update: 4ms.
+Flood fill starting locations: 1.
+Duration Game State Update: 5ms.
+++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++
+Duration Context NewTurn: 4ms.
+Ants: 1 [(67, 35, T0)].
+Ants Turn: 1.
+Flood fill starting locations: 1.
+Added Ants: 1 [(67, 35, T0)].
+Killed Ants: 0 [].
+Duration Game State Update: 7ms.
+++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++
+Duration Context NewTurn: 4ms.
+Ants: 1 [(91, 59, T0)].
+Ants Turn: 1.
+Added Ants: 1 [(91, 59, T0)].
+Killed Ants: 0 [].
+Visible Hills: 1 [(91, 59, T0)].
+Visible Enemy Hills: 0 [].
+Known Enemy Hills: 0 [].
+Visible Food: 3.
+Known Food: 3.
+New Food: 3 [(87, 59);(88, 58);(94, 65)].
+Removed Food: 0 [].
+Ungathered Food: 3 [(87, 59);(88, 58);(94, 65)].
+Unexplored tiles: 24.
+Frontier: 24.
+---------------------------------------------------
+ANT (91, 59, T0).
+Duration move check: 5ms.
+Trying to gather food
+Picking target from 3 possible locations.
+System.IO.IOException: Der Prozess kann nicht auf die Datei "D:\projects\Ants\tutorial\debug.log" zugreifen, da sie von einem anderen Prozess verwendet wird.
+   bei System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   bei System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy)
+   bei System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, String msgPath, Boolean bFromProxy)
+   bei System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access)
+   bei Ants.Source.Log.WriteLine(String log) in D:\projects\Ants\Source\Log.cs:Zeile 22.
+   bei Ants.MyBot.DoTurn(GameState state) in D:\projects\Ants\Source\MyBot.cs:Zeile 56.
+   bei Ants.Ants.PlayGame(Bot bot) in D:\projects\Ants\Source\Ants.cs:Zeile 55.
+System.IO.IOException: Der Prozess kann nicht auf die Datei "D:\projects\Ants\tutorial\debug.log" zugreifen, da sie von einem anderen Prozess verwendet wird.
+   bei System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   bei System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy)
+   bei System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, String msgPath, Boolean bFromProxy)
+   bei System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access)
+   bei Ants.Source.Log.WriteLine(String log) in D:\projects\Ants\Source\Log.cs:Zeile 22.
+   bei Ants.Source.Pathfinding.Pathfinder.FindPath(Location start, Location target) in D:\projects\Ants\Source\Pathfinding\Pathfinder.cs:Zeile 49.
+   bei Ants.Source.Entities.Ant.DoMovePosition(GameContext context, Location location, List`1& path) in D:\projects\Ants\Source\Entities\Ant.cs:Zeile 460.
+   bei Ants.Source.Entities.StrategyUtils.PickTarget(GameContext context, Ant ant, List`1 locations, LocationDistance& target, List`1& path) in D:\projects\Ants\Source\Entities\Ant.cs:Zeile 210.
+   bei Ants.Source.Entities.GatherFoodStrategy.DoTurn(GameContext context, Ant ant) in D:\projects\Ants\Source\Entities\Ant.cs:Zeile 284.
+   bei Ants.Source.Entities.Ant.DoTurn(GameContext context) in D:\projects\Ants\Source\Entities\Ant.cs:Zeile 440.
+   bei Ants.MyBot.DoTurn(GameState state) in D:\projects\Ants\Source\MyBot.cs:Zeile 94.
+   bei Ants.Ants.PlayGame(Bot bot) in D:\projects\Ants\Source\Ants.cs:Zeile 55.

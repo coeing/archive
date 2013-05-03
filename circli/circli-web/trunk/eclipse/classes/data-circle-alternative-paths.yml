@@ -1,0 +1,31 @@
+# Adam's lists
+models.user.item.WantedItem(wantedItem1Adam):
+    article: bookA
+    user: adam
+models.user.item.OwnedItem(ownedItem1Adam):
+    article: bookB
+    user: adam
+    
+# Berta's lists
+models.user.item.WantedItem(wantedItem1Berta):
+    article: bookC
+    user: berta
+models.user.item.OwnedItem(ownedItem1Berta):
+    article: bookA
+    user: berta
+    
+# Christo's lists
+models.user.item.WantedItem(wantedItem1Christo):
+    article: bookF # no connection possible to Adam!
+    user: christo
+models.user.item.OwnedItem(ownedItem1Christo):
+    article: bookC
+    user: christo
+
+# Daniel's lists
+models.user.item.WantedItem(wantedItem1Daniel):
+    article: bookB
+    user: daniel
+models.user.item.OwnedItem(ownedItem1Daniel):
+    article: bookC
+    user: daniel

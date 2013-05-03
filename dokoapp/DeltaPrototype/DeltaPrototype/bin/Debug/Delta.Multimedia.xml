@@ -1,0 +1,293 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Delta.Multimedia</name>
+  </assembly>
+  <members>
+    <member name="T:Delta.Multimedia.Video">
+      <summary>
+            Abstract base video class.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Video.Create(System.String)">
+      <summary>
+            Load a video instance.
+            </summary>
+      <param name="videoName">Name of the video content file.</param>
+      <returns>Video instance.</returns>
+    </member>
+    <member name="F:Delta.Multimedia.Video.videoData">
+      <summary>
+            Native video data.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Video.#ctor(System.String)">
+      <summary>
+            Create base video
+            </summary>
+      <param name="contentName">Name of the content.</param>
+    </member>
+    <member name="M:Delta.Multimedia.Video.Dispose">
+      <summary>
+            Dispose stops the video and calls DisposeNative.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Video.Play">
+      <summary>
+            Starts playing the video.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Video.Stop">
+      <summary>
+            Stops the playing video
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Video.Load">
+      <summary>
+            Simple load method for handling exceptions and if the loading failed.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Video.LoadNativeData(System.String)">
+      <summary>
+            Load the native music data.
+            </summary>
+      <param name="filename">Filename</param>
+      <returns>True if loading succeeded, otherwise False.</returns>
+    </member>
+    <member name="M:Delta.Multimedia.Video.DisposeNativeData">
+      <summary>
+            Dispose the video natively.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Video.SetVolume(System.Single)">
+      <summary>
+            Set the volume of the video. Implemented in the derived classes.
+            </summary>
+      <param name="setVolume">The desired volume value for the video.</param>
+    </member>
+    <member name="M:Delta.Multimedia.Video.PlayNative">
+      <summary>
+            Plays this media natively.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Video.StopNative">
+      <summary>
+            Stops this media natively.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Video.UpdateNative">
+      <summary>
+            Updates this media natively.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Video.DrawNative(Delta.Utilities.Datatypes.Rectangle)">
+      <summary>
+            Native implementation of drawing the native video data.
+            Note: This method will only be called, if the video is loaded.
+            </summary>
+      <param name="drawArea">Draw area</param>
+    </member>
+    <member name="P:Delta.Multimedia.Video.State">
+      <summary>
+            Represents the current state of the media file (play, pause, stop).
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Video.Volume">
+      <summary>
+            Gets or sets the volume (between 0.0 and 1.0) of this music instance
+            by using a logarithmic approach, so you can just use linear values to
+            get the desired effect. E.g.: 0.5 is half as loud as 1.0.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Video.TimePlayed">
+      <summary>
+            Time the video played in seconds.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Video.Name">
+      <summary>
+            Name of the content file.
+            </summary>
+    </member>
+    <member name="E:Delta.Multimedia.Video.Ended">
+      <summary>
+            Occurs every time playing the sound has ended.
+            </summary>
+    </member>
+    <member name="T:Delta.Multimedia.MusicPlaylist">
+      <summary>
+            Music playlist
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.MusicPlaylist.#ctor">
+      <summary>
+            Create a new music playlist.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.MusicPlaylist.Add(Delta.Multimedia.Music)">
+      <summary>
+            Add a new music item to the playlist.
+            </summary>
+      <param name="musicItem">The music to add.</param>
+    </member>
+    <member name="M:Delta.Multimedia.MusicPlaylist.Play">
+      <summary>
+            Play this playlist.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.MusicPlaylist.Stop">
+      <summary>
+            Stop this playlist.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.MusicPlaylist.Count">
+      <summary>
+            The number of music items in the playlist.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.MusicPlaylist.CurrentIndex">
+      <summary>
+            The index of the current playing music in the playlist.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.MusicPlaylist.State">
+      <summary>
+            The current state of the playlist.
+            </summary>
+    </member>
+    <member name="T:Delta.Multimedia.MediaState">
+      <summary>
+            Defines the possible states in which a media content file can be.
+            </summary>
+    </member>
+    <member name="T:Delta.Multimedia.Sound">
+      <summary>
+            Abstract base sound class. Needs to be implemented in the platform
+            multimedia module. Properties are set in the derived class.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Sound.#ctor(System.String)">
+      <summary>
+            Create base sound class.
+            </summary>
+      <param name="contentName">Name of the content.</param>
+    </member>
+    <member name="M:Delta.Multimedia.Sound.Dispose">
+      <summary>
+            Dispose stops the video and calls DisposeNative.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Sound.Play">
+      <summary>
+            Plays a sound with the help of a sound channel.
+            You can specify that you want a Channel returned, this will
+            lock its use for you, until you decide to set it to null, so that
+            it can be reused again.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Sound.Stop">
+      <summary>
+            Stops the sound (if it is playing).
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Sound.ActiveChannels">
+      <summary>
+            The number of active sound channels.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Sound.Volume">
+      <summary>
+            Volume, is 1.0f by default.
+            Gets or sets the volume (between 0.0 and 1.0) of this sound instance
+            by using a logarithmic approach, so you can just use linear values to
+            get the desired effect. E.g.: 0.5 is half as loud as 1.0.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Sound.Pitch">
+      <summary>
+            Pitch, is 1.0f by default.
+            Gets or sets the pitch of this sound instance which is the speed
+            of the sound playback.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Sound.Pan">
+      <summary>
+            Pan, is 0.0f by default.
+            Gets or sets the pan value. -1.0f is full left and 1.0f is full right.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Sound.State">
+      <summary>
+            Represents the current state of the media file (play, pause, stop).
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Sound.Name">
+      <summary>
+            Name of the content file.
+            </summary>
+    </member>
+    <member name="T:Delta.Multimedia.Music">
+      <summary>
+            Main music class, allowing to create a Music instance with the
+            normal constructor, instead of a static Create Method. For the abstract
+            layer and platform implementations there is the NativeMusic class which
+            then has the static Create method.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Music.#ctor(System.String)">
+      <summary>
+            Create music, all the magic happens in native classes.
+            </summary>
+      <param name="contentName">Name of the music content.</param>
+    </member>
+    <member name="M:Delta.Multimedia.Music.Dispose">
+      <summary>
+            Dispose stops the music and calls DisposeNative.
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Music.Play">
+      <summary>
+            Starts playback of the music (always looping, use Finished event
+            to do something else when music is done playing).
+            </summary>
+    </member>
+    <member name="M:Delta.Multimedia.Music.Stop">
+      <summary>
+            Stops the music (if he is playing).
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Music.State">
+      <summary>
+            Represents the current state of the media file (play, pause, stop).
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Music.Volume">
+      <summary>
+            Gets or sets the volume (between 0.0 and 1.0) of this music instance
+            by using a logarithmic approach, so you can just use linear values to
+            get the desired effect. E.g.: 0.5 is half as loud as 1.0.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Music.TimePlayed">
+      <summary>
+            Time the music played in seconds.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Music.Looping">
+      <summary>
+            Looping (auto replay after end), only used for music.
+            <c>true</c> if looping; otherwise, <c>false</c>.
+            </summary>
+    </member>
+    <member name="P:Delta.Multimedia.Music.Name">
+      <summary>
+            Name of the content file.
+            </summary>
+    </member>
+    <member name="E:Delta.Multimedia.Music.Ended">
+      <summary>
+            Occurs every time playing the sound has ended.
+            </summary>
+    </member>
+  </members>
+</doc>

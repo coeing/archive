@@ -1,0 +1,26 @@
+#{extends 'main.html' /}
+#{set title:'circ.li Home' /}
+
+<p>
+  <a href="${requestUrl}">Request URL</a>
+</p>
+<p>
+  Search result for '${search}'
+</p>
+
+#{list items:items, as:'item'}
+  <div>
+	<h4>	
+	<a href="${item.Url}">${item.Title}</a>
+	</h4>
+	<h5>
+	${item.Author}
+	</h5>
+	<div class="article" style="width: ${item.ImageWidth}px; height: ${item.ImageHeight}px;">
+	    <p class="articleId" style="display: none;">${item.id}</p>
+		<img src="${item.ImageUrl}" width="${item.ImageWidth}" height="${item.ImageHeight}"/>
+		<div class="articleFunctions" style="position: relative; vertical-align: middle; padding: auto; margin-top: -${item.ImageHeight}px; width: ${item.ImageWidth}px; height: ${item.ImageHeight}px;">
+		</div>
+	</div>
+  </div>
+#{/list}

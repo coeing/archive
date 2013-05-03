@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <PlatformTarget>x86</PlatformTarget>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6BAAF8A6-704E-4369-9C58-FD4C7C1F76C4}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RocketChimps</RootNamespace>
+    <AssemblyName>RocketChimps</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <WarningLevel>4</WarningLevel>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Delta.ContentSystem.Rendering, Version=0.9.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\DeltaEngine\Dlls\Delta.ContentSystem.Rendering.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+    </Reference>
+    <Reference Include="Delta.Utilities">
+      <HintPath>$(DeltaEnginePath)\Dlls\Delta.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Delta.ContentSystem">
+      <HintPath>$(DeltaEnginePath)\Dlls\Delta.ContentSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="Delta.Engine">
+      <HintPath>$(DeltaEnginePath)\Dlls\Delta.Engine.dll</HintPath>
+    </Reference>
+    <Reference Include="Delta.Graphics">
+      <HintPath>$(DeltaEnginePath)\Dlls\Delta.Graphics.dll</HintPath>
+    </Reference>
+    <Reference Include="Delta.InputSystem">
+      <HintPath>$(DeltaEnginePath)\Dlls\Delta.InputSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="Delta.Multimedia">
+      <HintPath>$(DeltaEnginePath)\Dlls\Delta.Multimedia.dll</HintPath>
+    </Reference>
+    <Reference Include="Delta.Rendering">
+      <HintPath>$(DeltaEnginePath)\Dlls\Delta.Rendering.dll</HintPath>
+    </Reference>
+    <Reference Include="Delta.Rendering.Basics">
+      <HintPath>$(DeltaEnginePath)\Dlls\Delta.Rendering.Basics.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Game.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RainyGames.RocketChimps.UI\RainyGames.RocketChimps.UI.csproj">
+      <Project>{661E261E-7CBC-4922-977C-EB1F11318855}</Project>
+      <Name>RainyGames.RocketChimps.UI</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

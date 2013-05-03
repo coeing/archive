@@ -1,0 +1,38 @@
+#{extends 'main.html' /}
+#{set title:'circ.li Home' /}
+
+
+<script type="text/javascript">
+		$(function(){
+			//var data = "Core Selectors Attributes Traversing Manipulation CSS Events Effects Ajax Utilities".split(" ");
+			
+			//Autocomplete
+			$(".search").autocomplete({
+				source: 
+					function(request, response) 
+					{ 
+						$.ajax( "http://completion.amazon.co.uk/search/complete",
+								{ 
+									type: "GET",
+			                        cache: false,
+			                        dataType: "jsonp",
+									data: { q: request.term, "search-alias": "stripbooks", mkt: "4", callback: '?' }, 
+								  	success: function(data) { response(data[1]);}
+								}
+						); 
+					}
+			});
+		});
+	</script>	
+
+#{form @SearchController.search()}
+
+<input class="search" name="search"/>
+
+<input type="submit" id="dosearch" value="&{'search.submit'}" />
+
+#{/form}
+
+<p>
+Search for your books!
+</p>

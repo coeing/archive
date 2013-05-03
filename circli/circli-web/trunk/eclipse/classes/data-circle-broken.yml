@@ -1,0 +1,31 @@
+# Adam's lists
+models.user.item.WantedItem(wantedItem1Adam):
+    article: bookC
+    user: adam
+models.user.item.OwnedItem(ownedItem1Adam):
+    article: bookB
+    user: adam
+    
+# Berta's lists
+models.user.item.WantedItem(wantedItem1Berta):
+    article: bookG
+    user: berta
+models.user.item.OwnedItem(ownedItem1Berta):
+    article: bookC
+    user: berta
+    
+# Christo's lists
+models.user.item.WantedItem(wantedItem1Christo):
+    article: bookF
+    user: christo
+models.user.item.OwnedItem(ownedItem1Christo):
+    article: bookG
+    user: christo
+    
+# Damiel's lists
+models.user.item.WantedItem(wantedItem1Daniel):
+    article: bookA # circle breaks here!
+    user: daniel
+models.user.item.OwnedItem(ownedItem1Daniel):
+    article: bookF
+    user: daniel

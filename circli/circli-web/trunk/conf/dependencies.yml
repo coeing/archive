@@ -1,0 +1,10 @@
+# Application dependencies
+
+require:
+    - play -> play
+    - play -> secure
+    - play -> fbconnect 0.5
+    - play -> maven head
+    - play -> jqvalidate 0.3
+    - play -> spring 1.0.1 
+    - play -> less 0.1

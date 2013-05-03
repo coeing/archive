@@ -1,0 +1,2625 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delta.Utilities.Graphics</name>
+    </assembly>
+    <members>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.UseSkinningShaderFeature">
+            <summary>
+            Skinning shader feature
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.IShaderFeature">
+            <summary>
+            Interface for all ShaderFeatures.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.IShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.IShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.IShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UseSkinningShaderFeature.#ctor">
+            <summary>
+            Create skinning shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UseSkinningShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create skinning shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UseSkinningShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UseSkinningShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.UseSkinningShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.UseSkinningShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.UseSkinningShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.FresnelShaderFeature">
+            <summary>
+            Fresnel shader feature
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.FresnelShaderFeature.FresnelPower">
+            <summary>
+            Fresnel power.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.FresnelShaderFeature.FresnelFactor">
+            <summary>
+            Fresnel factor.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.FresnelShaderFeature.#ctor">
+            <summary>
+            Create fresnel shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.FresnelShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create fresnel shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.FresnelShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.FresnelShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.FresnelShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.FresnelShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.FresnelShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature">
+            <summary>
+            Fog shader feature
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.FogColor">
+            <summary>
+            The ShaderParameters array should contain: FogColor, FogStart and
+            FogEnd. This does not mean those variables are used as shader uniforms,
+            they are usually constant and can be used for both fixed function
+            pipeline code and for shader code. Adds 4-5 vertex shader instructions
+            and 2 pixel shader instructions (lerp is costly, but required).
+            Note: Currently only the FogColor is used in the shader, the rest
+            is baked as constants into it (faster because we don't need to
+            calculate FogEnd-FogStart and it makes more sense to have the same
+            values for all shaders anyway).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.FogStart">
+            <summary>
+            The default fog start distance is 10m, everything closer will also
+            get a little of the FogColor, see MinimumFogValue.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.FogEnd">
+            <summary>
+            Maximum distance for the fog, here the fog is at full intensity (see
+            MaximumFogValue). Should be synced up with BaseCamera.FarPlane, which
+            is currently 75.0 for the SoulCraft Tech Demo.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.MinimumFogValue">
+            <summary>
+            Minimum fog value that gets mixed in for each pixel in the pixel
+            shader. This value is currently pretty high (0.15 like the default
+            ambient color) to color all pixels a little in the fog color to
+            colorize everything in the scene with this fog color to fit together
+            better.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.MaximumFogValue">
+            <summary>
+            Maximum fog value, does not have to be 1.0, the default value for
+            this is 0.9, which means fog is never at 100%. There will always be
+            a little bit of the original pixel shader color visible.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.#ctor">
+            <summary>
+            Create fog shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create fog shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.FogShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.ParallaxMapShaderFeature">
+            <summary>
+            ParallaxMap shader feature
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ParallaxMapShaderFeature.ParallaxAmount">
+            <summary>
+            Parallax mapping is usually used in combination with normal mapping,
+            but you can use it own its own. It needs an extra height map (usually
+            just the light map or normal map extra alpha color channel) for even
+            cooler depth effects on the texture. Adds about 2 instructions, but
+            even if that overhead is ok, also additional work at the artist side
+            is needed, not only to create the extra height/bump map, but also to
+            fine tune the parallax amount to look nice. The height map should be
+            as blurry as possible, high variations will cause parallax glitches.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.ParallaxMapShaderFeature.#ctor">
+            <summary>
+            Create parallax shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.ParallaxMapShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create parallax shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.ParallaxMapShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.ParallaxMapShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.ParallaxMapShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.ParallaxMapShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.ParallaxMapShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.WaterShaderFeature">
+            <summary>
+            Water shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.WaterShaderFeature.#ctor">
+            <summary>
+            Create water shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.WaterShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create water shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.WaterShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.WaterShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.WaterShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.WaterShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.WaterShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.DynamicDirectionalLightingShaderFeature">
+            <summary>
+            Dynamic directional lighting shader feature
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.DynamicDirectionalLightingShaderFeature.DirectionalLightDirection">
+            <summary>
+            Direction of the directional light.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.DynamicDirectionalLightingShaderFeature.#ctor">
+            <summary>
+            Create basic shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.DynamicDirectionalLightingShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create basic shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.DynamicDirectionalLightingShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.DynamicDirectionalLightingShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.DynamicDirectionalLightingShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.DynamicDirectionalLightingShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.DynamicDirectionalLightingShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.BasicShaderFeature">
+            <summary>
+            Basic shader feature
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.BasicShaderFeature.DiffuseMap">
+            <summary>
+            Diffuse map, is always set except when ShaderFeatureFlags.NoTexturing
+            is set (then we don't want a diffuse map and this setting is ignored).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.BasicShaderFeature.#ctor">
+            <summary>
+            Create basic shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.BasicShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create basic shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.BasicShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.BasicShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.BasicShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.BasicShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.BasicShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.LightMapShaderFeature">
+            <summary>
+            Light map shader feature
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.LightMapShaderFeature.LightMap">
+            <summary>
+            LightMap, is always set except when ShaderFeatureFlags.NoTexturing is
+            set (then we don't want a diffuse map and this setting is ignored).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.LightMapShaderFeature.#ctor">
+            <summary>
+            Create light map shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.LightMapShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create light map shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.LightMapShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.LightMapShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.LightMapShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.LightMapShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.LightMapShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.DetailMappingShaderFeature">
+            <summary>
+            Detail mapping shader feature
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.DetailMappingShaderFeature.DetailMap">
+            <summary>
+            The Detail map is a tiled texture that is added to improve the sharpness
+            especially in highly scaled textures. There is a texture on which a 
+            fine pattern is shown (usually this is a "noise" effect used). 
+            The Detail map is tiled over the terrain and this combined with a 
+            diffuse mal or color map.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.DetailMappingShaderFeature.#ctor">
+            <summary>
+            Create detail map shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.DetailMappingShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create detail map shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.DetailMappingShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.DetailMappingShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.DetailMappingShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.DetailMappingShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.DetailMappingShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ColorBufferMode">
+            <summary>
+            Platform color buffer for a device. Usually RGB565 for mobile devices
+            and RGBA8888 for PCs and Consoles. RGBAFloat16 or RGBAFloat32 can also
+            be used for high profile PC or Console games.
+            <para />
+            Note: Exotic modes like RGBA4444, RGBA5551, RGB888, or RGB10A2 are not
+            supported right now.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ColorBufferMode.RGB565">
+            <summary>
+            16 bit color display bit depth. This means less colors can be displayed
+            and more jaggy steps between darker and brighter shaders of the same
+            color are visible. Clever artists can circumvent that by using not
+            so many shades, using dither effects or have a overall more comic or
+            solid color look. This is the default color depth for most mobile
+            devices. Except for the iPad2 and the iPhone4 almost all of them
+            only support 16 bit colors at the display anyway. For example check
+            out: http://www.obsessable.com/cell-phone/apple-iphone-3g/specs/
+            So using 24 or 32 bit for your frame buffer will not result in any
+            better output, just worse performance. Red channel = 5 bits, Green
+            channel = 6 bits and Blue channel = 5 bits. Some texture generation
+            rules might also be aware of this setting and reduce or optimize
+            quality to fit the output format.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ColorBufferMode.RGBA8888">
+            <summary>
+            32 bit color display bit depth. Usually only the RGB components are
+            important so this color mode is usually called 24 bit because the
+            last 8 bits are unused. Quality is a lot better than 16 bit, but
+            since this is twice as many bits, it needs twice the memory bandwidth.
+            Faster platforms have this as their default, which is even faster for
+            them because memory bandwidth is not a big issue and converting to
+            16 bit can even slow you down. For slower and older mobile devices
+            and especially devices that can only do 16 bit on the display anyway,
+            it is much better to choose 16 bit. A developer can choose this bit
+            depth if he wants more quality on devices where it makes a difference
+            if he still has enough performance.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ColorBufferMode.RGBAFloat16">
+            <summary>
+            Special mode for 16-bit floating point RGBA frame buffers, 16 bit
+            float is also called half-float. Total size is 64 bit. Screens usually
+            only have 24 bits or even only 18 bits (3*6 bits), so this mode only
+            makes sense for HDR cases and high performance platforms.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ColorBufferMode.RGBAFloat32">
+            <summary>
+            Special mode for 32-bit floating point RGBA frame buffers. Total size
+            is 128 bit. Screens usually only have 24 bits or even only 18 bits
+            (3*6 bits), so this mode only makes sense for HDR cases and high
+            performance platforms.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.BlendMode">
+            <summary>
+            Blending presets are used for setting alpha blending operations of
+            various types for producing different effects. Now set directly
+            in materials because we want to sort them by blend mode too :)
+            Note: Needed in Content modules already because atlas textures
+            need to know about the blend modes!
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.BlendMode.Opaque">
+            <summary>
+            The default preset is opaque, which is the fastest blending type
+            because it uses no blending obviously. Also works with AlphaTesting,
+            which is decided once a material is created (then an AlphaTest shader
+            will be chosen). This blend state is the default for all materials
+            that have no alpha channel in the diffuseMap!
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.BlendMode.AlphaTest">
+            <summary>
+            Same as opaque, but use AlphaTest to discard any pixel below 0.66f
+            in the alpha channel. Rendering this is faster than Translucency
+            because we need no sorting and we can skip lots of pixels, which
+            makes the pixel shader go faster. This is however not always true for
+            mobile GPUs as discard is sometimes as expensive as actual rendering!
+            Still this is a useful feature to not write to the depth buffer for
+            transparent pixels thus helping with sorting.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.BlendMode.Subtractive">
+            <summary>
+            Subtractive rendering mode is pretty much the opposite of additive
+            blending. Instead of always adding more brightness to the target
+            screen pixels, this one subtracts brightness. It is usually and
+            mostly only used for fake shadowing effects (blob shadows) and
+            sometimes in clever combinations of particle effects.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.BlendMode.Additive">
+            <summary>
+            Additive blending is used to accumulate the color we already got
+            on screen plus the diffuseMap * AmbientColor. This makes the result
+            image brighter and should be used with care. Has the advantage that
+            we do not need to sort, we can just render this out in any order
+            on top of the Opaque materials and it will always look the same.
+            This blend state usually has to be set by hand to a material!
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.BlendMode.Translucency">
+            <summary>
+            The normal version of alpha blending, which uses ambientColor.A *
+            diffuseMap alpha and blends that with SrcAlpha InvDestColor (default
+            alpha blending technique). This blend mode is the default for
+            all materials that have an alpha channel in diffuseMap!
+            Note: Only translucent images with alpha should use this blend mode.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.BlendMode.LightEffect">
+            <summary>
+            LightEffect, which is using a special blend mode of DestColor+One,
+            which will maybe change later a bit. Basically used for light effects
+            (similar to lightmap shader, but just using a lightmap, no diffuse
+            texture). Needs to set by hand for lightmap materials, only a couple
+            of materials even need to use this, e.g. glow, light and flare effects.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.UseShadowMapShaderFeature">
+            <summary>
+            Use shadow map shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UseShadowMapShaderFeature.#ctor">
+            <summary>
+            Create a shader feature for using shadow maps.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UseShadowMapShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create basic shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UseShadowMapShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UseShadowMapShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.UseShadowMapShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.UseShadowMapShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.UseShadowMapShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.SpecularDiffuseShaderFeature">
+            <summary>
+            Specular diffuse shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularDiffuseShaderFeature.#ctor">
+            <summary>
+            Create specular diffuse shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularDiffuseShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create specular diffuse shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularDiffuseShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularDiffuseShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.SpecularDiffuseShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.SpecularDiffuseShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.SpecularDiffuseShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.NoTexturingShaderFeature">
+            <summary>
+            No texture shader feature. This is just used to disable texturing,
+            which is on by default (via BasicShaderFeature).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.NoTexturingShaderFeature.#ctor">
+            <summary>
+            Create basic shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.NoTexturingShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create basic shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.NoTexturingShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.NoTexturingShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.NoTexturingShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.NoTexturingShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.NoTexturingShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.SpecularShaderFeature">
+            <summary>
+            Specular shader feature
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.SpecularShaderFeature.SpecularColor">
+            <summary>
+            Specular color is the color of highlights on a shiny surface. 
+            The highlights are reflections of the lights that illuminate the 
+            surface. For a naturalistic effect, set the specular color to the 
+            same color as the key light source, or make it a high-value, 
+            low-saturation version of the diffuse color.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.SpecularShaderFeature.SpecularPower">
+            <summary>
+            A specular power refers to how much light is reflected in a mirror 
+            like fashion, rather than scattered randomly in a diffuse manner. 
+            So a mirror would have high specular power, a glossy surface some 
+            specular power and a matt black surface none.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularShaderFeature.#ctor">
+            <summary>
+            Create specular shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create specular shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.SpecularShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.SpecularShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.SpecularShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants">
+            <summary>
+            Shader constants, not only needed for the Content and as default values
+            for the shader classes in Graphics, but also for the default fallback
+            values for many of the shader feature classes in this namespace.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultSpecularPower">
+            <summary>
+            Default specular power (4 now for better fresnel, was 24 before)
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultFresnelPower">
+            <summary>
+            Default fresnel power if the shader for this material does fresnel,
+            fresnel bias is 0 (or bias in the shader) and the factor is 1.0 too.
+            Note: Now in a pre-calculated lut texture, not longer a parameter!
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultFresnelFactor">
+            <summary>
+            Default fresnel factor. Fresnel * FresnelFactor.
+            Note: Now in a pre-calculated lut texture, not longer a parameter!
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultParallaxAmount">
+            <summary>
+            Default parallax offset amount in pixels for a 1024x1024 texture.
+            16 means that we will offset -16 to +16 pixels in the texture (which
+            is a lot, you really need smooth transitions to make this look ok).
+            Note: For a 2048x2048 texture it would be -32 to +32 pixels, for
+            a 512x512 texture it would be -8 to +8 because the formula is always
+            the same: 1024.0 / ParallaxAmount. Note: Increased a bit to 27.0f
+            because now it is only used on floors, old value: 16.0f.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultMinAmbientValue">
+            <summary>
+            Minimum ambient value.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultAlphaTestValue">
+            <summary>
+            Value for alpha test.
+            The default value is normally 0.66.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultFogStart">
+            <summary>
+            Default fog start.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultFogEnd">
+            <summary>
+            Fog end.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultMaxFogValue">
+            <summary>
+            Maximum fog value.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultMinFogValue">
+            <summary>
+            Minimum fog value.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.MaxBonesCount">
+            <summary>
+            Maximal bones count that we can support currently = 36.
+            But you can change that value dynamically via the Content Settings :)
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultAmbientColor">
+            <summary>
+            Default colors are 0.15 for ambient and 1.0 for diffuse and specular.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultDiffuseColor">
+            <summary>
+            Default diffuse color is almost white (90%)
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultSpecularColor">
+            <summary>
+            Default specular color is always white
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultFogColor">
+            <summary>
+            Default fog color. 133, 37, 12 + 0.075 brightness
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultShadowSize">
+            <summary>
+            Default shadow size. Normally 512x512. The size is useful to get 
+            the pixel size in shader (1.0 / 512.0).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderConstants.DefaultShadowColor">
+            <summary>
+            Default shadow color. Using for the shadow map generation.
+            0.33 is pretty dark (0.5 is too weak however), 0.0 is black and
+            will usually not look very well for bright scenes (only in Doom3 ^^)
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.FontStyle">
+            <summary>
+            Font style for the font creation process, allows us to add shadow
+            to the font, create an outline, use italic or bold text plus
+            specifying anti aliasing. Combine these with or and pass them to
+            FontGenerator.GenerateFont, but also used for creating and loading
+            fonts to make sure we got the correct style.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.FontStyle.Normal">
+            <summary>
+            Normal is probably used by most fonts, just renders the font out
+            and uses anti aliasing, no bold, no italic, no shadow and no outline.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.FontStyle.Italic">
+            <summary>
+            Use italic (works only if the font has it), not used often.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.FontStyle.Bold">
+            <summary>
+            Make font bold (works only if font supports this).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.FontStyle.Underline">
+            <summary>
+            Add underline to the font (works only if font supports this).
+            Note: This may look strange with some other effects (like shadow or
+            outline) because this is not supported well and probably needs some
+            fixing when rending the font.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.FontStyle.AddShadow">
+            <summary>
+            Add shadow to the font, usually makes the font a little bigger
+            to fit the shadow (which is just the font again painted in black
+            with a 10% distance into the bottom right, rendered before the
+            actual white font).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.FontStyle.AddOutline">
+            <summary>
+            Add a black outline to the font, currently does not work well,
+            especially for big fonts. Small fonts look ok. This will add some
+            spacing (2px) around the font to allow an artist to add outlines
+            himself if he isn't pleased with the generated texture.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.FontStyle.HighContrast">
+            <summary>
+            Increase the contrast of the font rendering to its maximum value.
+            This can be used the font is too blurry otherwise. Should not be
+            used with NoAntiAliasing, this would not affect SingleBitPerPixel.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.FontStyle.LowContrast">
+            <summary>
+            Decrease the contrast to a very low setting to make the font look
+            more smooth. You should only use this for big fonts and if you think
+            the font is too sharp. Should not be used with NoAntiAliasing,
+            this would not affect SingleBitPerPixel rendering.
+            Do not use together with HighContrast, then this setting will be
+            ignored.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.FontStyle.ClearTypeAntiAliasing">
+            <summary>
+            Instead of using the default anti aliasing (which uses
+            TextRenderingHint.AntiAliasGridFit) use
+            TextRenderingHint.ClearTypeGridFit, which might produce slightly
+            different results depending if the font and system support
+            clear type. Sometimes produces less sharp fonts so this is not the
+            default and the difference can usually be neglected.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.FontStyle.NoAntiAliasing">
+            <summary>
+            Disable anti aliasing (uses TextRenderingHint.SingleBitPerPixel),
+            should not be necessary, even small fonts look ok with anti aliasing.
+            Note: Do not use together with ClearTypeAntiAliasing, then
+            this setting will be ignored (then Clear Type Anti aliasing will be
+            still on, this only disables the default Anti aliasing).
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.VertexElement">
+            <summary>
+            Vertex element, defines the type of a vertex element, if it is
+            compressed and the size occupied. See VertexFormat for details.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElement.MaxCompressedVertexDistance">
+            <summary>
+            The max. distance (in meters) that a vertex may be distant from the
+            coordinate origin (because of mobile vertex compression). When
+            importing 3D models this is checked and a warning will be shown if a
+            vertex is farther away from the origin than 300m.
+            See Position3DCompressionValue for the formula.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElement.Position3DCompressionValue">
+            <summary>
+            When converting vertex positions to shorts to store them into
+            Position3DCompressed this formula is used (1/436.0f). The minimum
+            resulting 3D position is -75.0f and the maximum is 75.0f. Everything
+            beyond that cannot be represented as Position3DCompressed shorts, but
+            since most models are only a few meters in size this should be no
+            problem.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElement.Position2DCompressionValue">
+            <summary>
+            When converting vertex positions to shorts to store them into
+            Position2DCompressed this formula is used (1/16384). The minimum
+            valid value for shorts is -32767, divided through this constant this
+            is -2.0f, the maximum value is 32768, which is +2.0f.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElement.ShortCompressionValue">
+            <summary>
+            For TextureUVCompressed we just use a simple 1/32767 formula, since
+            we will only accept UVs between 0 and 1 anyway. This precision is also
+            good for the bigger atlas textures we might have (up to 2k/2k).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElement.SignedByteCompressionValue">
+            <summary>
+            For normals, tangents and binormals (colors are not normalized, they
+            won't need any compression, we can just use the bytes values from
+            our Color struct). So only for normalized values we use a simple
+            compression formula: value * 127
+            Decompress formula: value / 127
+            The formula is only for values between -1 and +1.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElement.OpenGLPositionAttribute">
+            <summary>
+            OpenGL attributes are used for the shader generation and for getting
+            of the attributes to set them.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElement.OpenGLTexCoordAttribute">
+            <summary>
+            Open GL tex coord attribute
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElement.OpenGLNormalAttribute">
+            <summary>
+            Open GL normal attribute
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElement.OpenGLTangentAttribute">
+            <summary>
+            Open GL tangent attribute
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.#ctor(Delta.Utilities.Graphics.VertexElementType)">
+            <summary>
+            Create vertex element of a specific type. If we are on the iPhone,
+            Android or WP7 compression should be used with the other constructor
+            for vertex elements to save bandwidth and make rendering much faster.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.#ctor(Delta.Utilities.Graphics.VertexElementType,System.Boolean)">
+            <summary>
+            Create vertex element, this constructor forces compression if wanted.
+            This is usually controlled by the content and build system on the
+            server side (important for iPhone, Android, WP7 to save bandwith and
+            improve rendering performance).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.Load(System.IO.BinaryReader)">
+            <summary>
+            Load
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.LoadData(System.IO.BinaryReader)">
+            <summary>
+            Extract value as a Vector, not very efficient, but always works :)
+            </summary>
+            <param name="reader">Reader</param>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.LoadDataAsPoint(System.IO.BinaryReader)">
+            <summary>
+            Extract value as a Point, not very efficient, but always works :)
+            </summary>
+            <param name="reader">Reader</param>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.SaveData(System.IO.BinaryWriter,Delta.Utilities.Datatypes.Vector)">
+            <summary>
+            Save data helper method for GeometryData.SetVertexData, which is slow,
+            but still helpful for debugging and creating geometry dynamically.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.SaveData(System.IO.BinaryWriter,Delta.Utilities.Datatypes.Point)">
+            <summary>
+            Save data helper method for GeometryData.SetVertexData, which is slow,
+            but still helpful for debugging and creating geometry dynamically.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.SaveData(System.IO.BinaryWriter,Delta.Utilities.Datatypes.Color)">
+            <summary>
+            Save data helper method for GeometryData.SetVertexData, which is slow,
+            but still helpful for debugging and creating geometry dynamically.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.ToString">
+            <summary>
+            To string
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.SetupProperties">
+            <summary>
+            Get size, component count, vertex data format and if this vertex data
+            needs to be normalized (for compressed data).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.Position3DCompress(System.Single)">
+            <summary>
+            Short compression is only for values between -75.0 and +75.0.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.Position2DCompress(System.Single)">
+            <summary>
+            Position 2D compression
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.ShortCompress(System.Single)">
+            <summary>
+            Short compression is only for values between -1.0 and +1.0.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.SignedByteCompress(System.Single)">
+            <summary>
+            Byte compression is only for normalized values between -1.0 and +1.0.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.Position3DDecompress(System.Int16)">
+            <summary>
+            Decompress a short value to a float.
+            Return min value: -75.0
+            Return max value: +75.0
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.Position2DDecompress(System.Int16)">
+            <summary>
+            Position 2D decompress
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.ShortDecompress(System.Int16)">
+            <summary>
+            Short decompression.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.SignedByteDecompress(System.SByte)">
+            <summary>
+            Decompress a byte value to a float (for normals, tangents, etc.)
+            Return min value: -1.0
+            Return max value: +1.0
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexElement.Type">
+            <summary>
+            Type for this vertex element (position, uv, etc.)
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexElement.IsCompressed">
+            <summary>
+            Is this vertex element compressed? Usually true for iPhone, Android
+            and WP7 to save bandwidth (about half), but some vertex format types
+            like color and skin data are already compressed and cannot be more
+            compact. Most VertexFormats like Position2DTexture really get much
+            smaller with compressed on (down to 10 bytes from 20 uncompressed).
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexElement.Size">
+            <summary>
+            Size in bytes of this vertex element. Used to find the offset for the
+            next element mostly and for the total vertex size in bytes of course.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexElement.Offset">
+            <summary>
+            Offset from the start of the vertex data to this element in bytes.
+            Calculated in VertexFormat constructor.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexElement.ComponentCount">
+            <summary>
+            Returns the number of components of that element.
+            E.g. Color = 4, Vector (Position, Normal) = 3, Point (UV) = 2.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexElement.IsNormalized">
+            <summary>
+            Is normalized? Currently used for compressed Texture UVs, Normals,
+            Tangents, Color and SkinWeights. This is used to save bandwidth
+            because compressed vertex data is smaller, but needs to be normalized
+            usually (except when we account for it in the shader like for
+            position vertex data via the World or WorldViewProj matrices).
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexElement.IsByteFormat">
+            <summary>
+            Is byte format? Currently only used for colors. Use IsSignedByteFormat
+            for normals, tangents and binormals.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexElement.IsSignedByteFormat">
+            <summary>
+            Is signed byte format? Only used for normals, tangents, binormals.
+            Colors use IsByteFormat (unsigned).
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexElement.IsShortFormat">
+            <summary>
+            Is short format? Used mostly for compressed vertex data. If this
+            and IsByteFormat are false the vertex element components are floats!
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.VertexElement.VertexElementTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexElement.VertexElementTests.GetSize">
+            <summary>
+            Get size
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.UI2DShaderFeature">
+            <summary>
+            UI2D shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UI2DShaderFeature.#ctor">
+            <summary>
+            Create basic shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UI2DShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create basic shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UI2DShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.UI2DShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.UI2DShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.UI2DShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.UI2DShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.NormalMapShaderFeature">
+            <summary>
+            Normal mapping shader feature
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.NormalMapShaderFeature.NormalMap">
+            <summary>
+            NormalMap, is always set except when ShaderFeatureFlags.NoTexturing is
+            set (then we don't want a diffuse map and this setting is ignored).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.NormalMapShaderFeature.#ctor">
+            <summary>
+            Create normal mapping shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.NormalMapShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create normal mapping shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.NormalMapShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.NormalMapShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.NormalMapShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.NormalMapShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.NormalMapShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, willl be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.GenerateShadowMapShaderFeature">
+            <summary>
+            Generate shadow map shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.GenerateShadowMapShaderFeature.#ctor">
+            <summary>
+            Create a shader feature for generate shadow maps.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.GenerateShadowMapShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create basic shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.GenerateShadowMapShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.GenerateShadowMapShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.GenerateShadowMapShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.GenerateShadowMapShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.GenerateShadowMapShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.VertexFormat">
+            <summary>
+            Vertex format for GeometryData, check out VertexFormatType for details!
+            </summary>
+            <remarks>
+            Interesting papers and sites about vertex compression:
+            http://blogs.msdn.com/b/shawnhar/archive/2010/11/19/compressed-vertex-data.aspx
+            http://gsdwrdx.tistory.com/92
+            http://stackoverflow.com/questions/1762866/using-gl-short-instead-of-gl-float-in-an-opengl-es-vertex-array
+            http://wiki.gamedev.net/index.php/D3DBook:(Lighting)_Per-Pixel_Lighting
+            http://www.cs.jhu.edu/~jab/publications/vertexcompression.pdf
+            http://www.graphcomp.com/info/specs/ibm/cgd.html
+            http://irrlicht.sourceforge.net/docu/_i_animated_mesh_m_d3_8h_source.html
+            http://viola.usc.edu/Publication/PDF/selected/2000_JVCIR_Cheang.pdf
+            http://www.cse.ohio-state.edu/~hwshen/Su01_888/deering.pdf
+            http://www.cg.tuwien.ac.at/studentwork/VisFoSe98/lm/
+            http://personal.redestb.es/jmovill/opengl/openglonwin-15.html
+            https://www.opengl.org/sdk/docs/man3/xhtml/glVertexAttribPointer.xml
+            http://iphonedevelopment.blogspot.com/2009/06/opengl-es-from-ground-up-part-8.html
+            Seems like support for 16 bit floats is sometimes there, but we cannot
+            guarantee that it works on all platforms, so we cannot use it :(
+            Instead we use shorts to compress data into 16 bits as well, but this
+            has sometimes some additional overhead in the vertex shader.
+            For example Position3DCompressed | TextureUVCompressed |
+            NormalCompressed | TangentCompressed | SkinWeightCompressed |
+            SkinIndexCompressed is just 6+4+6+6+2+4 = 28 bytes instead of
+            12+8+12+12+4+4 = 52 bytes uncompressed :)
+            <para />
+            Note: When we use different sizes, we must make sure that we align all
+            our components to their native alignment, e.g. floats are on 4-byte
+            boundaries, shorts are on 2-byte boundaries. If we don't do this it will
+            tank our performance. It might be helpful to mentally map it by typing
+            out your attribute ordering as a struct definition so we can sanity
+            check our layout and alignment (this is not easy). Also:
+            * making sure your data is stripped to share vertices
+            * using a texture atlas to reduce texture swaps (see Image)
+            <para />
+            Optimizing Vertex Data
+            Each API call results in a certain amount of overhead that is caused by
+            translating the standard API calls into commands understood by the
+            hardware. The amount of overhead can be reduced by minimizing the
+            translation work required by making sure that the data submitted to the
+            API is already in a hardware friendly format. This can be achieved by
+            following the simple recommendation when submitting vertex data: submit
+            strip-ordered indexed triangles with per vertex data interleaved.
+            <para />
+            Indexed triangles (glDrawElements) is preferred over non-indexed strips
+            (glDrawArrays). Indexing allows for a higher amount of vertex reuse. The
+            same vertex in strips can not be used for more than 3 triangles; indexed
+            triangles does not have this constraint. Further, OpenGL ES requires one
+            draw call per strip. If you want to collapse draw calls for multiple
+            strips into one, you will have to add degenerate strips in between to
+            introduce discontinuities. This extra work is not required using indexed
+            triangles. With strip-ordered indexed triangles, multiple disconnected
+            strips can be drawn in a single draw call, while avoiding the cost of
+            inserting elements to create degenerate triangles.
+            <para />
+            Sorting the vertex data (either using indexed triangles or non-indexed
+            strips) is very important. Sorting allows you to generate more triangles
+            per vertex submitted. For peak performance, sort index triangles so that
+            connected indexed triangles can build strips. This improves memory
+            access patterns and the usage of the various data caches.
+            <para />
+            Use interleaved or tightly packed vertex arrays. OpenGL ES allows vertex
+            data elements to be spread out over memory thus resulting in scatter
+            reads to fetch the required data. On the other hand it is also possible
+            to interleave the data such that it is already together in memory.
+            Interleaving of the per vertex elements improves the memory efficiency
+            and is more logical for the processing that needs to be done. For
+            optimal performance, interleave the individual components in an order of
+            Position, Normal, Color, TexCoord0, TexCoord1, PointSize, Weight,
+            MatrixIndex. Memory bandwidth is limited, so try to use the smallest
+            acceptable type for each component. Specify vertex colors using 4
+            unsigned byte values. Specify texture coordinates with 2 or 4 unsigned
+            byte or short values, instead of floating-point values, if you can.
+            </remarks>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.VersionNumber">
+            <summary>
+            Version number for this VertexFormat. If this goes above 1, we need
+            to support loading older versions as well. Saving is always going
+            to be the latest version (this one).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.None">
+            <summary>
+            Empty vertex format, currently only used for OpenGL ES 1.1, where we
+            need to reset the vertex format after rendering else we are in a
+            messed up state and problems in follow up code can happen. This is
+            not required for any other OpenGL or Graphics implementation.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.Position2DTextured">
+            <summary>
+            Defines the vertex format with Position2D and TextureUV. On iPhone,
+            Android and WP7 compressed data will be used (see VertexElement.ctr).
+            Used mostly for simple 2D and UI data (basic shader, no extra features)
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.Position3DTextured">
+            <summary>
+            Defines the vertex format with Position3D and TextureUV. On iPhone,
+            Android and WP7 compressed data will be used (see VertexElement.ctr).
+            This vertex format is used mostly for simple 3D meshes, e.g.
+            Mesh.CreateSphere (uncompressed 3+2 floats = 20 bytes, compressed 10)
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.Position2DColor">
+            <summary>
+            Simple format for 2D points and colored vertices, used for lines.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.Position2DColorTextured">
+            <summary>
+            Simple format for textured 2D drawing with vertex colors. Mostly
+            used for effects because each vertex can have different colors.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.Position3DColor">
+            <summary>
+            Simple format for 3D points and colored vertices, used for 3D lines.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.Position3DColorTextured">
+            <summary>
+            Defines the vertex format with Position3D and TextureUV. On iPhone,
+            Android and WP7 compressed data will be used (see VertexElement.ctr).
+            This vertex format is used mostly for simple 3D meshes, e.g.
+            Mesh.CreateSphere (uncompressed 24 bytes, compressed 16)
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.Position3DTexturedLightMap">
+            <summary>
+            3D position, uv and lightmap textured vertex format for simple 3D
+            geometry using light maps.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.PositionTexturedSkinned">
+            <summary>
+            Position textured skinned
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.PositionSkinned">
+            <summary>
+            Position skinned
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexFormat.PositionNormalTexturedSkinned">
+            <summary>
+            Position normal textured skinned
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.#ctor(Delta.Utilities.Graphics.VertexElement[])">
+            <summary>
+            Create vertex format
+            </summary>
+            <param name="setElements">Set elements</param>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create vertex format from binary stream, will load all elements.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.Load(System.IO.BinaryReader)">
+            <summary>
+            Load VertexFormat from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save VertexFormat, will save all vertex elements in here.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.op_Equality(Delta.Utilities.Graphics.VertexFormat,Delta.Utilities.Graphics.VertexFormat)">
+            <summary>
+            Op equality
+            </summary>
+            <param name="a">A</param>
+            <param name="b">B</param>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.op_Inequality(Delta.Utilities.Graphics.VertexFormat,Delta.Utilities.Graphics.VertexFormat)">
+            <summary>
+            Op inequality
+            </summary>
+            <param name="a">A</param>
+            <param name="b">B</param>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.Equals(System.Object)">
+            <summary>
+            Equals, used to check if two VertexFormats are the same.
+            </summary>
+            <param name="obj">Object</param>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.GetHashCode">
+            <summary>
+            Get hash code
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.GetElementIndex(Delta.Utilities.Graphics.VertexElementType)">
+            <summary>
+            Does this vertex format contain a specific vertex element type?
+            Will return the index if found, else InvalidIndex. Index can be used
+            to learn more about this element (e.g. IsCompressed, Offset, Size).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.ToString">
+            <summary>
+            To string
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexFormat.Elements">
+            <summary>
+            Elements
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexFormat.LengthInBytes">
+            <summary>
+            Get length in bytes, cached in GeometryData as this is used quite often
+            and never changes.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexFormat.IsCompressed">
+            <summary>
+            Is data in this vertex format compressed? Only will return true if
+            all elements are compressed that can be compressed, e.g. position, uv
+            or normal data. Color or skinning data is always in the same format
+            (compressed), it will not be used for this check. Calculated in the
+            constructor.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexFormat.HasNormals">
+            <summary>
+            Has normals? Used to check if we need to compare normals for
+            optimizing meshes.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexFormat.HasTangents">
+            <summary>
+            Has tangents? Used to check if we need to generate tangents when
+            importing meshes.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.VertexFormat.HasLightmapUVs">
+            <summary>
+            Has lightmap UV texture coordinates? Good check for merging meshes.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.VertexFormat.VertexFormatTests">
+            <summary>
+            Tests
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.VertexFormatTests.LengthInBytes">
+            <summary>
+            Checks if LengthInBytes returns the correct size.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.VertexFormatTests.GetElementIndex">
+            <summary>
+            Get element index
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.VertexFormat.VertexFormatTests.SaveAndLoad">
+            <summary>
+            Save and load
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.VertexElementType">
+            <summary>
+            Vertex element. Currently used to dynamically create vertex data,
+            flags are combined to create a specific format. Data is always aligned
+            in the same order as specified here. Usage for channels (e.g. texture
+            channel 0, 1, etc.) is defined by number of UVs used (TexturedUV is
+            usually in channel 0, then whatever UV comes next is channel 1, etc.).
+            Note: All the byte sizes should be kept in sync with the VertexFormat
+            GetVertexDataLength helper method!
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.Position2D">
+            <summary>
+            2D position data (Point, 2 floats = 8 bytes).
+            If compressed form (2 shorts = 4 bytes, ranging from
+            0 to 16k instead of 0.0-1.0, this way we have enough values to go from
+            -2.0 to +2.0, which is good enough for 2D UI).
+            Note: The ScreenSpace.ViewProjection2DViaShorts must be scaled correctly to
+            account for this scaling (1.0f/16384.0f) before rendering.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.Position3D">
+            <summary>
+            3D position data (Vector, 3 floats = 12 bytes). Note: Often used in
+            combination with the other compressed data types because it is just
+            easier to use and does not require handling in the vertex shader
+            (e.g. for ES 1.1 or WP7 we got no shaders).
+            If compressed form (3 shorts = 6 bytes). Each short
+            is ranging from -32k to +32k and needs to be scaled with the world
+            matrix of the model to account for the scaling factor needed. This
+            scaling is based on VertexData.Position3DCompressedMultiplier, which
+            is 1/256.0f, which allows 3D positions from -128.0f to +128.0f.
+            Note: After Position3DCompressed the offset is 6 bytes, which is NOT
+            4 byte aligned, thus the next data type should be short, not float,
+            else our performance will be killed (just use only Compressed).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.Normal">
+            <summary>
+            Normal vector data for light calculation and normal mapping (Vector,
+            3 floats = 12 bytes). If compressed, then just 3 normalized bytes are
+            used +1 byte padding (because it all has to be 4 byte aligned).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.Tangent">
+            <summary>
+            Tangent vector for normal mapping (Vector, 3 floats = 12 bytes).
+            If compressed, then just 3 normalized bytes are used +1 byte padding
+            (because it all has to be 4 byte aligned).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.Binormal">
+            <summary>
+            Binormal vector for normal mapping (Vector, 3 floats = 12 bytes).
+            If compressed, then just 3 normalized bytes are used +1 byte padding
+            (because it all has to be 4 byte aligned).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.Color">
+            <summary>
+            Color for this vertex (Color, 4 bytes).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.TextureUV">
+            <summary>
+            UV data (Point, 2 floats = 8 bytes)
+            Compressed UV data as shorts (2 shorts = 4 bytes), while the data is
+            very small, it needs to be converted from shorts to real UVs for use
+            in the vertex shader (done automatically in OpenGL ES via normalize,
+            1/32k is the scaling, see VertexData.TextureUVCompressedMultiplier).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.TextureUVW">
+            <summary>
+            UVW 3D texture data for cube mapping or reflection cube maps
+            (Vector, 3 floats = 12 bytes).
+            UVW 3D texture data in compressed form for cube mapping or reflection
+            cube maps (3 shorts = 6 bytes), same rules as for TextureUVCompressed
+            apply here too (1/32k automatically performed in OpenGL ES).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.LightMapUV">
+            <summary>
+            Optional light map UV channel (secondary texture channel). Please note
+            that most texture channels all use the same TextureUV data (e.g.
+            DiffuseMap, NormalMap and SpecularMap), but LightMap has extra UVs.
+            Uses Point, 2 floats = 8 bytes.
+            Optional light map UV channel in compressed form, same rules as for
+            TextureUVCompressed apply here (2 shorts = 4 bytes, 1/32k scaling).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.ExtraUV">
+            <summary>
+            Extra UV channel for crazy purposes :D (Point, 2 floats = 8 bytes).
+            Compressed form, same rules as for
+            TextureUVCompressed apply here (2 shorts = 4 bytes, 1/32k scaling).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.SkinIndices">
+            <summary>
+            Skin indices as compressed data for the skin weights, just 2 shorts,
+            should be used together with SkinWeight for 4 byte alignment. This
+            could also be optimized to 2 bytes, but then our vertex data is not
+            longer 4 byte aligned (which is not allowed in DirectX/XNA and can
+            sometimes be bad for performance in OpenGL, but usually supported).
+            Note: Unlike most other vertex element flags this one has no
+            compressed counterpart and is not normalized, the format is fine.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.VertexElementType.SkinWeights">
+            <summary>
+            Skin weight data for skinning (just 2 normalized shorts = 4 bytes).
+            Will be automatically normalized when passed to the vertex shader.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags">
+            <summary>
+            Shader feature enum, usually multiple values are combined to define
+            a shader ruffly. This data is mainly used for fallback generation and
+            hints to make rendering quicker. We can skip a lot of code paths if we
+            already know what the shader can and cannot do. For more details see
+            the MaterialEditor tool (that can view and edit materials and shaders).
+            Note: This enum already uses 31 bit-flags (maximum for ints, uints could
+            be 32 bit-flags, ulong could be 64 bit-flags).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.Basic">
+            <summary>
+            Basic shader feature always set, provides always a diffuse map.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.UI2D">
+            <summary>
+            By default all shaders are for 3D rendering (meshes, effects, etc.).
+            If a shader should target 2D and more specifically UI rendering, then
+            use this flag to make sure we only handle 2D shader code parts and
+            also use ScreenSpace.ViewProjection2D together with
+            Shader.Set2DRenderMatrix instead of the default
+            ScreenSpace.ViewProjection3D.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.VertexCompression">
+            <summary>
+            Normally vertex data is just a bunch of Vectors, Colors and floats
+            in general, which works fine on fast platforms, but on lower quality
+            mobile devices this could kill bandwidth and fill-rate, so we sometimes
+            need to make sure that we use compressed vertex data. Please note that
+            this flag is often set automatically for low quality mobile devices
+            even if the shader designer did not specify it himself (which he can
+            do both for testing and if more precision is not even required on HD
+            platforms). For example on iPhone 3G and Older Android this flag is
+            always automatically set, for iPhone 3GS, iPad, iPhone 4, WP7 and
+            other Android devices this is also often set, but it depends on the
+            shader and hints set in the MaterialEditor.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.LightMap">
+            <summary>
+            Do we have a secondary UV texture channel for a light map? Then this
+            flag must be set. Since dynamic lights are usually way too expensive
+            on mobile platforms we should bake all static geometry with light maps
+            to give games a nice look. We usually even use a little HDR in light
+            maps, but not by providing floating point or HDR light map textures
+            (they have too much overhead for mobile platforms), but instead by
+            just multiplying all light map values by 4, thus the light can be
+            darkened down if it is below 0.25, and lightened up if it is above.
+            Animated and dynamic game objects can still have different lighting or
+            a combination of light maps and lighting in shaders. Remember even on
+            consoles and in big engines like Unreal light maps are used for almost
+            everything :) If this flag is off then you are probably in some unit
+            test, 2D code or your game is ugly :D
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.NoTexturing">
+            <summary>
+            Helper flag to indicate that this shader has no texturing, no UV
+            channel is needed in the vertex data and the material also has no
+            textures set (just material colors). Should be used together with the
+            Lighting flag, else you will only see whatever static computation the
+            pixel shader throws out (e.g. an ambient color or maybe vertex colors,
+            which are used for line and effect shaders btw).
+            No diffuse map is used. Even it is set in basic.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.DynamicDirectionalLighting">
+            <summary>
+            Should dynamic directional lighting be used for this shader? This has
+            the lowest impact on vertex and pixel shaders, but it still adds a
+            few instructions. Note that any lighting calculation needs normals
+            in the vertex data. A simple texturing shader with no flags will
+            result in a very fast 1 pixel shader instruction shader, but adding
+            directional lighting adds 1 or 2 pixel shader instruction (2 if the
+            directional light contribution is calculated in the pixel shader, but
+            it can also be done in the vertex shader, then it is just one pixel
+            shader instruction: ambientColor + diffuseColor * lightContribution,
+            which translates to mad r0, r0, c2, c1).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.DynamicPointLight">
+            <summary>
+            Point lights are usually calculated (or at least pre-calculated) in
+            the vertex shader and thus are very heavy on the computation side.
+            They add about 20 instructions just for one point light because the
+            light direction needs to be dynamically calculated (4 instructions).
+            Then we need to calculate the distance and build a normal vector (3
+            instructions) and we also need to calculate the attenuation (7
+            instructions). And then all this needs to be applied to the final
+            ambientDiffuseColor for the vertex for use in the pixel shader (6
+            instructions), which adds up to 20 vertex shader instructions or even
+            more for more complex light shaders (adding colors, fall-offs, etc.)!
+            Some calculations can be done in the pixel shader adding a few more
+            instructions there (e.g. applying the light normal and calculating the
+            ambientDiffuseColor there for more realistic close up light gradients),
+            but we should always pre-calculate the light direction and attenuation
+            in the pixel shader. Note: If you use two dynamic point lights, use
+            DynamicPointLight and DynamicSecondPointLight!
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.DynamicSecondPointLight">
+             <summary>
+             Calculate a second point light, which usually adds another 10-20
+             vertex shader instructions. See DynamicPointLight for all the notes.
+            TODO: spot lights, more?
+             </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.PerPixelLighting">
+            <summary>
+            Hint to do the light calculation as much as possible in the pixel
+            shader to have more accurate per pixel lighting at the cost of
+            performance. This is usually not used, but if you have close ups
+            or your vertices are too low for good lighting, it can be used to
+            pretty up your final result a bit. For low quality mobile platforms
+            this usually kills the fill-rate performance because we can only do a
+            few pixel shader instructions, e.g. a DynamicPointLight shader with
+            Specular turned on too adds 16 pixel shader instructions and for
+            more than 2-3 instructions on iPad (because of the high resolution) or
+            more than 4-5 instructions on iPhone 3GS we cannot fill the whole
+            screen with that complex pixel shaders at 60fps anymore! Note even
+            faster platforms like WP7, iPhone 4 or High Quality Android (they
+            also all have high resolutions btw) cannot handle this kind of complex
+            pixel shaders. You either need to make sure this is only used in
+            specialized cases when the camera cannot go that close to objects or
+            switch the shader if the object gets too close or just use a much
+            lower resolution or frame rate.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.AmbientDiffuse">
+            <summary>
+            Provides ambient color and diffuse color which calculated with the
+            diffuse map. Everything else is set by each shader feature, e.g.
+            specular has specular color and shininess.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.Specular">
+            <summary>
+            Add specular color calculation into the mix, the SpecularColor is
+            added to the final pixel if the light reflection is right. This only
+            makes sense if we have any lighting (DynamicDirectionalLighting or
+            DynamicPointLight). Mostly used together with NormalMapping (which
+            also needs lighting to work correctly) and only adds about 1 varying
+            and maximal one instructions to the pixel shader. Specular lighting
+            is however a little overhead in the vertex shader or even the pixel
+            shader if PerPixelLighting is used.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.SpecularDiffuse">
+            <summary>
+            Same as Specular, but instead of adding the SpecularColor at the end
+            we multiply it with the final diffuse color. This has 4 advantages:
+            1. The specular effect is much weaker this way, 2. The specular color
+            is not equally distributed, but instead depends on the texture color
+            (black pixels get no specular, brighter ones get lightened up), 3. the
+            vertex and pixel shader impact is usually 1 instruction less and 4.
+            we even save one varying because we can pre-calculate this in the same
+            ambientDiffuseColor variable we use for lighting anyway. This technique
+            has its drawbacks obviously, it can only be used for not so shiny
+            materials. For example metal looks much better with a Specular shader,
+            but for some materials this technique might look good or even better.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.NormalMap">
+            <summary>
+            Normal mapping shader, which requires both normals (like for any
+            lighting shaders) and also tangents (binormals are calculated in the
+            vertex shader). Normal mapping also only makes sense if we have
+            lights (either directional lighting or point lights). It can be
+            combined with LightMap shaders, but there are issues there: Directional
+            light maps are complex and not really suited for mobile platforms,
+            even with normal light maps, normal mapping should not be used too
+            heavily because light maps already have all lighting pre-calculated.
+            Please also note that normal mapping adds significant overhead to
+            the pixel shader and bandwidth because normal mapping is a per pixel
+            operation. Diffuse (without specular) normal mapping can optimized to
+            4 pixel shader instructions, so it is fast enough even for slow
+            mobile platforms if not used everywhere (together with LightMaps it
+            might be too much both bandwidth and pixel fill rate wise). Specular
+            normal mapping is more complex (at least 8 pixel shader instructions)
+            and should only be used on small surfaces for slow platforms, else it
+            might kill your performance (same tips as for PerPixelLighting apply).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.DetailMapping">
+            <summary>
+            The Detailmap is a tiled texture that is added to improve the sharpness
+            especially in highly scaled textures. There is a texture on which a 
+            fine pattern is shown (usually this is a "noise" effect used). 
+            The Detailmap is tiled over the terrain and this combined with a 
+            diffuse mal or color map.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.SpecularMap">
+            <summary>
+            Gloss (specular map) mapping effect for a directional or point light
+            shaders. Does not add any significant pixel shader overhead, but
+            requires a lot more bandwidth and requires content that is usually
+            not available (has to be created on the artist side).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.ColoredVertices">
+            <summary>
+            Color is used for vertices, this is not really important for the
+            final pixel output the user sees, but there are different ways
+            rendering of colored output can be optimized. For example it is more
+            efficient to use colored vertices for lines and effects using the
+            same shader instead of using different AmbientColor or DiffuseColor
+            material settings because switching materials or even updating
+            shader parameters is very expensive, not just because you need to
+            do the actual material update, but also because you cannot combine
+            vertices and meshes that easily. For static or animated 3D mesh
+            geometry on the other hand this should be used because coloring those
+            things besides using different light sources and colors is almost non
+            existent (if you need to use different colors for many meshes that
+            all share the same materials otherwise, it is obviously clever again
+            to use VertexColors instead of using many different materials).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.UseSkinning">
+            <summary>
+            Is skinning being used? If this is on all vertices must have SkinWeight
+            and SkinIndex data (2 floats each usually, but can also be optimized
+            to 2 shorts each). We also need a lot of bones that need to be updated
+            for each animated mesh and because of those bones skinning adds
+            significant overhead to the vertex shader, which is still much better
+            than to do all this computation on the CPU (usually a lot of vertices
+            are affected), but obviously not as fast as static geometry!
+            Because of this overhead the number of animated meshes should be
+            kept as low as possible and the number of bones and vertices are also
+            very important for fine tuning the performance on each platform.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.Fog">
+            <summary>
+            If fog is used this flag should be set and the ShaderParameters
+            array should contain: FogColor, FogStart and FogEnd. This does not
+            mean those variables are used as shader uniforms, they are usually
+            constant and can be used for both fixed function pipeline code and
+            for shader code.
+            Note: Currently only the FogColor is used in the shader, the rest
+            is baked as constants into it (faster because we don't need to
+            calculate FogEnd-FogStart and it makes more sense to have the same
+            values for all shaders anyway).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.Fresnel">
+            <summary>
+            Use fresnel for lighting calculations, which will mostly reduce the
+            specular color effect and show it stronger at polygons facing 90
+            degrees away from the camera, which looks nice at silhouettes.
+            Please note that we will completely ignore this effect for low
+            quality platforms or if there is no lighting.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.ParallaxMap">
+            <summary>
+            Parallax mapping is usually used in combination with normal mapping,
+            but you can use it own its own. It needs an extra height map (usually
+            just the light map or normal map extra alpha color channel) for even
+            cooler depth effects on the texture. Adds about 2 instructions, but
+            even if that overhead is ok, also additional work at the artist side
+            is needed, not only to create the extra height/bump map, but also to
+            fine tune the parallax amount to look nice. The height map should be
+            as blurry as possible, high variations will cause parallax glitches.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.Water">
+            <summary>
+            If this is a water shader, then this is one of the most complex and
+            advanced shaders we can do, but we still need fallbacks for slower
+            platforms. For example on fixed function and the slowest mobile
+            devices we just use a moving texture on the surface wobbling around,
+            in medium platforms we might add some more pixel and vertex shader
+            instructions for waves and all the advanced stuff can be done in
+            specially fine tuned water shaders using pixel shader 3.0, etc.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.AlphaTest">
+            <summary>
+            AlphaTest skip everything below 0.66 alpha, which is sometimes useful 
+            for decals and models with hard alpha (trees, etc.) which look better 
+            without having to sort anything. Examples: GlowLightEffect, 
+            LensFlareAdditive, TreeLeavesAlphaTest, etc.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.GenerateShadowMap">
+            <summary>
+            Is this a shader to generate a shadow map? While the shader itself
+            might not be very complex (we just need to render a depth map from
+            the given light position), the implications on the engine are huge!
+            First of all we need to render the whole scene from the light
+            perspective into a render target and then use that for the
+            UseShadowMap shader, which should be added dynamically to all existing
+            shaders to make shadow mapping even work (or alternatively if the
+            bandwidth allows this, we could render a extra pass on top of the
+            final output lighten/darken up things). And finally we need to provide
+            fallbacks for platforms that do not support shadow mapping at all
+            (e.g. ES11, fixed function, WP7) by calculating stencil shadows for
+            each object if the performance allows us to do so (if not, use fake
+            shadow blobs) and then display all these stencil or fake shadows
+            instead of using a real shadow mapping algorithm.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.UseShadowMap">
+            <summary>
+            This is the counterpart for GenerateShadowMap. The generated shadow
+            map (or if fallbacks were used, the generated stencil shadows or
+            shadow blobs) will be shown here. There are two ways the shadow map
+            can be applied: 1. through an extra pass with a shader just using
+            this flag, but this adds significant bandwidth and especially vertex
+            computation overhead (we need to render the whole scene again) or 2.
+            by just adding this flag to all the existing shaders in the scene,
+            which only adds a single instructions to each pixel for the shadow
+            mapping usually (can be more for more complex comparisons, but those
+            should be done at the vertex level anyway). The second way is much
+            faster and more desirable, but a lot harder to do for the engine,
+            which should not matter for games however (because either you use
+            shadow mapping in your game for a specific platform or not, only in
+            unit tests you might want an extra pass to tweak the shadows).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.PostScreenHDR">
+            <summary>
+            Use high dynamic range for the post screen calculations. This means
+            the whole rendering happens into a render target that can do HDR
+            and then the post screen shaders will apply tone mapping after
+            all the effects are done to display the final result on the screen.
+            Obviously this is not only slow on most mobile platform, but almost
+            always not even supported, thus dynamic tone mapping is a thing for
+            PC and consoles, but in the future some mobile platforms might have
+            enough support and speed to do this (maybe not full scale, but for
+            some stuff).
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.PostScreenBlurOrGlow">
+            <summary>
+            Blur the post screen. Will just make everything blurry depending on
+            how much pixel instructions and passes we can use for this (this is
+            not a cheap effect and thus has to be ignored like all other post
+            screen shaders on low quality mobile platforms).
+            <para></para>
+            Add fake HDR and glow effects to the scene by blurring it down and
+            adding all bright spots to the final screen on top. This way we get
+            a nice glow around all bright objects. This has similar impact on
+            performance as Blur, but we can do some extra optimizations here.
+            Still the main problem is the fill rate, to use this effect we not
+            only need to calculate all the blur texture targets, but we also need
+            to apply the glow to the final image, which costs at least 2 extra
+            instructions (more if the glow is dynamic) for each pixel on the
+            screen plus all the overhead with the render to texture issues.
+            <para></para>
+            Radial blur effect for fast moving games like RocketCommander or
+            the RacingGame. I like it :) Might however not be suitable to every
+            game. Main advantage here is that we can just reuse our last render
+            target and go from there, this is much faster than Blur or Glow, but
+            we still need a render target thus we still have that overhead.
+            <para></para>
+            Radial zoom is even crazier than just blurring the borders, we also
+            zoom into the screen giving the impression of motion blur. This is
+            again the same cheap effect as RadialBlur (also used in
+            RocketCommander and RacingGame btw). It can look very cool and even
+            has been used similarity in movies like Pitch Black, but when rotating
+            around the whole illusion gets destroyed and for still pictures it is
+            also not usable. Real per pixel motion blur is very hard however.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.ShaderFeatureFlags.PostScreenColorAdjust">
+            <summary>
+            Color adjustment shader. Should mainly be used for unit testing and
+            tweaking, not in the final game. Textures should already be tweaked by
+            the artists to fit the final color and even if that was not done, we
+            have a content system and can easily recolor all textures instead of
+            doing this expensive operation at runtime! Sometimes we might want to
+            change the mood of the scene however or we just want to color level
+            parts differently. Then use this shader to recolor the whole scene and
+            final output. On slower platforms this must be ignored most likely
+            (so recoloring textures works better there).
+            <para></para>
+            PostScreenContrast:
+            Similar to ColorAdjust Contrast should have been added to the
+            textures already by the artists, but sometimes we might want to change
+            the contrast dynamically for effects, menus or more dramatic scenes.
+            This has a high overhead like ColorAdjust for a pretty simple effect.
+            <para></para>
+            PostScreenDarken:
+            Darken the whole screen down. We don't need a shader for this,
+            it can also be done with an overlay texture (even without any shaders
+            at all). That still has the same pixel fill rate overhead however!
+            On slower platforms use this with care, it is better to provide
+            special code and only darken parts of the screen (e.g. if the menu
+            is in the center, but you can see the game in the background, only
+            darken the left and right sides that the user can see, not the whole
+            screen).
+            <para></para>
+            PostScreenDesaturate:
+            Desaturate the whole screen (same tips as for Darken apply here).
+            This shader is really simple (even when calculating 0.3 * R +
+            0.59 * G + 0.11 * B), but we still have the same overhead as for all
+            post screen shaders here (render target, fill rate bound), which
+            can be optimized by only applying this post screen shader to smaller
+            parts of the screen or by using different textures.
+            <para></para>
+            Please note that most PostScreen shaders we can combined, it makes no
+            sense to apply different post screen shaders one after another if we
+            can all do it in the same shader and highly optimize it there :)
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.DepthBufferMode">
+            <summary>
+            Which kind of depth Buffer is used on current platform
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.DepthBufferMode.None">
+            <summary>
+            Use no depth buffer. (e.g. for 2D games) 
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.DepthBufferMode.BitDepth16">
+            <summary>
+            Use a 16bit Depth Buffer
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.DepthBufferMode.BitDepth24">
+            <summary>
+            Use a 24bit Depth Buffer (usually +8 bit for stencil or unused)
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.DepthBufferMode.BitDepth32">
+            <summary>
+            Use a 32bit Depth Buffer
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.DepthBufferMode.FloatingPoint">
+            <summary>
+            Use Floating point Z buffer
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.DepthBufferMode.NonLinearZ">
+            <summary>
+            Use non linear
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.TextureFilterMode">
+            <summary>
+            Texture filter modes for textures.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.TextureFilterMode.Nearest">
+            <summary>
+            Basic filtering which just picks the nearest pixel value, without
+            any interpolation
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.TextureFilterMode.Linear">
+            <summary>
+            Takes an average of surrounding pixels, looses some sharpness,
+            but looks better most of the time. (Except for 2D un-scaled images)
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.VertexCompressionShaderFeature">
+            <summary>
+            Vertex compression shader feature helper class. Defines nothing, just
+            the flag, which is used to make the exported shader use compression
+            in the vertex format specified for it.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.VertexCompressionShaderFeature.#ctor">
+            <summary>
+            Create compressed vertices shader feature.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.VertexCompressionShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create compressed vertices shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.VertexCompressionShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.VertexCompressionShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.VertexCompressionShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.VertexCompressionShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.VertexCompressionShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.SpecularMapShaderFeature">
+            <summary>
+            Specular mapping shader feature
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.SpecularMapShaderFeature.SpecularMap">
+            <summary>
+            SpecularMap, is always set except when ShaderFeatureFlags.NoTexturing
+            is set (then we don't want a diffuse map and this setting is ignored).
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularMapShaderFeature.#ctor">
+            <summary>
+            Create specular mapping shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularMapShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create specular mapping shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularMapShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.SpecularMapShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.SpecularMapShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.SpecularMapShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.SpecularMapShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, willl be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.PostScreenHDRShaderFeature">
+            <summary>
+            Post screen HDR shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.PostScreenHDRShaderFeature.#ctor">
+            <summary>
+            Create basic shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.PostScreenHDRShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create basic shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.PostScreenHDRShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.PostScreenHDRShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.PostScreenHDRShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.PostScreenHDRShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.PostScreenHDRShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.ColoredVerticesShaderFeature">
+            <summary>
+            Colored vertices shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.ColoredVerticesShaderFeature.#ctor">
+            <summary>
+            Create colored vertices shader feature.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.ColoredVerticesShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create colored vertices shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.ColoredVerticesShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.ColoredVerticesShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.ColoredVerticesShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.ColoredVerticesShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.ColoredVerticesShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.AmbientDiffuseShaderFeature">
+            <summary>
+            Ambient diffuse shader feature
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.AmbientDiffuseShaderFeature.AmbientColor">
+            <summary>
+            Default ambient color, usually not used, but can be set here in the
+            BasicShaderFeature. When used, mostly affected by lighting
+            calculations.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.ShaderFeatures.AmbientDiffuseShaderFeature.DiffuseColor">
+            <summary>
+            Default diffuse color, usually not used, but can be set here in the
+            BasicShaderFeature. When used, mostly affected by lighting
+            calculations.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.AmbientDiffuseShaderFeature.#ctor">
+            <summary>
+            Create ambient diffuse shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.AmbientDiffuseShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create ambient diffuse shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.AmbientDiffuseShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.AmbientDiffuseShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.AmbientDiffuseShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.AmbientDiffuseShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.AmbientDiffuseShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.AntiAliasingMode">
+            <summary>
+            Platform AntiAliasing modes. Since there are different implementations
+            of AntiAliasing we supply a switch to differentiate between those.
+            It is important to set amount of samples, but you may omit AA technique.
+            This is only used on platforms which support multiple techniques.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.AntiAliasingMode.None">
+            <summary>
+            No AA applied
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.AntiAliasingMode.AA2x">
+            <summary>
+            Use 2 sample AA
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.AntiAliasingMode.AA4x">
+            <summary>
+            Use 4 sample AA
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.AntiAliasingMode.AA8x">
+            <summary>
+            Use 8 sample AA
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.AntiAliasingMode.AA16x">
+            <summary>
+            Use 16 sample AA
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.AntiAliasingMode.AA32x">
+            <summary>
+            Use 32 sample AA
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.AntiAliasingMode.AALevel">
+            <summary>
+            May be used for extracting AALevel out of previous flags.
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.AntiAliasingMode.FSAA">
+            <summary>
+            Full Scene AA.
+            1. Render image in higher resolution
+            2. Scale it down to display resolution
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.AntiAliasingMode.MSAA">
+            <summary>
+            Multi Sample AA, this is default on most platforms,
+            if nothing else is specified
+            </summary>
+        </member>
+        <member name="F:Delta.Utilities.Graphics.AntiAliasingMode.CSAA">
+            <summary>
+            Coverage Sample AA
+            Nvidia extension (mainly used on tegra at the moment)
+            </summary>
+        </member>
+        <member name="T:Delta.Utilities.Graphics.ShaderFeatures.AlphaTestShaderFeature">
+            <summary>
+            Alpha test shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.AlphaTestShaderFeature.#ctor">
+            <summary>
+            Create basic shader feature
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.AlphaTestShaderFeature.#ctor(System.IO.BinaryReader)">
+            <summary>
+            Create basic shader feature and load automatically
+            the ShaderFeatures from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.AlphaTestShaderFeature.Load(System.IO.BinaryReader)">
+            <summary>
+            Load this ShaderFeature from a binary data stream.
+            </summary>
+        </member>
+        <member name="M:Delta.Utilities.Graphics.ShaderFeatures.AlphaTestShaderFeature.Save(System.IO.BinaryWriter)">
+            <summary>
+            Save this ShaderFeature to a binary data stream.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.AlphaTestShaderFeature.ShaderFeature">
+            <summary>
+            Which shader feature flag is this ShaderFeature class using?
+            Important for loading this file via ShaderData.LoadShaderFeature.
+            Each flag should obviously only have one class for it!
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.AlphaTestShaderFeature.RequiredShaderFeatures">
+            <summary>
+            Which shader feature flags are required for this ShaderFeature.
+            Very important for creating of a new ShaderFeature.
+            </summary>
+        </member>
+        <member name="P:Delta.Utilities.Graphics.ShaderFeatures.AlphaTestShaderFeature.Parameters">
+            <summary>
+            Parameters as a dictionary, will be generated on the fly when
+            requested.
+            </summary>
+        </member>
+    </members>
+</doc>

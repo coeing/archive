@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Settings>
+  <AvailableLanguages>English</AvailableLanguages>
+  <Resolution>1024, 768</Resolution>
+  <Extra>
+    <IsFullscreen>True</IsFullscreen>
+    <Orientation>Landscape</Orientation>
+    <DepthBuffer>BitDepth24</DepthBuffer>
+    <ColorBuffer>RGBA8888</ColorBuffer>
+    <AntiAliasing>None</AntiAliasing>
+    <MultithreadedModules>False</MultithreadedModules>
+    <GameLogicUpdatesPerSec>0</GameLogicUpdatesPerSec>
+    <LimitFramerate>0</LimitFramerate>
+    <AllowDelayedTextureLoading>False</AllowDelayedTextureLoading>
+    <ReduceInputLag>False</ReduceInputLag>
+    <LogServerIp>DeltaEngine.net</LogServerIp>
+  </Extra>
+  <Modules>
+    <GraphicModule>OpenTK</GraphicModule>
+    <InputModule>Windows</InputModule>
+    <AudioModule>OpenTK</AudioModule>
+    <VideoModule>Vlc</VideoModule>
+    <PhysicsModule></PhysicsModule>
+  </Modules>
+  <Debug>
+    <ProfilingModes>None</ProfilingModes>
+    <DrawDebugInfoModes>None</DrawDebugInfoModes>
+    <LogFramerateWhenQuitting>False</LogFramerateWhenQuitting>
+    <AllowDuplicateLogChecking>True</AllowDuplicateLogChecking>
+    <AllowDevelopmentAssemblyUpdating>False</AllowDevelopmentAssemblyUpdating>
+  </Debug>
+  <Optional />
+</Settings>

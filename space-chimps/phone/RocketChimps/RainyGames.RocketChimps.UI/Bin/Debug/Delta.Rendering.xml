@@ -1,0 +1,385 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Delta.Rendering</name>
+  </assembly>
+  <members>
+    <member name="T:Delta.Rendering.Light">
+      <summary>
+            Light helper class for shaders, not used much, just has a direction!
+            TODO: Finalize and put to the public Delta.Rendering.Basics assembly!
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Light.Distance">
+      <summary>
+            Distance from target position for the calculation of virtual position
+            of the light.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Light.SoulcraftTechDemoLightDirection">
+      <summary>
+            Light direction for the Soulcraft Tech Demo, used at many places.
+            Still needs to be normalized!
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Light.Direction">
+      <summary>
+            Light direction for a directional light source (like a sun).
+            Interpreted as direction to sun from Location(0,0,0)
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Light.Position">
+      <summary>
+            Position
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Light.Draw">
+      <summary>
+             Draw the light direction as a single line.
+            TODO: These three methods (Draw, Rotate, Get) are not really reflecting the changes above (still works however)
+             </summary>
+    </member>
+    <member name="M:Delta.Rendering.Light.RotateDirection(Delta.Utilities.Datatypes.Point)">
+      <summary>
+            Update input helper method to update the light direction with the
+            right mouse button. Called from the camera UpdateMouseInput methods.
+            </summary>
+      <param name="relativeMovement">The relative movement.</param>
+    </member>
+    <member name="M:Delta.Rendering.Light.GetLightPosition(Delta.Utilities.Datatypes.Vector,System.Single)">
+      <summary>
+            Get virtual sun position by giving an origin (should be current camera
+            position) and a wished distance. Light Direction is expected to be
+            normalized
+            </summary>
+      <param name="origin">The origin.</param>
+      <param name="distance">The distance.</param>
+      <returns></returns>
+    </member>
+    <member name="P:Delta.Rendering.Light.Target">
+      <summary>
+            Target
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.Light.LightViewProjectionMatrix">
+      <summary>
+            Light view projection matrix
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.Light.LightViewProjectionBiasMatrix">
+      <summary>
+            Light view projection bias matrix
+            </summary>
+    </member>
+    <member name="T:Delta.Rendering.MaterialColored">
+      <summary>
+            Class that performs 3D material drawing with color stuff during shader
+            process and its usually used for drawing stuff like billboard stuff, 2D
+            quads and particle rendering in Effect system. Please note that both
+            Material2DColored and this one shares the concept of BlendColor and for
+            2D rendering stuff you can refer the Material2DColored class.
+            </summary>
+    </member>
+    <member name="T:Delta.Rendering.BaseMaterial">
+      <summary>
+            Base material, this is an abstract class that provides us with basic
+            material features. In most cases you just want to use the derived
+            Material class or one of the other classes in Delta.Rendering.Basics.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.BaseMaterial.DefaultDrawLayer">
+      <summary>
+            Represents the layer where a material is drawn if no drawLayer was set
+            explicitely.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.BaseMaterial.DefaultAnimationSpeed">
+      <summary>
+            The default frame speed for playing an animation in FramesPerSecond.
+            Default is 30 FPS, which is what is often used, 15 is also good for
+            mobile devices to save lots of memory and still looks ok.
+            Only used if the content tells us 0, otherwise it is often already
+            in the default 30 FPS setting or something else for special content.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.BaseMaterial.NumberOfBlendModes">
+      <summary>
+            Helper constant for number of blend mode enums, used in the DrawLayer
+            property to determinate the correct material layer to add stuff to.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.BaseMaterial.UV">
+      <summary>
+            Get the current UV area of the diffuse map for rendering. Can be
+            changed if you want different UVs for rendering. Please note that
+            for animations the UV area is always updated when playing.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.BaseMaterial.AnimationSpeed">
+      <summary>
+            Gets/sets the speed animation speed (in FramesPerSecond).
+            Note: This is usually set by the content, only overwrite this if you
+            need this feature dynamically. It makes more sense in the content!
+            Note: Not used if AnimationFrameLengthsInMs is used!
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.#ctor(System.String,Delta.Graphics.Basics.Shader)">
+      <summary>
+            Create material with just a diffuse map and a shader. Will check if
+            the diffuse map is an animation set and load all animated images
+            automatically (use StartAnimation to control it).
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.#ctor(Delta.Graphics.BaseTexture,Delta.Graphics.Basics.Shader)">
+      <summary>
+            Special constructor to allow creating a material just with a single
+            diffuse map image (e.g. created from RenderToTexture).
+            </summary>
+      <param name="setDiffuseMap">Image for the diffuse map</param>
+      <param name="setShader">And the shader used</param>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.#ctor(Delta.ContentSystem.Rendering.MaterialData)">
+      <summary>
+            Create material from MaterialData, only used internally, for example
+            for loading Models from ModelData (they contain a list of MaterialData)
+            TODO: Refactor a bit later, also enable warning again!
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.StartAnimation">
+      <summary>
+            Starts the animation without looping.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.StartAnimation(System.Boolean)">
+      <summary>
+            Starts the animation.
+            </summary>
+      <param name="shouldLoop">Should loop</param>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.StartAnimation(System.Boolean,System.Single)">
+      <summary>
+            Starts the animation.
+            </summary>
+      <param name="shouldLoop">Should loop</param>
+      <param name="startDelay">Sets the start delay in seconds.</param>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.StopAnimation">
+      <summary>
+            Stops the animation.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.SetAnimationFrame(System.Int32)">
+      <summary>
+            This manually sets the current animation frame to given frame index.
+            Note: If you just need to display the last frame, consider just
+            playing the animation without looping.
+            <para />
+            Note: This does not work for running animations. Call StopAnimation
+            first! If you want to modify a running animation, feel free to update
+            animTimeInMs to a value which matches the given frameIndex.
+            </summary>
+      <param name="frameIndex">Frame index that must be in the valid range
+            between 0 and AnimationFrameCount-1</param>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.GetRelativeSize(System.Int32)">
+      <summary>
+            Get relative size of the material based on a expected screen pixel
+            width (we do not care about the height because we want the output
+            size to have the same aspect ratio as Size). This is useful because
+            the Size property will always return a pixel true 1:1 quadratic space
+            size, but if we rescale our game or use smaller device we might want
+            to use smaller images (which usually happens in the UI editor or when
+            you set sizes up yourself).
+            </summary>
+      <param name="expectedScreenPixelWidth">Expected screen pixel width for
+            this material to look normal, e.g. 1024 pixels.</param>
+      <returns>Size this material should be displayed to be the same size
+            in relation to the expectedScreenPixelWidth.</returns>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.Draw(Delta.Graphics.Basics.Geometry)">
+      <summary>
+            Draws the given geometry with this material on the screen in 2D.
+            Used for line drawing and pre-calculated 2D geometry like fonts,
+            effects or other 2D UI elements.
+            </summary>
+      <param name="geometry">The geometry.</param>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.Draw(Delta.Graphics.Basics.Geometry,Delta.Utilities.Datatypes.Matrix@)">
+      <summary>
+            Draws the given geometry with this material on the screen in 3D with
+            the given renderMatrix.
+            </summary>
+      <param name="geometry">The geometry.</param>
+      <param name="renderMatrix">The render matrix.</param>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.Dispose">
+      <summary>
+            Dispose will dispose all used textures for this material (if those
+            textures are not still used elsewhere of course, the content
+            system checks this automatically for us). This allows you to free up
+            some memory in your game code, but it is never really required to call
+            this method. Once you leave a scene all content including textures and
+            shaders and everything that is linked to a material is freed anyway.
+            Note: Calling dispose does not actually make a material unusable, you
+            can still use it after calling dispose, but all textures and the shader
+            might have to be reloaded (happens automatically internally if possible,
+            but not for dynamically created textures outside of the content system).
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.BaseMaterial.ToString">
+      <summary>
+            To string
+            </summary>
+      <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
+    </member>
+    <member name="P:Delta.Rendering.BaseMaterial.DrawLayer">
+      <summary>
+            Defines in which layer the material is drawn.
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.BaseMaterial.PixelSize">
+      <summary>
+            Pixel size of the diffuseMap. Used to help with aspect ratio true
+            drawing (e.g. the background in UI Screens). Rarely used.
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.BaseMaterial.IsShaderVertexCompressed">
+      <summary>
+            If this material is using a vertex compressed shader. Only used to
+            create compressed vertex geometry, please do not confuse this with
+            texture compression (has nothing to do with this and we don't care
+            about texture formats and compressions here).
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.BaseMaterial.Name">
+      <summary>
+            Content name of Material (string given in constructor)
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.BaseMaterial.IsAnimated">
+      <summary>
+            Returns 'true' if the material has an image animation (several frames).
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.BaseMaterial.AnimationFrameCount">
+      <summary>
+            The number of frames this animation contains. 1 is returned if there
+            is no animation at all (to make sure we can use this value for
+            divisions as well, check IsAnimated to see if there is any animation).
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.BaseMaterial.TotalAnimationLengthMs">
+      <summary>
+            Total animation length ms. Will return 0 for non-animated images.
+            If AnimationFrameLengthsInMs was used, this will return the total
+            length of all frame ms times together and if it is not used this
+            will be the number of animated images times the 1000/AnimationSpeed
+            value (e.g. 15 animations with 30fps equals 0.5 seconds = 500ms).
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.BaseMaterial.AnimationFrameIndicesAndMs">
+      <summary>
+            Note: This is usually set by the content, only overwrite this if you
+            need this feature dynamically. It makes more sense in the content!
+            Animation frame indices and their lengths in milliseconds for whatever
+            crazy animation logic you want to build. You are not forced to play
+            the animation in order and you can repeat frames as many times as
+            you like and make the animation as long as you want (see
+            TotalAnimationLengthMs). AnimationSpeed (see above) is also ignored,
+            you need to set each of these frame length times yourself.
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.BaseMaterial.IsPlaying">
+      <summary>
+            Is playing
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.BaseMaterial.Size">
+      <summary>
+            Size in quadratic space for the material, diffuseMap is used to
+            determinate this (from its pixel size, which can easily be converted
+            to quadratic size). Note: When using this size for rendering the
+            material will be displayed at a 1:1 pixel ratio, which obviously means
+            a 512x512 image will fit more than the whole screen on 480x320, but
+            will only cover half of the screen in 1024x768. You can use the
+            GetRelativeSize method to always get a relative size based on a given
+            screen size you want the image to be normally on (e.g. 1024x768).
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.MaterialColored.DefaultBlendColor">
+      <summary>
+            Represents the default blend color value which is used for
+            initialization of the 2D material. The default color is white!
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.MaterialColored.BlendColor">
+      <summary>
+            The blend color which is used when drawing (is "White" by default).
+            Note: The blend color affects only if the shader supports blending.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.MaterialColored.billboardMode">
+      <summary>
+            Billboard mode used for rendering. Each billboard mode has slightly
+            different add code, which is mostly used to determinate the
+            orientation of the billboard.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.MaterialColored.#ctor(System.String)">
+      <summary>
+            Create material from just a diffuse map image name and a the default
+            blend color. The material will always just use the basic shader with
+            vertex coloring. That is mostly used for UI rendering.
+            </summary>
+      <param name="setDiffuseMapName">Set diffuse map name</param>
+    </member>
+    <member name="M:Delta.Rendering.MaterialColored.#ctor(System.String,Delta.Graphics.Basics.Shader)">
+      <summary>
+            Create material with just a diffuse map and a shader. Will check if
+            the diffuse map is an animation set and load all animated images
+            automatically (use StartAnimation to control it).
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.MaterialColored.#ctor(Delta.ContentSystem.Rendering.MaterialData)">
+      <summary>
+            Create colored 3D material from MaterialData, which contains the
+            Diffuse color, which we will set to the BlendColor here automatically.
+            </summary>
+      <param name="data">Material data to use for creation</param>
+    </member>
+    <member name="P:Delta.Rendering.MaterialColored.Default">
+      <summary>
+            The default material which is always used if no material is explictly
+            set. Will be created the first time this is used, which is quite
+            likely for unit test code and if some material is missing or wrong,
+            but not so much true for the real games later. Also delayed loading
+            is much better for the application initialization time.
+            </summary>
+    </member>
+    <member name="T:Delta.Rendering.Enums.BillboardMode">
+      <summary>
+            Specifies how Billboards are calculated.
+            </summary>
+    </member>
+    <member name="T:Delta.Rendering.Enums.RenderLayer">
+      <summary>
+            Flag to determine which layer a 2D object (e.g. Material, Effect) should
+            be drawn onto. Note: This system will be changed in the near future to
+            be more flexible. Currently it causes a lot of overhead when rendering,
+            but it allows sorting without depth buffers, which can be very useful for
+            2D games.
+            </summary>
+    </member>
+    <member name="T:Delta.Rendering.Enums.FlipMode">
+      <summary>
+            Flipping is useful to display materials in different ways. Just rotating
+            is often enough, but sometimes flipping is needed (e.g. for
+            RenderTargets or to make non-tileable textures pseudo-tilable).
+            FlipMode.Vertical and FlipMode.Horizontal can be combined (which is
+            FlipMode.VerticalAndHorizontal, the same as rotating 180 degrees).
+            </summary>
+    </member>
+  </members>
+</doc>

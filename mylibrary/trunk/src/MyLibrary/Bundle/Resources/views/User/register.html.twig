@@ -1,0 +1,34 @@
+{% extends 'MyLibraryBundle::layout.html.twig' %}
+
+{% block content %}
+    <h1>Register</h1>
+
+    <p>
+        Please choose your username and password:
+    </p>
+
+    {% if error is defined and error %}
+        <div class="error">{{ error }}</div><br/>
+    {% endif %}
+
+    <form action="{{ path("mylibrary_register_check") }}" method="post" id="login">
+        <div>
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="{{ user.Name|default('Username') }}" />
+        </div>
+
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" />
+        </div>
+
+        <div>
+            <label for="password_repeat">Password</label>
+            <input type="password" id="password_repeat" name="password_repeat" />
+        </div>
+
+        <input type="submit" class="symfony-button-grey" value="REGISTER" />
+    </form>
+{% endblock %}
+
+{% set code = code(_self) %}

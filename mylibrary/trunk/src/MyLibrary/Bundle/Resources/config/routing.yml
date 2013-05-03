@@ -1,0 +1,27 @@
+mylibrary:
+    pattern:  /mylibrary
+    defaults: { _controller: MyLibraryBundle:User:login }
+    
+mylibrary_login:
+    pattern:  /mylibrary/login
+    defaults: { _controller: MyLibraryBundle:User:login }
+    
+mylibrary_register:
+    pattern:  /mylibrary/register
+    defaults: { _controller: MyLibraryBundle:User:register }
+    
+mylibrary_add:
+    pattern:  /mylibrary/add
+    defaults: { _controller: MyLibraryBundle:MyLibrary:index }
+
+mylibrary_add_search:
+    pattern:  /mylibrary/add/search
+    defaults: { _controller: MyLibraryBundle:MyLibrary:search }
+    
+mylibrary_login_check:
+    pattern: /mylibrary/login/check
+    defaults: { _controller: MyLibraryBundle:User:loginCheck }
+    
+mylibrary_register_check:
+    pattern: /mylibrary/register/check
+    defaults: { _controller: MyLibraryBundle:User:registerCheck }

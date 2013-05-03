@@ -1,0 +1,17 @@
+# View specific messages
+views.application.index.login.facebook=Anmelden mit Facebook
+views.users.index.title=Dein Profil
+views.users.index.submit=Speichern
+views.users.index.success=Deine Daten wurden gespeichert
+
+# Model properties
+user.firstName = Vorname
+user.middleName = Zwischenname
+user.lastName = Nachname
+
+# Validation
+validation.required = Plichtfeld
+
+# Generic form messages
+forms.errors.title=Bitte korrigiere die Fehler
+search.submit=Suche

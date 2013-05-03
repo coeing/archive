@@ -1,0 +1,730 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Delta.Rendering.Effects</name>
+  </assembly>
+  <members>
+    <member name="T:Delta.Rendering.Effects.Modifiers.SizeModifier">
+      <summary>
+            Represents a modifier which will change the size value of the
+            particles over the time.
+            </summary>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.BaseModifier">
+      <summary>
+            Base modifier class which only contains the process methods, which are
+            implemented in the derived classes if needed.
+            TODO: we need a solution to persistent modifiers for effects, maybe Process(emitter) is good enough, but we need to test it. For now the solution is to use Particle.UserData!
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.BaseModifier.Process(Delta.Rendering.Effects.Emitter@)">
+      <summary>
+            Process an emitter with this modifier. This method has no base
+            implementation and is only virtual because we don't always use a
+            modifier for both, emitter and particle. Never call base.Process and
+            only override this method if needed.
+            </summary>
+      <param name="emitter">Emitter to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.BaseModifier.Process(Delta.Rendering.Effects.Particle@)">
+      <summary>
+            Process a particle with this modifier (should be very fast as many more
+            particles can be active than emitters). This method has no base
+            implementation and is only virtual because we don't always use a
+            modifier for both, emitter and particle. Never call base.Process and
+            only override this method if needed.
+            </summary>
+      <param name="particle">Particle to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.BaseModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Force using the save method in derived classes.
+            </summary>
+      <param name="writer">
+            Writer to write binary data to for this modifier (must be readable again
+            with the Load method below).
+            </param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.BaseModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Force using the load method in derived classes.
+            </summary>
+      <param name="reader">
+            Reader to read modifier data saved out with Save again.
+            </param>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.SizeModifier.WidthRange">
+      <summary>
+            The with range of the particle over time.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.SizeModifier.HeightRange">
+      <summary>
+            The height range of the particle over time.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.SizeModifier.Process(Delta.Rendering.Effects.Particle@)">
+      <summary>
+            The logic which will process each particle.
+            </summary>
+      <param name="particle">The particle to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.SizeModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the size modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.SizeModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the size modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.GravityModifier">
+      <summary>
+            Represents a modifier that applies a gravity to all particles.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.GravityModifier.Gravity">
+      <summary>
+            Gravity of the modifier.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.GravityModifier.Process(Delta.Rendering.Effects.Particle@)">
+      <summary>
+            Process the particle.
+            </summary>
+      <param name="particle">Particle to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.GravityModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the gravity modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.GravityModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the gravity modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.VelocityModifier">
+      <summary>
+            Represents a modifier which will change the velocity value of the
+            particles over the time.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.VelocityModifier.Velocity">
+      <summary>
+            The velocity that will be set to the particle.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.VelocityModifier.Process(Delta.Rendering.Effects.Particle@)">
+      <summary>
+            The logic which will process each particle.
+            </summary>
+      <param name="particle">The particle to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.VelocityModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the velocity modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.VelocityModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the velocity modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.MaterialModifier">
+      <summary>
+            Represents a modifier which will change the Emitters material.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.MaterialModifier.Material">
+      <summary>
+            Material that will be set as the emitters material.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.MaterialModifier.BillboardMode">
+      <summary>
+            The billboard mode for rendering this material.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.MaterialModifier.Process(Delta.Rendering.Effects.Emitter@)">
+      <summary>
+            The logic which will process each emitter.
+            </summary>
+      <param name="emitter">The emitter to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.MaterialModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the material modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.MaterialModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the material modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.EmitterOffsetModifier">
+      <summary>
+            Represents a modifier which will change the position value of the
+            modifier by the offset.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.EmitterOffsetModifier.Offset">
+      <summary>
+            The offset added to the Emitter position.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.EmitterOffsetModifier.Process(Delta.Rendering.Effects.Emitter@)">
+      <summary>
+            The logic which will process the emitter.
+            </summary>
+      <param name="emitter">The emitter to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.EmitterOffsetModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the emitter offset modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.EmitterOffsetModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the emitter offset modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.RandomSpawnOffsetModifier">
+      <summary>
+            Represents a modifier which will add a random offset to a particle
+            spawn position.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.RandomSpawnOffsetModifier.MinOffset">
+      <summary>
+            The minimum offset values for the random.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.RandomSpawnOffsetModifier.MaxOffset">
+      <summary>
+            The maximum offset values for the random.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RandomSpawnOffsetModifier.Process(Delta.Rendering.Effects.Particle@)">
+      <summary>
+            The logic which will process each particle.
+            </summary>
+      <param name="particle">The particle to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RandomSpawnOffsetModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the offset modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RandomSpawnOffsetModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the offset modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.ParticleLifetimeModifier">
+      <summary>
+            Represents a modifier that sets the particle lifetime of a modifier.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.ParticleLifetimeModifier.ParticleLifetime">
+      <summary>
+            The particle lifetime of the emitter.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.ParticleLifetimeModifier.Process(Delta.Rendering.Effects.Emitter@)">
+      <summary>
+            The logic which will process each emitter.
+            </summary>
+      <param name="emitter">The emitter to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.ParticleLifetimeModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the particle lifetime modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.ParticleLifetimeModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the particle lifetime modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.RandomVelocityModifier">
+      <summary>
+            Represents a modifier which will change the velocity value of the
+            particles at the first tick with a random vector.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.RandomVelocityModifier.MinVelocity">
+      <summary>
+            The minimum velocity values for the random.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.RandomVelocityModifier.MaxVelocity">
+      <summary>
+            The maximum velocity values for the random.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RandomVelocityModifier.Process(Delta.Rendering.Effects.Particle@)">
+      <summary>
+            The logic which will process each particle.
+            </summary>
+      <param name="particle">The particle to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RandomVelocityModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the velocity modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RandomVelocityModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the velocity modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.TimeRangeModifier">
+      <summary>
+            Represents a modifier which will change the lifetime of an 
+            emitter.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.TimeRangeModifier.TimeRange">
+      <summary>
+            The modified time range.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.TimeRangeModifier.Process(Delta.Rendering.Effects.Emitter@)">
+      <summary>
+            Process the emitter and change the time range.
+            </summary>
+      <param name="emitter">Emitter to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.TimeRangeModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the time range modifier.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.TimeRangeModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the time range modifier.
+            </summary>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Emitter">
+      <summary>
+            Emitter structure that represents a spawner inside of an effect
+            instance.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Emitter.Scale">
+      <summary>
+            The scale of this emitter, where Width and Height can be changed
+            separately.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Emitter.Position">
+      <summary>
+            The position of this emitter.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Emitter.#ctor(Delta.ContentSystem.Rendering.Helpers.EmitterData,Delta.Rendering.Effects.Effect,System.Int32)">
+      <summary>
+            Create a new Emitter and set all the default values.
+            </summary>
+      <param name="setEmitterData">EmitterData to populate from.</param>
+      <param name="setParentEffect">Parent effect owner.</param>
+      <param name="setIndex">Emitter index.</param>
+    </member>
+    <member name="P:Delta.Rendering.Effects.Emitter.BillboardMode">
+      <summary>
+            The billboard mode of this emitter.
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.Effects.Emitter.Material">
+      <summary>
+            The material of this emitter.
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.Effects.Emitter.NumberOfActiveParticles">
+      <summary>
+            The number of active particles belonging to this emitter.
+            </summary>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Effect">
+      <summary>
+            Effect class which only exposes the static functionality for spawning,
+            stopping and killing effects. No instance will be given to the end user;
+            only an id is given with which the user can get information about the
+            particle like the number of active particles (for performance reasons).
+            <para />
+            Note: Effect particles are heavily optimized for speed, you can render
+            many thousands particles even on slow platforms. But to make sure your
+            game is still fast, make sure to only use as many emitters and
+            spawn-rates as needed. Also do not have too many fill bound particles
+            (this happens when they get too big and your pixel fill rate is not that
+            good, so for big smoke use few simple particles, not many overlapping).
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Effect.Spawn(Delta.ContentSystem.Rendering.EffectData,Delta.Utilities.Datatypes.Vector)">
+      <summary>
+            Spawn an effect at the specified position.
+            </summary>
+      <param name="template">The data template of the effect.</param>
+      <param name="position">Position of the effect.</param>
+      <returns>
+            Effect Id of the newly spawned effect.
+            </returns>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Effect.Spawn(Delta.ContentSystem.Rendering.EffectData,Delta.Utilities.Datatypes.Point)">
+      <summary>
+            Spawn an effect at the specified position for 2d particle effects.
+            </summary>
+      <param name="template">The data template of the effect.</param>
+      <param name="position">Position of the effect.</param>
+      <returns>
+            Effect Id of the newly spawned effect.
+            </returns>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Effect.Spawn(Delta.ContentSystem.Rendering.EffectData,Delta.Engine.Game.Interfaces.IAttachable)">
+      <summary>
+            Spawn an effect attached to the specified Attachable.
+            </summary>
+      <param name="template">The data template of the effect.</param>
+      <param name="attachable">Attachable the effect is attached to.</param>
+      <returns>
+            Effect Id of the newly spawned effect.
+            </returns>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Effect.NumberOfActiveParticles(System.Int32)">
+      <summary>
+            Return the number of active particles that belong to the effect with
+            the specified effect Id.
+            </summary>
+      <param name="effectId">Effect id.</param>
+      <returns>
+            Number of active particles of the effect.
+            </returns>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Effect.Stop(System.Int32)">
+      <summary>
+            Stop the effect with the specified Id.
+            Just stops spawning of the particles but the currently active ones
+            phases out.
+            </summary>
+      <param name="effectId">Id of the effect to stop.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Effect.Kill(System.Int32)">
+      <summary>
+            Kill the effect with the specified Id.
+            Stops and kills everything immediately. Automatically done when
+            MaxTotalTime is reached and no active particles are left.
+            </summary>
+      <param name="effectId">Id of the effect to kill.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Effect.KillAll">
+      <summary>
+            Kill all effects that are currently active.
+            Mostly only used for example for screen transitions, where
+            everything has to be gone asap.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Effect.#ctor(Delta.ContentSystem.Rendering.EffectData)">
+      <summary>
+            Create a new effect.
+            </summary>
+      <param name="template">The effect data of this effect.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Effect.ToString">
+      <summary>
+            To String.
+            </summary>
+      <returns>
+            String describing this effect.
+            </returns>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Effect.NumberOfActiveParticles(Delta.Rendering.Effects.Effect)">
+      <summary>
+            Return the number of active particles that belong to the effect.
+            </summary>
+      <param name="effect">Effect to count the particles for.</param>
+      <returns>Number of active effect particles.</returns>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.RotationModifier">
+      <summary>
+            Represents a modifier which will change the rotation value of the
+            particles over the time.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.RotationModifier.Rotation">
+      <summary>
+            The rotation that will be added to a particle by the time
+            (of its life).
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RotationModifier.Process(Delta.Rendering.Effects.Particle@)">
+      <summary>
+            The logic which will process each particle.
+            </summary>
+      <param name="particle">The particle to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RotationModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the rotation modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RotationModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the rotation modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Particle">
+      <summary>
+            This structure represents a particle in the EffectSystem
+            (like smoke, water, fire or even trails) which is spawned by an
+            Effect Emitter.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Particle.BlendColor">
+      <summary>
+            Blend color of the particle.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Particle.Position">
+      <summary>
+            Position of the particle.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Particle.Velocity">
+      <summary>
+            Velocity of the particle.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Particle.Rotation">
+      <summary>
+            Rotation of the particle.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Particle.Scale">
+      <summary>
+            Scaling of the particle.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Particle.PhysicsBody">
+      <summary>
+            Physics body, if any that process motion of this particle.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Particle.#ctor(System.Int32,System.Int32,System.Single,Delta.Utilities.Datatypes.Vector@,Delta.Utilities.Datatypes.Color@,Delta.Utilities.Datatypes.Size@)">
+      <summary>
+            Initializes a new instance of the <see cref="T:Delta.Rendering.Effects.Particle" /> struct.
+            </summary>
+      <param name="setParentEffectId">The set parent effect id.</param>
+      <param name="setParentEmitterIndex">Index of the set parent emitter.</param>
+      <param name="setMaxLifeTime">The set max life time.</param>
+      <param name="setPosition">The set position.</param>
+      <param name="setBlendColor">Color of the set blend.</param>
+      <param name="setScale">The set scale.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Particle.Kill">
+      <summary>
+            Kill this particle e.g. set IsDead=true and decrease the number
+            of active particles in the emitter this particle belongs to.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Particle.Kill(Delta.Rendering.Effects.Emitter@)">
+      <summary>
+            Kill this particle e.g. set IsDead=true and decrease the number
+            of active particles in the emitter this particle belongs to.
+            </summary>
+      <param name="emitter">The emitter.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Particle.Run">
+      <summary>
+            Update this particle.
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.Effects.Particle.ElapsedLifeTime">
+      <summary>
+            Elapsed lifetime of the particle in seconds.
+            </summary>
+    </member>
+    <member name="P:Delta.Rendering.Effects.Particle.BlendColorStarted">
+      <summary>
+            Specifies a blend color which is used for drawing (optionally).
+            </summary>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.FadeModifier">
+      <summary>
+            Represents a modifier which will change the alpha value of the
+            particles over the time.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.FadeModifier.AlphaFade">
+      <summary>
+            The definition of the (material) alpha values which will used over
+            the time for each particle.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.FadeModifier.AdvancedAlphaFade">
+      <summary>
+            A more customized definition of the (material) alpha values which will
+            used over the time for each particle.
+            Note: If not set (= null), the "AlphaFade" value will used instead.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.FadeModifier.RedGraph">
+      <summary>
+            Multiplier for red value over time.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.FadeModifier.GreenGraph">
+      <summary>
+            Multiplier for blue value over time.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.FadeModifier.BlueGraph">
+      <summary>
+            Multiplier for blue value over time.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.FadeModifier.Process(Delta.Rendering.Effects.Particle@)">
+      <summary>
+            The logic which will process each particle.
+            </summary>
+      <param name="particle">The particle to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.FadeModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the rotation modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.FadeModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the rotation modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.SpawnOnceModifier">
+      <summary>
+            Represents a modifier which will change the Emitter so it'll always
+            spawn new particles.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.SpawnOnceModifier.Process(Delta.Rendering.Effects.Emitter@)">
+      <summary>
+            The logic which will process each emitter.
+            </summary>
+      <param name="emitter">The emitter to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.SpawnOnceModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the spawn once modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.SpawnOnceModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the spawn once modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.SpawnIntervalModifier">
+      <summary>
+            Represents a modifier which will change the Emitter so it'll always
+            spawn new particles.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.SpawnIntervalModifier.SpawnInterval">
+      <summary>
+            The spawn interval of the emitter.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.SpawnIntervalModifier.Process(Delta.Rendering.Effects.Emitter@)">
+      <summary>
+            The logic which will process each emitter.
+            </summary>
+      <param name="emitter">The emitter to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.SpawnIntervalModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the spawn interval modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.SpawnIntervalModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the spawn interval modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.AlwaysSpawnModifier">
+      <summary>
+            Represents a modifier which will change the Emitter so it'll always
+            spawn new particles.
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.AlwaysSpawnModifier.Process(Delta.Rendering.Effects.Emitter@)">
+      <summary>
+            The logic which will process each emitter.
+            </summary>
+      <param name="emitter">The emitter to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.AlwaysSpawnModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the always spawn modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.AlwaysSpawnModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the always spawn modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+    <member name="T:Delta.Rendering.Effects.Modifiers.RandomRotationModifier">
+      <summary>
+            Represents a modifier which will change the rotation value of the
+            particles at the first tick with a random range.
+            </summary>
+    </member>
+    <member name="F:Delta.Rendering.Effects.Modifiers.RandomRotationModifier.RotationRange">
+      <summary>
+            RotationRange to set randomly at the start
+            </summary>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RandomRotationModifier.Process(Delta.Rendering.Effects.Particle@)">
+      <summary>
+            The logic which will process each particle.
+            </summary>
+      <param name="particle">The particle to process.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RandomRotationModifier.Save(System.IO.BinaryWriter)">
+      <summary>
+            Save the velocity modifier.
+            </summary>
+      <param name="writer">Binary writer for saving.</param>
+    </member>
+    <member name="M:Delta.Rendering.Effects.Modifiers.RandomRotationModifier.Load(System.IO.BinaryReader)">
+      <summary>
+            Load the velocity modifier.
+            </summary>
+      <param name="reader">Binary reader for loading.</param>
+    </member>
+  </members>
+</doc>

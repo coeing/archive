@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Settings>
+  <PlayerName>christian.oeing</PlayerName>
+  <AvailableLanguages>English</AvailableLanguages>
+  <Language>English</Language>
+  <Resolution>1024, 768</Resolution>
+  <Extra>
+    <IsFullscreen>True</IsFullscreen>
+    <WindowPosition>184.000, 184.000</WindowPosition>
+    <DepthBuffer>BitDepth24</DepthBuffer>
+    <ColorBuffer>RGBA8888</ColorBuffer>
+    <AntiAliasing>None</AntiAliasing>
+    <MultithreadedModules>False</MultithreadedModules>
+    <GameLogicUpdatesPerSec>0</GameLogicUpdatesPerSec>
+    <LimitFramerate></LimitFramerate>
+    <AllowDelayedTextureLoading>False</AllowDelayedTextureLoading>
+    <ReduceInputLag>False</ReduceInputLag>
+    <AllowApplicationToStartMultipleTimes>False</AllowApplicationToStartMultipleTimes>
+    <LogServerIp>DeltaEngine.net</LogServerIp>
+    <LogDirectory></LogDirectory>
+  </Extra>
+  <Modules>
+    <GraphicModule>OpenTK</GraphicModule>
+    <EmulatorName></EmulatorName>
+    <InputModule>Windows</InputModule>
+    <AudioModule>OpenTK</AudioModule>
+    <VideoModule>Vlc</VideoModule>
+    <PhysicsModule></PhysicsModule>
+    <IsSoundEnabled>True</IsSoundEnabled>
+    <IsMusicEnabled>True</IsMusicEnabled>
+    <IsVideoEnabled>True</IsVideoEnabled>
+    <IsTouchEnabled>True</IsTouchEnabled>
+  </Modules>
+  <Debug>
+    <ProfilingModes>None</ProfilingModes>
+    <DrawDebugInfoModes>None</DrawDebugInfoModes>
+    <LogFramerateWhenQuitting>False</LogFramerateWhenQuitting>
+    <AllowDuplicateLogChecking>True</AllowDuplicateLogChecking>
+    <AllowDevelopmentAssemblyUpdating>False</AllowDevelopmentAssemblyUpdating>
+    <OptionalAssemblyPath>D:\Programme\DeltaEngine</OptionalAssemblyPath>
+  </Debug>
+  <Services>
+    <ContentServerIp>Content.DeltaEngine.net</ContentServerIp>
+    <Username>Lupus</Username>
+    <Password>0x947B6FF2C6C5A0A6A1A1BCA6BDB747CE4E1F1D3CDB</Password>
+    <ContentProject>RocketChimps</ContentProject>
+  </Services>
+  <Optional />
+</Settings>

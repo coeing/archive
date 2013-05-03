@@ -1,0 +1,1 @@
+python tools/playgame.py "Ants.exe" "%~dp0versions\Ants9.exe" "%~dp0versions\Ants9.exe" "%~dp0versions\AntsNick.exe" "%~dp0versions\AntsNick.exe" "Ants.exe" --map_file tools/maps/maze/maze_06p_01.map --log_dir game_logs --turns 1000  --verbose -e > game.log

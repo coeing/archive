@@ -1,0 +1,1862 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<doc>
+  <assembly>
+    <name>Delta.Engine</name>
+  </assembly>
+  <members>
+    <member name="T:Delta.Engine.SystemInformation">
+      <summary>
+            Base system information class that is implemented in each platform
+            module. It provides system information that does not change over the
+            course of a running application or does not need updates. Some method
+            might take some time, for example determining the cpu speed can take
+            a few ms, so only call it when really needed. Access is provided through
+            Application.Information, which is only initialized when first used. The
+            Delta Engine itself very rarely needs this class, mostly only to make
+            some cpu speed checks and getting MaxVertexShader and MaxPixelShader.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.SystemInformation.InvokeLowMemory">
+      <summary>
+            Helper method to invoke the low memory event for the native
+            implementations.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.SystemInformation.InvokeLowBattery">
+      <summary>
+            Helper method to invoke the low battery event for the native
+            implementations.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.SystemInformation.InvokeAppPause">
+      <summary>
+            Helper method to invoke the app pause event for the native
+            implementations.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.SystemInformation.InvokeAppResume">
+      <summary>
+            Helper method to invoke the app resume event for the native
+            implementations.
+            </summary>
+    </member>
+    <member name="E:Delta.Engine.SystemInformation.OnLowMemory">
+      <summary>
+            Delegate for low memory cases on the current platform.
+            Will be raised by the MonoDroidActivity for example.
+            </summary>
+    </member>
+    <member name="E:Delta.Engine.SystemInformation.OnLowBattery">
+      <summary>
+            Delegate for low battery cases on the current platform.
+            Will be raised by the MonoDroidActivity for example.
+            </summary>
+    </member>
+    <member name="E:Delta.Engine.SystemInformation.OnAppPause">
+      <summary>
+            Delegate which is thrown once the app is paused or sent to the
+            background. This can be the home button on Android, the Back button
+            on WP7 or iOS.
+            <para />
+            For example on android this needs to dispose all opengl contents and
+            destroy the graphics context, which will be recreated in OnAppResume.
+            <para />
+            This is also a good place to pause the GameTime and pause the actual
+            game if needed.
+            </summary>
+    </member>
+    <member name="E:Delta.Engine.SystemInformation.OnAppResume">
+      <summary>
+            Delegate which is thrown once the app is resumed after a pause.
+            <para />
+            For example on android this needs to recreate the graphics context and
+            start the Run loop of the GameView once again.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.MachineName">
+      <summary>
+            Machine name for this system. On windows this is the Netbios name for
+            this PC, which is the network computer name. On other platforms this
+            will return some details about the platform (device name). In any case
+            this property is not used by the engine, but still might be useful to
+            link this name up to log or content server client names, which use it!
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.IsMobileDevice">
+      <summary>
+            Is this device a mobile device? Memory consumption and power usage
+            should be optimized. In release builds the framerate will be bound
+            to the maximum capabilities (there is no sense wasting more cpu time
+            except for profiling and debugging). Mobile devices might also want
+            different UI. Make sure to also check the IsTablet property. Common
+            resolutions for mobile devices are 480x320, 800x480 and more for newer
+            devices, see Application.Window.Size for the actual current resolution.
+            </summary>
+      <value>
+        <c>true</c> if this device is a mobile device (phone or table);
+            otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.IsTablet">
+      <summary>
+            Is this device a tablet device (like an iPad or Android tablet). If
+            this is set the IsMobileDevice setting is also true since tablets are
+            also pretty mobile and need to be aware of their power usage. This
+            property is most commonly used to check if we need a different UI or
+            bigger effects or sometimes different optimizations or shaders. The
+            best example is probably to have different in game ui for tablet
+            devices just because there is more physical screen space. This means
+            even if a mobile phone has the same resolution as a tablet device,
+            a UI scene designed for a tablet device with lots of buttons might
+            not be a good idea on a small phone with just 3.5 inches instead of
+            9.7 inches for a tablet device. Usually the SceneEditor handles all
+            this for you and allows designers to target specific device groups.
+            </summary>
+      <value>
+        <c>true</c> if this device is a Tablet; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.IsConsole">
+      <summary>
+            This property is used to mark console devices (Xbox 360, PS3, Wii,
+            or even PSP, N3DS or other devices that might be mobile too).
+            </summary>
+      <value>
+        <c>true</c> if this device is a Console; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.MaxResolution">
+      <summary>
+            This property returns for every platform the maximum resolution that
+            is possible or makes sense (usually limited by the device display or
+            GPU). Normally this should be the full screen resolution, but on some
+            systems we might want a lower resolution for better performance or on
+            Windows we can use windowed mode with a smaller resolution for testing.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.Language">
+      <summary>
+            Grab the current language of the running system. Currently only checks
+            for the 5 languages: German, Spanish, French, Italian and English
+            (which is always the fallback).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.Username">
+      <summary>
+            Username of the current platform. E.g. in Windows this is the
+            user account that is currently logged in. On other platforms this
+            feature might not be supported and then just "Player" is returned.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.CpuName">
+      <summary>
+            Gets the name of the CPU of the currently used device. Most devices
+            only have a certain CPU, but devices that come from many different
+            manufacturers have very different CPUs and sometimes it can be useful
+            to do some quick compares which CPU is there (e.g. on Windows you
+            have many different CPUs from AMD or Intel, on Android there are many
+            different manufacturers and CPU/GPU combinations).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.GpuName">
+      <summary>
+            Gets the name of the GPU of the currently used device. Most devices
+            only have a certain GPU (especially mobile and console devices have
+            mostly the same GPU, Xbox 360 is always the same, etc.).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.CpuSpeed">
+      <summary>
+            Cpu speed for this device in Mhz. Not really comparable since each
+            platform has different characteristics and even on the same platforms
+            the same CPU speed in Mhz might be much slower or faster depending
+            on the architecture and chip manufacturer (AMD vs intel, recent or
+            older generation, etc.). Should also be used together with CoreCount!
+            This cpu speed is just the speed of the first core, which is very
+            rarely different from the other cores and the first core is usually
+            the important one anyway for game logic.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.CpuUsage">
+      <summary>
+            The usage of the cpu's in percent 0-1 stored as a float.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.CoreCount">
+      <summary>
+            Returns the number of the cores in the CPU or if there is multiple
+            CPUs how many cores are available together. This includes hyperthreaded
+            cores as well (so an i7 has 8 hyperthreaded cores). Most mobile devices
+            only will have one core, but some already have 2 (iPad 2) or even 4
+            (Tegra 3).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.MaxRam">
+      <summary>
+            Maximum ram available on this machine in MB. Might be used by other
+            processes, but still a useful number to know. On Windows machines
+            most of this can usually be used for a big game, on mobile devices it
+            is more important to check how much memory is really left as there is
+            no virtual memory and memory used by other applications is only freed
+            if they are closed down by the OS.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.UsedRam">
+      <summary>
+            Gets the amount of used ram in MB by this process. We cannot really
+            control how much memory is going to be freed, but we can make sure
+            to unload content and garbage collect after a game or level is
+            finished.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.AvailableRam">
+      <summary>
+            Available ram in MB, which is especially important on mobile devices.
+            If this goes close to 0, we cannot load any more content, especially
+            images. Either other content needs to be unloaded or the device OS
+            needs to be asked to free up some more memory. Worst case scenario is
+            that the OS will close this app because it needs too much memory and
+            is still requesting more, which is obviously not good. On some
+            platforms (e.g. iOS) this is called UserRam because MaxRam is usually
+            way bigger and not usable because much of it is already taken.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.Version">
+      <summary>
+            Returns the engine version that is currently used. The current engine
+            version is v0.9.3 (this will be increased each release).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.MaxVertexShader">
+      <summary>
+            Returns the max. supported Vertex Shader version that is supported on
+            the current system. The minor shader version is ignored, 1 means
+            vertex shader 1.1 is available, 2 (most common on mobile devices)
+            means vertex shader 2.0 is available, 3, 4 and 5 is for DirectX 9.0c,
+            10 and 11.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.MaxPixelShader">
+      <summary>
+            Returns the max. supported Pixel Shader version that is supported
+            on the current system. The minor shader version is ignored, 1 means
+            pixel shader 1.1 is available, 2 (most common on mobile devices)
+            means vertex shader 2.0 is available, 3, 4 and 5 is for DirectX 9.0c,
+            10 and 11. More detailed information can be requested using the
+            concrete graphic framework (e.g. XNA, OpenTK or SharpDX).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.IsShaderSupported">
+      <summary>
+            Checks if the current graphics card can use Shaders.
+            </summary>
+      <returns>Returns 'true' if Shaders are supported.</returns>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.SoundCardAvailable">
+      <summary>
+            Flag determining if a sound card is available for music, sound and
+            video playback or if this feature is not available on the current
+            platform.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SystemInformation.MaxSoundChannels">
+      <summary>
+            How many sound channels does this device support? If this is 0 no
+            sound card is installed or can be used. To disable sound in the app
+            use the Settings.Modules.IsSoundEnabled property. Usually this number
+            is 4 or much higher (100), but there is obviously also a performance
+            impact if using too many sounds at the same time.
+            The engine currently allows only the number of this property for
+            simultaneously played sounds.
+            </summary>
+    </member>
+    <member name="T:Delta.Engine.SettingsNodes.ModulesSettings">
+      <summary>
+            Modules settings
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.ModulesSettings.#ctor">
+      <summary>
+            Create modules settings is not allowed, only Settings can do this!
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ModulesSettings.GraphicModule">
+      <summary>
+            Graphic module, can be multiple entries separated by commas.
+            The name of this module is the assembly name minus Delta.Graphics.
+            This can be whatever assembly can be found in the current directory
+            that contains an Graphic class (will be searched by Factory).
+            <para />
+            On Windows OpenTK works fine and does not need any extra installation.
+            For more advanced DirectX 11 features just use SharpDX!
+            Most mobile and console platforms will use some form of OpenGL,
+            WP7 and Xbox 360 use XNA.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ModulesSettings.EmulatorName">
+      <summary>
+            Emulator name in case we are trying to use some Emulator on Windows.
+            One example is OpenGL ES, which does not exist for windows, but still
+            can be tested with an OpenGL ES emulator like the one from PowerVR.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ModulesSettings.AudioModule">
+      <summary>
+            Audio module, mostly OpenAL, DirectX or XNA as implemented by the
+            native platform or OpenTK, SharpDX or XNA.
+            The name of this module is the assembly name minus Delta.Multimedia.
+            This can be whatever assembly can be found in the current directory
+            that contains an Sound or Music class (will be searched by Factory)
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ModulesSettings.VideoModule">
+      <summary>
+            Video module, which is mostly a platform specific implementation that
+            only works on the current platform (e.g. MonoTouch for iOS), but for
+            Windows, Linux and MacOS Vlc is used, which works on all of those.
+            The name of this module is the assembly name minus Delta.Multimedia.
+            This can be whatever assembly can be found in the current directory
+            that contains an Video class (will be searched by Factory)
+            <para />
+            This is empty by default, but if video playback is needed just use Vlc.
+            OpenTK does not help us for video playback, so try to use the Vlc
+            library (open source too) for video playback on Windows.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ModulesSettings.InputModule">
+      <summary>
+            Input module is just "Windows" by default, but can be changed to any
+            other input module to support more features and game controllers.
+            The name of this module is the assembly name minus Delta.InputSystem.
+            This can be whatever assembly can be found in the current directory
+            that contains an Input class (will be searched by Factory)
+            <para /> 
+            For Input in Windows, it is much better to have the more accurate
+            keyboard and mouse event system instead of polling from Xna, if
+            you want to support XnaTouch or XnaGamePad, you need to add this
+            here. Same goes for WiimoteAccelerometer, WiimoteGamePad and even
+            MultiMouse (all advanced features, not enabled by default).
+            A complex example might be "Wiimote, MultiMouse, Xna, Windows" to
+            use all Wiimote, then MultiMouse, then Xna classes and as a fallback
+            the Windows InputSystem (if the others are not available).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ModulesSettings.PhysicsModule">
+      <summary>
+            Physics module(s) that should be used for this application.
+            Default physics module is empty, but Jitter is used by default when
+            you enable physics in the Content Manager Settings, because it works
+            for 3D and 2D, but for 2D Farseer is usually all you need (which can't
+            do 3D however). JigLib is also an option (if Jitter is missing), but
+            vanilla JigLibX requires the XNA 4.0 assemblies for testing!
+            <para />
+            Other options are in the future Apex and PhysX, Ageia, Havoc and
+            others, but keep in mind that many of these will NOT work on all
+            platforms, JigLib and Farseer do.
+            <para />
+            By default this is empty, but you can select any physics engine on
+            Windows and most of them work on all other platforms as well. Use
+            the Content Manager Settings dialog to change.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ModulesSettings.IsSoundEnabled">
+      <summary>
+            Is true if it's allowed to play any sound effects. Note: That
+            doesn't affect playing music. This is sometimes used as a game setting
+            to enable/disable sounds, but usually it is a debug setting.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ModulesSettings.IsMusicEnabled">
+      <summary>
+            Is true if it's allowed to play any music. Note: That doesn't affect
+            playing sound effects. This is sometimes used as a game setting
+            to enable/disable sounds, but usually it is a debug setting.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ModulesSettings.IsVideoEnabled">
+      <summary>
+            If this is false, no videos will be played (every call to Play will
+            just return and the screen will continue to the next one usually).
+            Usually used to skip intro videos to speed up the startup (for testing
+            or if users are annoyed by videos ^^)
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ModulesSettings.IsTouchEnabled">
+      <summary>
+            If this is false, no touch input will be processed. This is useful to
+            optimize on platforms where touch input is not available or where it
+            might be very iffy (e.g. Windows 7 can do multi touch, but almost
+            no one has a multi touch capable screen). By default true.
+            </summary>
+    </member>
+    <member name="T:Delta.Engine.Dynamic.DynamicModule">
+      <summary>
+            Base class for all modules. Derived classes do need to implement the Run
+            method and you need to setup your parent type in the constructor. Each
+            Module has a name and provides a link to the parent module (null is only
+            used for the application module) and all child modules it contains. We
+            also got a method to add child modules via AddModule and SetupParent to
+            setup the parents later when we execute the modules (this delayed
+            creation has the advantage that we can have much more code in the
+            constructors without forcing to create parent modules yet). Most module
+            do not really care where stuff is happening, all data must be known),
+            all we need is the Run method, which will handle all the work!
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Dynamic.DynamicModule.isValid">
+      <summary>
+            Value cache for the property IsValid.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Dynamic.DynamicModule.#ctor(System.String,System.Type)">
+      <summary>
+            Create base module. Only uses a name and parent type to link it up.
+            The type can be an interface if we don't know the specific class or
+            it can be a specific class to link up with that parent module.
+            NOTE: DynamicModules MUST be created via Factory.Create() in order to
+            be added to ModuleList. If you want to allow construction via new,
+            you must call AddToDynamicModuleList() somewhere in your constructor
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Dynamic.DynamicModule.ToString">
+      <summary>
+            Since the normal ToString method is boring, provide some more useful
+            information for the debugger and anyone else using this method.
+            </summary>
+      <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
+    </member>
+    <member name="M:Delta.Engine.Dynamic.DynamicModule.Run">
+      <summary>
+            Run code, implement whatever you want to have executed. Some modules
+            have no run code, they are just initialized and don't execute anything
+            special. Usually this method has some code however that will be
+            executed each tick. If not, then just declare an empty Run method,
+            which useful to just make sure capabilities are enabled. Execution is
+            triggered via ExecuteRunLoop, which calls all Run methods.
+            </summary>
+      <remarks>
+            Also note that Run calls can be multi-threaded, which are sync-ed up
+            at the parent's Run method. This could greatly improve performance,
+            especially if we have many children Run methods in parallel.
+            Good post about an ideal multi threading solution with messaging:
+            http://www.zeromq.org/blog:multithreading-magic
+            See RunWithChildrenBefore and RunWithChildrenAfter on how this is
+            implemented here, with runs children multi-threaded if
+            Settings.Extra.MultithreadedModules is turned on (by default it is on).
+            </remarks>
+    </member>
+    <member name="M:Delta.Engine.Dynamic.DynamicModule.Dispose">
+      <summary>
+            Dispose
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Dynamic.DynamicModule.Name">
+      <summary>
+            Name for this module, only set in the constructor! This is usually
+            the name of this class, but do not confuse this with the module type,
+            each module can have a different purpose for Name, content for example
+            might use it for content loading and unique accessing content!
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Dynamic.DynamicModule.IsValid">
+      <summary>
+            Valid flag. Disable if Valid was set to false (something failed or we
+            don't want to use this anymore). Default is always enabled.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Dynamic.DynamicModule.IsDisposed">
+      <summary>
+            Is this class instance already disposed again? Useful to check if we
+            still can dispose dependant objects (like geometry for graphics).
+            </summary>
+    </member>
+    <member name="T:Delta.Engine.Settings">
+      <summary>
+            Settings class. Holds general information about an application or game
+            using the Delta Engine. Settings.xml will be generated if non-existent.
+            <para />
+            Use DeltaLauncher to change settings or modify the XML file directly.
+            Settings include global application settings like PlayerName, Language
+            or Resolution,<para />but also debug settings like which modules are
+            used for rendering, sound, video, etc. and also all the input commands
+            that are currently hooked up (for movement, hot keys, etc.)
+            <para />
+            See http://wiki.deltaengine.net/Private.Settings.ashx
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Settings.AlignResolution">
+      <summary>
+            Helper method to align resolution to multiple of 8 or 32 depending
+            on the platform.
+            <para />
+            Note: In most cases the target resolution will already be the
+            device default resolution, which is fitting into this rule anyway!
+            For defaults check out the following link (see Stride), ES 1.1 and
+            ES 2.0 have mostly a multiple of 32, ES 3.0 is a multiple of 8.
+            http://processors.wiki.ti.com/index.php/Render_to_Texture_with_OpenGL_ES
+            <para></para>
+            Some examples how fast each resolution is: All are multiples of
+            32 except 600, 720 and some other bigger Tegra and PC
+            resolutions, these are still multiples of 8 pixels however:
+            480*320   = 153600 Pixels (default iPhone and iPod resolution)
+            512*320   = 163840 Pixels (custom low resolution for performance)
+            640*384   = 245760 Pixels (custom low resolution for performance)
+            800*480   = 384000 Pixels (default for WP7, Android Mobiles)
+            960*640   = 614400 Pixels (default iPhone 4 Resolution)
+            1024*600  = 614400 Pixels (older/smaller Tegra Tablet resolution)
+            1024*768  = 786432 Pixels (iPad and older Windows Resolution)
+            1280*720  = 921600 Pixels (Medium HD Resolution)
+            1366*768  = 1049088 Pixels (bigger Tegra Tablet resolution)
+            1680*1050 = 1764000 Pixels (PC resolution 20-22 inch displays)
+            1920*1080 = 2073600 Pixels (Full HD Resolution, lots of pixels)
+            As you can see going Medium or even Full HD is a lot of pixels!
+            Pixel shaders on mobile devices are not very fast, so if you have
+            complex shaders, reduce the resolution to still achieve good
+            performance or only use simple shaders to render as fast as
+            possible!
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Settings.Equals(System.Object,System.Object)">
+      <summary>
+            Equals, just to hide the visibility of this method.
+            </summary>
+      <param name="objA">First object</param>
+      <param name="objB">Second object</param>
+      <returns>True if both objects are equal</returns>
+    </member>
+    <member name="M:Delta.Engine.Settings.ReferenceEquals(System.Object,System.Object)">
+      <summary>
+            Reference equals
+            </summary>
+      <param name="objA">First object</param>
+      <param name="objB">Second object</param>
+      <returns>
+            True if both objects are the same instance, otherwise false.
+            </returns>
+    </member>
+    <member name="M:Delta.Engine.Settings.Load">
+      <summary>
+            Loads the settings from file. This will first check if the file
+            is locally accessible. If that's true, we load it from there. If not
+            we try to load it from the content path. The content settings file is
+            only loaded once, after that we always use the local setting file!
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Settings.Save">
+      <summary>
+            Save the settings to local file. Xml data is written by hand until
+            XmlHelper is useful again.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Settings.SetDefaultsFromContent(Delta.Utilities.Xml.XmlNode)">
+      <summary>
+            Set the defaults from the content DefaultSettings.xml. If the
+            Settings.xml already existed and was loaded, only the Modules part
+            is replaced, otherwise the whole Settings is replaced and loaded.
+            </summary>
+      <param name="node">
+            The xml node data to load the default settings from. This has most
+            likely already be done in the constructor, but if that failed we set
+            everything again here.
+            </param>
+    </member>
+    <member name="F:Delta.Engine.Settings.DefaultResolution">
+      <summary>
+            Default resolution, will return the default resolution on each
+            platform, which is often the only resolution supported or a good
+            standard value. On Windows it will be 1024x768, which is nice
+            for debugging and testing iPad, iPhone, etc. platforms.
+            Internal because this is used as a fallback for invalid resolutions
+            in ScreenSpace.CalculateAspectRatio.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Settings.CommonResolutions">
+      <summary>
+            List of CommonResolutions used by most devices. Used mostly by tools
+            to group common resolutions for most devices together. Also used for
+            fonts, each font needs a configuration for all of these resolutions.
+            For tools and fonts it works like this: We go up this list until
+            we reach a point where our current resolution is bigger than the
+            given one. Then we stop and use that resolution. For example 1600x1200
+            would go up to 1280x720 because 1920x1080 does not fit anymore.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Settings.Extra">
+      <summary>
+            Extra settings for more detailed settings, initialized in constructor.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Settings.Modules">
+      <summary>
+            Modules settings for all used modules (graphics, sound, physics, etc.)
+            Initialized and loaded in constructor. Please note that the
+            Settings.xml does not contain any Module settings, only the fallback
+            values are set in the ModulesSettings class. Once the DefaultSettings
+            from the content have been loaded, the actual used modules are set.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Settings.Debug">
+      <summary>
+            Debug settings, initialized in constructor, can be accessed from
+            everywhere (no matter if in debug mode or not) because the default
+            settings are useful and sometimes even required (like Content path).
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Settings.Optional">
+      <summary>
+            Optional settings that can be saved to the settings file. Getting data
+            out is a little bit more cumbersome (via strings), but should work
+            fine for any game or application that needs a little extra :)
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Settings.PlayerName">
+      <summary>
+            The name of the player. Can be changed by the application.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Settings.AvailableLanguages">
+      <summary>
+            List of available languages for this application. Localization will
+            contain text entries for each of these languages and content entries
+            like images can be localized in these languages as well. Use Language
+            for the currently selected language! Note: This is read-only!
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Settings.Language">
+      <summary>
+            Gets or sets the currently selected language of the application.
+            You are only allowed to switch to a supported language listed in the
+            AvailableLanguages list. Can be changed by the application.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Settings.Resolution">
+      <summary>
+            Returns the current resolution from the settings. This WILL NOT change
+            the current running window or viewport, use Application.Window to do
+            that (they call this property too and will make sure it is all sync-ed
+            up). This are the setting for the next time we load settings. For this
+            reason setting the Settings resolution is internal and should not be
+            done via game code. Instead change your content project settings or use
+            Application.Window.Resize to do dynamic resizing in your application.
+            <para></para>
+            For best performance, we ensure the render-buffer height and width
+            are each a multiple of 8 pixels (32 pixels for iOS and WP7, but
+            this limit is not consistent on Android, e.g. the PC or Tegra can
+            render 720p or 1024x600 (both not a multiple of 32) totally fine).
+            See AlignResolution, which will be called when loading or saving!
+            </summary>
+    </member>
+    <member name="E:Delta.Engine.Settings.LanguageChanged">
+      <summary>
+            This event occurs every time the language settings will be changed.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Settings.SettingsTests.OptionalSettings">
+      <summary>
+            Optional settings
+            </summary>
+    </member>
+    <member name="T:Delta.Engine.Dynamic.RequireAttribute">
+      <summary>
+            For types which require a given type to have its implementation
+            determined first. This attribute enforces given type to be instantiated
+            first. Usually given type should be a singleton type.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Dynamic.RequireAttribute.#ctor(System.Type,Delta.Engine.SettingsNodes.ModuleType)">
+      <summary>
+            Create require attribute.
+            </summary>
+      <param name="setRequiredType">The type that is required.</param>
+      <param name="setSetting">The settings item that should be
+            checked for creating an implementation of this type.</param>
+    </member>
+    <member name="P:Delta.Engine.Dynamic.RequireAttribute.RequiredType">
+      <summary>
+            Required type.
+            </summary>
+      <value>
+            The type of the required.
+            </value>
+    </member>
+    <member name="P:Delta.Engine.Dynamic.RequireAttribute.Setting">
+      <summary>
+            Settings item.
+            </summary>
+    </member>
+    <member name="T:Delta.Engine.Application">
+      <summary>
+            The Application.Start method starts the whole game and engine up. You
+            can provide derived a Application class if you need different
+            implementations on other platforms and override the methods (e.g.
+            IPhoneApplication calls its own Main method, it can't use a while loop).
+            Each platform has its own implementation of this class, which is 99%
+            the same, just the startup sequence and RunTick is a little different.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Application.information">
+      <summary>
+            System information instance, only initialized when the Information
+            property is used (which it not happening often).
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Application.BackgroundColor">
+      <summary>
+            Represents the color which that the back buffer will be cleared. Can
+            be changed from everywhere. By default is Black which means we will
+            clear the back buffer with the black color each frame, in unit tests
+            this is changed to DarkBlue by default. You can also set the background
+            color to Uused, which speeds up rendering because it results in not
+            clearing of the (native) backbuffer. This is useful when we already
+            have a "fullscreen background" (2D or 3D scene) rendered.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Application.Start">
+      <summary>
+            Start application. You should do some initialization code before
+            calling this as this will immediately quit if you have 0 modules
+            (because there is no optionalRunCode or module in this overload).
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Application.Start(Delta.Engine.Dynamic.DynamicModule)">
+      <summary>
+            Start application with given main dynamic module (the game or
+            application or first module we want to run), which is inserted to the
+            Application.Run if it was not done before. Then this method will start
+            the execution loop, which will call Run for all modules and block until
+            quitting via the Quit() method.
+            </summary>
+      <param name="initialModule">The main dynamic module to run
+            the application with.</param>
+    </member>
+    <member name="M:Delta.Engine.Application.Start(Delta.Engine.Dynamic.RunDelegate)">
+      <summary>
+            Start the application and start the execution loop, which will call
+            Run for all modules and block until quitting via the Quit() method.
+            </summary>
+      <param name="setOptionalRunCode">Set optional run code.</param>
+    </member>
+    <member name="M:Delta.Engine.Application.Quit">
+      <summary>
+            Quit the currently running application, will close the game loop
+            and dispose all content and classes (via Base.Dispose()).
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Application.ApplicationStarted">
+      <summary>
+            Delegate event fired when the Application.Instance is created and
+            used for post startup code like the Settings Defaults.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Application.ApplicationClosing">
+      <summary>
+            Delegate event fired when the Application is closing and
+            used for disposing native instances like the VLC manager when closing
+            the application.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Application.quit">
+      <summary>
+            Set this variable to true to quit the application loop. Usually done
+            in the Quit method, which can do different things on each platform,
+            but should always set this variable to true to quit the game loop.
+            We also keep an extra variable hasStartedYet to check if we have
+            called the Start method already. All content loading should be delayed
+            and if content is loaded before Start a warning will be shown by
+            Content.Data, which should be fixed with delayed content loading.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Application.hasStartedYet">
+      <summary>
+            See quit
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Application.optionalRunCode">
+      <summary>
+            Optional run code, that will be set in Start and called in Run.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Application.#ctor">
+      <summary>
+            Create base application. The application just provides the run
+            loop, which will be started in the Start method (platform specific).
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Application.StartExecutionLoop">
+      <summary>
+            Start execution loop, used internally, overwrite this one if you need
+            a different way, e.g. on some platforms like iPhone we have to provide
+            a different way to start the application without our own while loop,
+            but using event based methods to then call the Run method.
+            Note: In release mode this also will catch exception in the while
+            loop. This way we can continue in the game loop without crashing
+            the whole app. In debug mode this makes not so much sense, use the
+            attached debugger instead to figure out what is wrong.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Application.Run">
+      <summary>
+            The run method is our main execution loop we call every single frame.
+            First the graphic rendering is executed to give work to the GPU, which
+            should work parallel to the CPU as much as possible each frame. Then
+            we execute Time, Input and Physics because all game logic depends on
+            these modules and will use their data. If we have optionalRunCode
+            (usually used for unit tests) that is executed next and finally all
+            the other modules are executed (scenes, game logic, etc.). Most
+            calculation should happen here and all GPU rendering is collected for
+            the next frame where we will render it all out at the beginning of the
+            frame! The cool thing about DynamicModules is that they are all
+            executed automatically for us, we only handle Graphic and Time
+            specially because we want them to be executed in this very special
+            way, but they are still DynamicModules and work exactly the same as
+            the rest of all modules.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Application.Dispose">
+      <summary>
+            After the run loop returns, the we are done executing. Dispose main
+            application modules and do some cleanup here. Dispose is based on the
+            DynamicModule.Dispose, which does kill all the children modules for
+            us automatically in the reverse order they were created and linked up.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Application.Error(System.String)">
+      <summary>
+            Error, will try to output the error in the console, log and as display
+            a dialog if possible on this platform and in the current game state.
+            See HandleUnhandledException (the usual caller) for more details.
+            Note: Only used internally for heavy errors, normal application
+            warnings should just be logged and fatal errors should throw an
+            exception (which will be caught by HandleUnhandledException if
+            nothing else catches it).
+            </summary>
+      <param name="message">Detailed error message</param>
+      <returns>True if the error should be ignored in the future,
+            false if not (application might already be aborting or the caller
+            can decide to abort in this case).</returns>
+    </member>
+    <member name="M:Delta.Engine.Application.Error(System.String,System.Object)">
+      <summary>
+            Error, will try to output the error in the console, log and as display
+            a dialog if possible on this platform and in the current game state.
+            See HandleUnhandledException (the usual caller) for more details.
+            Note: Only used internally for heavy errors, normal application
+            warnings should just be logged and fatal errors should throw an
+            exception (which will be caught by HandleUnhandledException if
+            nothing else catches it).
+            </summary>
+      <param name="message">Detailed error message</param>
+      <param name="exceptionObject">The exception object for more details.
+            </param>
+      <returns>True if the error should be ignored in the future,
+            false if not (application might already be aborting or the caller
+            can decide to abort in this case).</returns>
+    </member>
+    <member name="M:Delta.Engine.Application.ShowNoContentErrorDialog(System.String,System.String,System.Boolean,Delta.Engine.Dynamic.LoginDelegate,Delta.Engine.Dynamic.GetContentProjectsDelegate,Delta.Engine.Dynamic.GetAutocompleteProjectNamesDelegate,Delta.Engine.Dynamic.SelectContentProjectDelegate)">
+      <summary>
+            Show no content error dialog, which is mostly the same as
+            ShowErrorDialog on most platforms. On Windows in debug mode however
+            we allow grabbing content dynamically via a connect to the Content
+            Server. This is asked in this several dialogs, which makes this method
+            quite complicated. All data is returned via the delegates to the
+            caller. If the data is invalid or the connect could not been made, the
+            callbacks will return errors and this method will try again and again.
+            Note: This will block the app and should only be called for serious
+            content errors that prevent us from continuing (no content available).
+            </summary>
+      <param name="message">
+            Message to display. Initially this will be a warning about not having
+            content, but might also be a connection error or wrong login data.
+            </param>
+      <param name="username">Username to login, can be remembered</param>
+      <param name="clientAlreadyConnected">Is the client already connected?
+            Then we only need to select the content project, nothing more.</param>
+      <param name="loginCallback">Callback that is being called when the
+            user has entered his login information.</param>
+      <param name="getListOfContentProjects">Get list of content projects
+            for the ProjectsWindow dialog.</param>
+      <param name="getAutocompleteProjectsCallback">Get follow-able projects
+            when the user enters something in the project text box.</param>
+      <param name="selectContentProjectCallback">And finally selecting one
+            of the projects, will be checked if the user has access.</param>
+      <returns>
+            True if the user entered some data and the caller should try to grab
+            the new content from the connected server, false if we have to quit.
+            </returns>
+    </member>
+    <member name="M:Delta.Engine.Application.ShowLoginDialog(System.String,System.String,System.Boolean,Delta.Engine.Dynamic.LoginDelegate,Delta.Engine.Dynamic.GetContentProjectsDelegate,Delta.Engine.Dynamic.GetAutocompleteProjectNamesDelegate,Delta.Engine.Dynamic.SelectContentProjectDelegate)">
+      <summary>
+            Show no content error dialog, which is mostly the same as
+            ShowErrorDialog on most platforms. On Windows in debug mode however
+            we allow grabbing content dynamically via a connect to the Content
+            Server. This is asked in this several dialogs, which makes this method
+            quite complicated. All data is returned via the delegates to the
+            caller. If the data is invalid or the connect could not been made, the
+            callbacks will return errors and this method will try again and again.
+            Note: This will block the app and should only be called for serious
+            content errors that prevent us from continuing (no content available).
+            </summary>
+      <param name="message">
+            Message to display. Initially this will be a warning about not having
+            content, but might also be a connection error or wrong login data.
+            </param>
+      <param name="username">Username to login, can be remembered</param>
+      <param name="clientAlreadyConnected">Is the client already connected?
+            Then we only need to select the content project, nothing more.</param>
+      <param name="loginCallback">Callback that is being called when the
+            user has entered his login information.</param>
+      <param name="getListOfContentProjects">Get list of content projects
+            for the ProjectsWindow dialog.</param>
+      <param name="getAutocompleteProjectsCallback">Get follow-able projects
+            when the user enters something in the project text box.</param>
+      <param name="selectContentProjectCallback">And finally selecting one
+            of the projects, will be checked if the user has access.</param>
+      <returns>
+            True if the user entered some data and the caller should try to grab
+            the new content from the connected server, false if we have to quit.
+            </returns>
+    </member>
+    <member name="P:Delta.Engine.Application.Window">
+      <summary>
+            Window instance, always needed to start the application and show stuff
+            on the screen. The graphics device needs the internal window handle,
+            we can display dialogs on the screen with this class, etc. On some
+            platform this implementation is pretty thin and has dummy code. But on
+            Windows this is important for size information. Some classes like
+            Screen to calculate aspect ratio with it, etc.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Application.Information">
+      <summary>
+            Query the system information. Only call this if you really want to
+            know some characteristics of the currently running device. The engine
+            itself only rarely uses this, but a game can freely use this property
+            to access all system information details like cpu speed, cpu core
+            count, shader capabilities or which device type is actually used.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Application.IsRunning">
+      <summary>
+            IsRunning property, will be set to true once the game loop starts.
+            To quit the game, call the Quit() method, which will quit the game
+            loop and this property will be false again (same as before Start was
+            called). This property is also used to check if it is allowed to create
+            content, which should only be done while the app is running, not
+            before (use delayed content loading) or at shutdown (makes no sense).
+            </summary>
+      <value>
+        <c>true</c> if the Application is running; otherwise, <c>false</c>.
+            </value>
+    </member>
+    <member name="P:Delta.Engine.Application.ProjectName">
+      <summary>
+            Project name, which is grabbed from entry assembly. This is the name of
+            your project (e.g. ZombieHockey). Also used for tests, then this is the
+            assembly the test is contained in (e.g. Delta.Rendering.BasicTests).
+            Used for the log name if no UnitTestName was found. Also used as the
+            initial suggestion for the content project name, but that can be setup
+            differently, see Settings.Services.ContentProject for details.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Application.UnitTestName">
+      <summary>
+            Unit Test Name, grabbed from the stack if possible. If no unit test
+            entry point is found or it is Main, this property will return an empty
+            string (then no unit test is used and just the ProjectName is used for
+            the log filename). In case UnitTestName and ProjectName are equal this
+            will also return an empty string. UnitTestName if used is also used for
+            the log filename and for checking if we are in a unit test or not.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Application.EngineVersion">
+      <summary>
+            Returns the engine version that is currently used. The current engine
+            version is 0.9.2 (this will be increased each release). If you don't
+            care about the Revision (e.g. 0.9.1.6) use EngineVersionWitoutRevision.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Application.EngineVersionWitoutRevision">
+      <summary>
+            Returns the engine version that is currently used. The current engine
+            version is 0.9.2 (this will be increased each release). If you don't
+            care about the Revision (e.g. 0.9.1.6) use EngineVersionWitoutRevision.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Application.IsShuttingDown">
+      <summary>
+            Is shutting down? Used to check if we are still creating classes
+            dynamically or loading content when application is shutting down. This
+            should not happen, in this case a warning will be written to the log!
+            </summary>
+      <returns>
+            Returns <c>true</c> if the current Application is shutting down (when
+            Dispose was called after the application loop closes), otherwise false
+            (application has not started yet or is still running).
+            </returns>
+    </member>
+    <member name="T:Delta.Engine.Application.LogClient">
+      <summary>
+            Log client helper class, which just implements BaseClient for all the
+            functionality. We only need to send out text messages anyway.
+            </summary>
+    </member>
+    <member name="T:Delta.Engine.SettingsNodes.OptionalSettings">
+      <summary>
+            Internal optional settings that can be saved to the settings file
+            (needs to be public in order to access it via Setting.Optional.Set and
+            .Get). Getting data out is a little bit more cumbersome (via strings),
+            but should work fine for any application that needs a little extra :)
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.OptionalSettings.#ctor">
+      <summary>
+            Creating this class is not allowed, only the Settings class can do it.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.OptionalSettings.Get(System.String,System.String)">
+      <summary>
+            Get optional setting, will create a new setting if this key does
+            not exist yet (and then will return the given defaultValue).
+            </summary>
+      <param name="key">The key (unique name)</param>
+      <param name="defaultValue">The default value as a string</param>
+      <returns>Returns the optional setting as a string or if not found the
+            defaultValue.</returns>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.OptionalSettings.Get(System.String,System.Int32)">
+      <summary>
+            Get optional setting, will create a new setting if this key does
+            not exist yet (and then will return the given defaultValue).
+            </summary>
+      <param name="key">The key (unique name)</param>
+      <param name="defaultValue">The default value as an integer</param>
+      <returns>Returns the optional setting as an integer or if not found the
+            defaultValue.</returns>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.OptionalSettings.Get(System.String,System.Boolean)">
+      <summary>
+            Get optional setting, will create a new setting if this key does
+            not exist yet (and then will return the given defaultValue).
+            </summary>
+      <param name="key">The key (unique name)</param>
+      <param name="defaultValue">The default value as a boolean</param>
+      <returns>Returns the optional setting as an boolean or if not found the
+            defaultValue.</returns>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.OptionalSettings.Set(System.String,System.String)">
+      <summary>
+            Set optional setting, will create a new setting if this key does
+            not exist yet. In any case it will set the new value.
+            </summary>
+      <param name="key">The key.</param>
+      <param name="value">The value as a string</param>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.OptionalSettings.Set(System.String,System.Int32)">
+      <summary>
+            Set optional setting, will create a new setting if this key does
+            not exist yet. In any case it will set the new value as an integer.
+            </summary>
+      <param name="key">The key.</param>
+      <param name="value">The value as an integer</param>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.OptionalSettings.Set(System.String,System.Boolean)">
+      <summary>
+            Set optional setting, will create a new setting if this key does
+            not exist yet. In any case it will set the new value as a boolean.
+            </summary>
+      <param name="key">The key.</param>
+      <param name="value">The value as a boolean</param>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.OptionalSettings.ToString">
+      <summary>
+            To string
+            </summary>
+      <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
+    </member>
+    <member name="T:Delta.Engine.SettingsNodes.ExtraSettings">
+      <summary>
+            Extra settings. Used in the Settings class.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.SettingsNodes.ExtraSettings.DefaultMultithreadedModules">
+      <summary>
+            By default multi-threaded modules are on to improve performance.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.SettingsNodes.ExtraSettings.DefaultGameLogicUpdatesPerSec">
+      <summary>
+            Default value for GameLogicUpdatesPerSec is 5, which is good enough
+            for simple games, strategy and role playing games and is also great for
+            multiplayer messaging.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.SettingsNodes.ExtraSettings.DefaultAllowDelayedTextureLoading">
+      <summary>
+            Currently this feature is off because content streaming and loading
+            textures (and other big content) delayed in an extra thread is not
+            implemented yet. Once this is available this feature will be on by
+            default, which means all texture loads will do nothing until the
+            texture content is actually needed in rendering. Then they are loaded,
+            which causes hick-ups when not done in an extra thread and with
+            switching blurry default textures with the real ones once loading is
+            complete. However, since this feature is even useful without threading
+            and it was on by default since 2009 because it saves you a lot of
+            memory as only textures are loaded when they are actually used!
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.ExtraSettings.#ctor">
+      <summary>
+            Create extra settings is not allowed, only Settings can do this!
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.IsFullscreen">
+      <summary>
+            Fullscreen flag. Only false on windows in debug mode by default.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.WindowPosition">
+      <summary>
+            Represents the position of the application window on the desktop of
+            current operating system. Only used for windowed mode, which is
+            pretty cool for unit tests, you can move them over to a secondary
+            screen and next time you start the unit test, the window is still
+            there at the old position.
+            </summary>
+      <value>
+            The window position.
+            </value>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.UseDepthBuffer">
+      <summary>
+            Helper for determining if a depth buffer is used or not.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.DepthBufferSize">
+      <summary>
+            Helper for retrieving actual DepthBuffer size (0, 16, 24, 32).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.DepthBuffer">
+      <summary>
+            Depth-Buffer mode, determinates which kind of depth Buffer is used on
+            the current platform if possible.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.ColorBufferSize">
+      <summary>
+            Helper for retrieving actual ColorBuffer size in bits (16, 32, 64, 128)
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.ColorBuffer">
+      <summary>
+            ColorBuffer mode for the current device. Usually RGB565 for mobile
+            devices and RGBA8888 for PCs and Consoles. RGBAFloat16 or RGBAFloat32
+            can also be used for high profile PC or Console games.
+            <para />
+            Note: Exotic modes like RGBA4444, RGBA5551, RGB888, or RGB10A2 are not
+            supported right now.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.UseAntiAliasing">
+      <summary>
+            Helper for determining if anti aliasing is used or not
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.AntiAliasingSamples">
+      <summary>
+            Helper for determining Anti aliasing sample count (2, 4, 8, 16, 32)
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.AntiAliasing">
+      <summary>
+            AntiAliasing mode we want to use for this device (may be unsupported
+            and will be ignored then).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.MultithreadedModules">
+      <summary>
+            Use multithreaded modules to improve performance on multicore systems.
+            This setting is on by default. If just one core is available this
+            option usually does nothing (only one thread will execute everything).
+            This only has an affect if we have multiple cores and multiple modules
+            to be executed in the same layer (which is usually true for games and
+            even most unit tests). Parents sync childrens up.
+            <para></para>
+            The main advantage comes when many modules have to be executed side by
+            side and multiple cores are available (one thread is created per core).
+            Each module still can have its own multithreading, which makes total
+            sense for complex stuff like physics, which highly benefits from
+            multithreaded execution. Some engine intern modules like the
+            ProcessManager, Physics, Effects and other math or game logic heavy
+            tasks also use this setting to run their children in the same multiple
+            threads to improve performance. Finally advanced graphic modules like
+            DirectX 11 on Windows can even use this setting to offload graphics
+            computations into different threads and execute them faster this way.
+            <para></para>
+            This only works as long as the module work is separated from the rest
+            of the game logic. For example actors also would benefit greatly from
+            multithreading, but we cannot predict which actor needs data from
+            other actors or game logic code, which is totally unpredicatable in
+            multithreaded code. If you can manage, you are obviously free to
+            implement multithreaded actors yourself.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.GameLogicUpdatesPerSec">
+      <summary>
+            Game logic updates per seconds, only affects game logic modules. All
+            input, multimedia, graphics and other low level hardware dependant
+            modules run at the maximum framerate for the best user experience.
+            Used to separate rendering and update logic from each other (e.g. one
+            game loop with 5fps, interpolated to how many fps we have). The
+            default is 5, strategy games or RPGs and especially network games are
+            fine with 5 game logic updates per second, but you might want to
+            increase this for other game types. 10 and 15 works well too, action
+            packed games might want to go with 30 or completely disable this
+            feature (with 0 or a number greater than LimitFramerate, then each
+            frame is synced up: 1 rendering frame for 1 game update). Having more
+            game updates than rendering out frames makes no sense and has no
+            benefit, you will never see the results (this is why the game logic
+            updates per second are capped at the maximum frame rate if over 60
+            or LimitFramerate).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.LimitFramerateNumber">
+      <summary>
+            Limit frame rate number (usually off = 0), if on and 60 or below, then
+            VSync will also be enabled. Set in the private LimitFramerate property,
+            but can also be set by the application. Please note that changing this
+            value will not be reflected in the settings. It is usually used for
+            temporary testing (in some unit test) or to limit the framerate for
+            a specific application (e.g. a game on the iPhone that runs best with
+            30fps, default is 60fps there btw), but not wanted for the rest of
+            the unit tests or the real application (use the Settings.xml for that).
+            Also note that this has no effect if no Graphics device is used
+            (e.g. for very high fps unit tests without graphics).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.AllowDelayedTextureLoading">
+      <summary>
+            Allow loading textures (which take the longest load times) delayed only
+            when actually needing the textures (instead of when creating them).
+            Currently this feature is off because content streaming and loading
+            textures (and other big content) delayed in an extra thread is not
+            implemented yet. Once this is available this feature will be on by
+            default, which means all texture loads will do nothing until the
+            texture content is actually needed in rendering. Then they are loaded,
+            which causes hick-ups when not done in an extra thread and with
+            switching blurry default textures with the real ones once loading is
+            complete. However, since this feature is even useful without threading
+            and it was on by default since 2009 because it saves you a lot of
+            memory as only textures are loaded when they are actually used!
+            <para />
+            This will make the loading of your game much faster as textures are
+            only loaded when they are used first, but it can cause hickups in your
+            game when previously unloaded textures are used for the first time. Use
+            this option with care and test it, it usually works best for small
+            games or if the game correctly utilizes multithreading and can do the
+            loading in the background.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.ReduceInputLag">
+      <summary>
+            Extra option to reduce input lag, which is off by default. When this
+            option is on all GPU rendering happens in the same frame (instead of
+            in the next frame so GPU and CPU can work in parallel).
+            <para />
+            This means we do all the rendering in the same frame the input was
+            captured at the cost of running CPU and GPU after each other (when
+            waiting for vertical sync the CPU waits, when the GPU is done, it
+            waits until the CPU is done with the next frame). Else it would be
+            rendered and handled in the next frame to allow CPU and GPU work side
+            by side.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.AllowApplicationToStartMultipleTimes">
+      <summary>
+            By default all Delta Engine applications can only be started once. If
+            you start them again while an instance is still running the new
+            instance will be closed and the existing instance will be focused. If
+            you want to have multiple instance of your application running at the
+            same time (e.g. for multiplayer testing) set this property to true!
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.LogServerIp">
+      <summary>
+            Optional log server IP where we can use to log messages too.
+            Log Server IP and Port (separated by a colon, port is optional)
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.ExtraSettings.LogDirectory">
+      <summary>
+            By default no log directory is used, all logs end up in the application
+            directory (named by the program or unit test that was started).
+            Note: This is just a directory, no filename should be specified here.
+            Also note that this must be set before the actual logging happens,
+            so in case you first have some log warnings and then load the settings
+            the initial log directory is not set.
+            </summary>
+    </member>
+    <member name="T:Delta.Engine.SettingsNodes.ModuleType">
+      <summary>
+            Enumeration of available settings. These entries are stored in the
+            Settings.xml file and help the engine to decide which modules should
+            be used when loading certain classes (Graphic classes like Graphics,
+            Image, Shader, or Audio classes like Sound or Music). Note: Make sure
+            classes contain the name from the Settings, e.g. Xna will search for
+            XnaGraphics, but not for MyGreatXboxGraphics even if it uses Xna. Or
+            Farseer3 will only search for Farseer3, not FarseerPhysics.
+            </summary>
+    </member>
+    <member name="T:Delta.Engine.Time">
+      <summary>
+            Class for getting and manipulating the game time, is intended 
+            to support the game programmer any kind of info about timing: 
+            current time, delta time or any other useful.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Time.CheckEvery(System.Single)">
+      <summary>
+            Check every time (e.g. one second, half a second, every 10 seconds)
+            if the time has passed and return true once in that time frame and
+            false otherwise. Used for spawning stuff, e.g. every 0.5 seconds and
+            is very useful to write framerate independent code.
+            Note: If using a small value here like 1.0f/100.0f and we have less
+            fps (e.g. 60), then this will return true every time, but obviously
+            we cannot return true 100 times if this method is only called 60 times.
+            </summary>
+      <param name="timeStep">Time step in seconds</param>
+      <returns>
+            True if the timeStep is reached, false if we have too many frames and
+            need to wait until timeStep is reached next.
+            </returns>
+    </member>
+    <member name="M:Delta.Engine.Time.CheckEvery(System.Single,System.Int64)">
+      <summary>
+            Check every time (e.g. one second, half a second, every 10 seconds)
+            if the time has passed and return true once in that time frame and
+            false otherwise. Used for spawning stuff, e.g. every 0.5 seconds and
+            is very useful to write framerate independent code.
+            Note: If using a small value here like 1.0f/100.0f and we have less
+            fps (e.g. 60), then this will return true every time, but obviously
+            we cannot return true 100 times if this method is only called 60 times.
+            </summary>
+      <param name="timeStep">Time step in seconds</param>
+      <param name="startTimeMs">
+            Only start checking when this time is reached and then every time step
+            after (in milliseconds).
+            </param>
+      <returns>
+            True if the timeStep is reached, false if we have too many frames and
+            need to wait until timeStep is reached next.
+            </returns>
+    </member>
+    <member name="M:Delta.Engine.Time.GetDeltaToNow(System.Int64)">
+      <summary>
+            Get delta to now in seconds as a floating point value.
+            </summary>
+      <param name="startTimeInMs">The start time in ms.</param>
+      <returns>Float Delta to Now</returns>
+    </member>
+    <member name="F:Delta.Engine.Time.Delta">
+      <summary>
+            Returns the current delta time. It represents the difference between
+            the last tick and the current tick in seconds (usually small values).
+            Used for many calculations and updates to make sure the time goes
+            on constantly no matter how many frames we have per second.
+            Note: For very high number of fps (over 10 million fps), this gets
+            inaccurate and is not so reliable, but for normal fps it is fine.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Time.Seconds">
+      <summary>
+            Time in seconds since the application was launched. Not very accurate
+            because this is an int, but will be a good value for a very long time.
+            Float would be more accurate for sub second timings, but get very
+            inaccurate after a few days, which is very bad!
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Time.Milliseconds">
+      <summary>
+            Elapsed milliseconds as a long value. Much more accurate that the
+            Seconds value, but not as accurate as Delta. Also not easy to use
+            because most time checking code would be floats. Float would be more
+            accurate for sub second timings, but get very inaccurate after a few
+            days, which is very bad! This value is good for thousands of years!
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Time.Fps">
+      <summary>
+            The frames per second for the current rendering. Can fluctuate a bit
+            and is updated at FpsTimeIntervals.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.Time.EverySecond">
+      <summary>
+            Every second helper method, will only return true if a second just
+            passed in this tick (which is totally frame rate independent).
+            Used for the FPS calculation and many times throughout the engine
+            and for unit tests.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Time.#ctor">
+      <summary>
+            Create time
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.Time.Run">
+      <summary>
+            Update the time based on the difference between the last tick
+            and the current tick gap time. We use the system time and the
+            function is automatically called, there is no need to be used.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Time.CurrentExactTime">
+      <summary>
+            This property is slow, it will check the underlying timer and report
+            back a very accurate value rounded to a float in seconds for today.
+            Warning: This method is slower than Time.Seconds, Time.Milliseconds,
+            Time.Delta, etc. Use those instead if possible (much faster).
+            The return value is in seconds and reports a fraction for up to 0.1ns.
+            The value will be reset every day to stay accurate (again, after 3
+            days floats lose accuracy and will not be very useful anymore). Used
+            for profilers and more accurate input for example. If you do not need
+            this high accuracy please only use the Milliseconds value or the helper
+            methods here (all millisecond exact and updated once per frame).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.Time.Timer">
+      <summary>
+            Instead of using DateTime, which is way too inaccurate, we should use
+            PerformanceCounters (see Windows assembly) or Stopwatch, which is
+            pretty accurate too (uses PerformanceCounters underneath too on
+            Windows). Try to use high resolution counters, but if a platform
+            does not support them, we won't have them and thats ok too.
+            Only static to support the CurrentExactTotalTime property.
+            Note: This also updates Log.logTimer.
+            Note: On the Android Tegra we use EglTimeSource via NVidias extension.
+            </summary>
+    </member>
+    <member name="T:Delta.Engine.SettingsNodes.DebugSettings">
+      <summary>
+            Debug settings, used in Settings, contains all the debug settings you
+            can set in the DeltaLauncher like ContentPath, Modules, ProfilingModes,
+            DebugModes, LimitFramerate, etc.
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.DebugSettings.#ctor">
+      <summary>
+            Create debug settings, not allowed, only the Settings class uses this!
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.DebugSettings.IsProfilingModeOn(Delta.Engine.SettingsNodes.ProfilingMode)">
+      <summary>
+            Is a certain profiling mode used? Very simple combined enum check,
+            but this is used several times in the engine.
+            </summary>
+      <param name="checkMode">The check mode.</param>
+      <returns>
+        <c>true</c> if [is profiling mode on]; otherwise, <c>false</c>.
+            </returns>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.DebugSettings.IsDrawDebugInfoModeOn(Delta.Engine.SettingsNodes.ProfilingMode)">
+      <summary>
+            Is a certain draw debug info mode used? Very simple combined enum check,
+            but this is used several times in the engine.
+            </summary>
+      <param name="checkMode">The check mode.</param>
+      <returns>
+        <c>true</c> if [is debug mode on] [the specified check mode];
+            otherwise, <c>false</c>.
+            </returns>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.DebugSettings.ToggleDrawDebugInfoMode(Delta.Engine.SettingsNodes.ProfilingMode)">
+      <summary>
+            Toggle a specific debug mode on/off.
+            </summary>
+      <param name="modeToToggle">The mode to toggle.</param>
+    </member>
+    <member name="M:Delta.Engine.SettingsNodes.DebugSettings.SetDrawDebugInfoMode(Delta.Engine.SettingsNodes.ProfilingMode,System.Boolean)">
+      <summary>
+            Set debug mode
+            </summary>
+      <param name="modeToEnable">Mode to enable</param>
+      <param name="on">if set to <c>true</c> [on].</param>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.DebugSettings.LogFramerateWhenQuitting">
+      <summary>
+            If this is on (off by default) we will log the number of Fps we
+            had at application shutdown into the log file for the application.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.DebugSettings.AllowDuplicateLogChecking">
+      <summary>
+            By default Allow Duplicate Log Checking. This speeds up console writing
+            by a lot (skips messages if too much is going on, making logging
+            10-100x faster). It also checks for duplicate messages written into
+            the log file (keeping the log file much smaller).
+            <para />
+            But it can be useful if you really want every single log message in
+            the console and log file including duplicates, then disable this
+            feature (via Application Settings or by setting this to false).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.DebugSettings.AllowDevelopmentAssemblyUpdating">
+      <summary>
+            Skip development assembly updating, see AssemblyFinder for details.
+            Basically we won't provide the AssemblyDetails class with the
+            development paths it needs for updating assemblies dynamically if they
+            have changed in the development paths. Note: On a Consumer PC there
+            won't be any development paths anyway so this setting only makes a
+            difference on development PCs.
+            </summary>
+      <value>
+        <c>true</c> if allowing development assembly updating,
+            otherwise, <c>false</c>.</value>
+    </member>
+    <member name="P:Delta.Engine.SettingsNodes.DebugSettings.OptionalAssemblyPath">
+      <summary>
+            This string is only used in the Factory system to have an additional
+            development path where we can search for further needed assemblies.
+            By default this string is empty and will be filled to whatever we
+            can find (..\..\, ..\..\..\, c:\code\Delta, etc.) or left empty.
+            </summary>
+    </member>
+    <member name="T:Delta.Engine.Dynamic.Factory">
+      <summary>
+            Factory class to dynamically create types in the engine. We usually use
+            interfaces or abstract classes to create types in other assemblies,
+            that are not even referenced here or in the application, but can be
+            loaded dynamically.
+            <remarks>
+            This is the third iteration of the Factory class, it is more dynamic
+            now and does not rely on the helper classes AssemblyDetails and
+            AssemblyFinder anymore. For the Delta.Tools.Launcher however it still
+            does work this way (way more information is needed there for dynamic
+            execution).
+            For more details about Factory design in C# check out this link:
+            http://www.codeproject.com/KB/architecture/CSharpClassFactory.aspx
+            For the wiki entry see:
+            http://wiki.deltaengine.net/Private.Factory.ashx
+            </remarks></summary>
+    </member>
+    <member name="M:Delta.Engine.Dynamic.Factory.Create(System.Type)">
+      <summary>
+            Same as Create(Type, object), but without arguments. Only allowed to
+            be used internally (use the generic Create instead).
+            </summary>
+      <param name="classToCreate">Class to create</param>
+      <returns>Created Object</returns>
+    </member>
+    <member name="M:Delta.Engine.Dynamic.Factory.Create(System.String,System.String)">
+      <summary>
+            Creates an instance of the given object type description. Quite useful
+            for serializing respectively de-serializing an object.
+            </summary>
+      <param name="assemblyName">
+            Assembly name in which the type is located.
+            </param>
+      <param name="fullTypeName">
+            Full type name of the type we want to create.
+            </param>
+      <returns>Created object</returns>
+    </member>
+    <member name="M:Delta.Engine.Dynamic.Factory.Create(System.String,System.String,System.Object)">
+      <summary>
+            Creates an instance of the given object type description.
+            Quite useful for serializing respectively de-serializing an object.
+            </summary>
+      <param name="assemblyName">
+            Assembly name in which the type is located.
+            </param>
+      <param name="fullTypeName">
+            Full type name of the type we want to create.
+            </param>
+      <param name="argument">
+            Argument passed to the Constructor of the type we want to create. The
+            argument can be one or an array of arguments :)
+            </param>
+      <returns>Created object</returns>
+    </member>
+    <member name="M:Delta.Engine.Dynamic.Factory.Save(System.IO.BinaryWriter,Delta.Utilities.ISaveLoadBinary)">
+      <summary>
+            Helper to save any object that implements the "ISaveLoadBinary" to the
+            given stream. Saves the assembly and type full name and then the data.
+            </summary>
+      <param name="dataWriter">Data writer</param>
+      <param name="objectToSave">Save to object</param>
+    </member>
+    <member name="M:Delta.Engine.Dynamic.Factory.GetImplementationTypes(System.Type)">
+      <summary>
+            Get all types available that are implementing the baseType.
+            </summary>
+      <param name="baseType">Base type we want to search implementations
+            for.</param>
+      <returns>Array of types that derive our base type.</returns>
+    </member>
+    <member name="M:Delta.Engine.Dynamic.Factory.Create(System.Type,System.Object)">
+      <summary>
+            Helper method to dynamically create a class type with arguments.
+            </summary>
+      <param name="classToCreate">Class to create</param>
+      <param name="argument">
+            Optional argument (default is null, which means we wont pass any
+            parameters to the constructor). The argument can be one or an array of
+            arguments :)
+            </param>
+      <returns>
+            If everything went right the created instance will be returned,
+            otherwise null.
+            </returns>
+    </member>
+    <member name="T:Delta.Engine.ScreenSpace">
+      <summary>
+            Static Screen Space class, tells us about the render area we can use in
+            quadratic screen space and its top left corner (see the wiki page:
+            http://DeltaEngine.net/Wiki.ScreenSpace). Also has all the space
+            converter methods we might need for pixel to quadratic and back
+            space conversions in the engine. We also store the background color for
+            clearing the back buffer here so we do not need to create the graphics
+            device just for setting the background color, which might be needed
+            much later (note that the graphic device is also internal now, there is
+            no need anymore to access it publicly). Finally this class has Project
+            and Unproject helper methods for camera and ray picking. All methods
+            and properties are heavily optimized and cached and can be used a lot!
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.CalculateAspectRatio">
+      <summary>
+            Calculate aspect ratio, make sure you call this if you change the
+            resolution or aspect ratio. Called from the BaseGraphic constructor
+            and the Core.Window.ResizeEvent!
+            </summary>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.CalculateAspectRatio(System.Single,System.Single)">
+      <summary>
+            Calculate aspect ratio, this method takes the current viewport size as
+            parameters, which is useful for startup where we do not have a window
+            yet for the real viewport pixel size (Settings is used instead).
+            </summary>
+      <param name="viewportPixelWidth">Width of the viewport pixel.</param>
+      <param name="viewportPixelHeight">Height of the viewport pixel.</param>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.ToPixelSpace(Delta.Utilities.Datatypes.Point)">
+      <summary>
+            Converts a point from quadratic space (0-1) to pixel space (0-size).
+            Note: This is currently only used for mouse position setting.
+            The results will be rounded to full numbers to make return values more
+            useful: (22, 90) instead of (21.999998, 90.0000002).
+            </summary>
+      <param name="quadraticPosition">The quadratic position.</param>
+      <returns>Point</returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.ToPixelSpace(Delta.Utilities.Datatypes.Size)">
+      <summary>
+            Converts a size from quadratic space (0-1) to pixel space (0-size).
+            Note: This is currently only used for font positioning.
+            The results will be rounded to full numbers to make return values more
+            useful: (22, 90) instead of (21.999998, 90.0000002).
+            </summary>
+      <param name="quadraticSize">Size of the quadratic rectangle.</param>
+      <returns>Pixel size</returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.ToPixelSpace(Delta.Utilities.Datatypes.Rectangle)">
+      <summary>
+            Converts a rectangle from quadratic space (0-1) to pixel space (0-size)
+            The results will be rounded to full numbers to make return values more
+            useful: (22, 90) instead of (21.999998, 90.0000002).
+            Note: Currently this method is never needed in the engine itself.
+            </summary>
+      <param name="quadraticArea">
+            The quadratic area in quadratic space
+            </param>
+      <returns>Rectangle in pixel space.</returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.ToQuadraticSpace(Delta.Utilities.Datatypes.Point)">
+      <summary>
+            Converts a point from pixel space (0-size) to quadratic space (0-1).
+            Note: You should not use this for converting sizes (like 1 Y pixel
+            here is in quadratic around 0.25f, which is converted back few hundred
+            pixels due the way the quadratic screen space works, just use the
+            Size version of ToQuadraticSpace).
+            </summary>
+      <param name="pixelPosition">The pixel position.</param>
+      <returns>Point </returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.ToQuadraticSpace(Delta.Utilities.Datatypes.Size)">
+      <summary>
+            Converts a size from pixel space (0-size) to quadratic space (0-1).
+            </summary>
+      <param name="pixelSize">Pixel Space size</param>
+      <returns>
+            Size
+            </returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.ToQuadraticSpace(Delta.Utilities.Datatypes.Rectangle)">
+      <summary>
+            Converts a rectangle from pixel space (0-size) to quadratic space (0-1)
+            </summary>
+      <param name="pixelArea">The pixel area.</param>
+      <returns>Rectangle</returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.ToQuadraticSpaceTopLeft(Delta.Utilities.Datatypes.Rectangle)">
+      <summary>
+            Does the same as "ToQuadraticSpace()" but doesn't add the positioning
+            offset for centering the visible screen area. Used for font rendering!
+            -&gt; e.g. Position (0, 0) of resolution 1024x768 will return (0, 0)
+            instead of (0, 0.125)
+            Note: (0, 0) is not fully correct as we might have small offsets to
+            account for strange resolutions not dividable by 2 (e.g. 799*599).
+            See <see cref="F:Delta.Engine.ScreenSpace.pixelTopLeftQuadraticOffset" /> and this method comments
+            for details.
+            </summary>
+      <param name="pixelArea">The pixel area.</param>
+      <returns>Rectangle</returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.MakePositionPixelAccurate(Delta.Utilities.Datatypes.Point)">
+      <summary>
+            Makes sure that the given Quadratic Space position fits perfectly to
+            the pixels on the screen.
+            </summary>
+      <param name="quadSpacePosition">Quadratic space position</param>
+      <returns>If the point is accurate</returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.InArea(Delta.Utilities.Datatypes.Point)">
+      <summary>
+            Is the given position in our valid quadratic space render area?
+            </summary>
+      <param name="position">The position.</param>
+      <returns>If the point is in area</returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.StayInArea(Delta.Utilities.Datatypes.Point@)">
+      <summary>
+            Helper method to let a position stay in the valid screen area.
+            Used for the virtual keyboard cursor for example.
+            </summary>
+      <param name="position">The position.</param>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.Project(Delta.Utilities.Datatypes.Vector,Delta.Utilities.Datatypes.Matrix@,Delta.Utilities.Datatypes.Matrix@,Delta.Utilities.Datatypes.Matrix@)">
+      <summary>
+            Project a vector to the screen.
+            </summary>
+      <param name="source">The source.</param>
+      <param name="projection">The projection.</param>
+      <param name="view">The view.</param>
+      <param name="world">The world.</param>
+      <returns>Projection point </returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.Project(Delta.Utilities.Datatypes.Vector)">
+      <summary>
+            Project a source vector by transforming it through ViewProjection3D.
+            This returns results in quadratic space (0-1) and takes aspect ratio
+            into account.
+            </summary>
+      <param name="source">The source.</param>
+      <returns>Source</returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.Unproject(Delta.Utilities.Datatypes.Vector)">
+      <summary>
+            Un-project a source vector by transforming it through the Inverse of
+            the worldViewProjection matrix.
+            </summary>
+      <param name="source">The source.</param>
+      <returns>Vector</returns>
+    </member>
+    <member name="M:Delta.Engine.ScreenSpace.GetRayFromScreenPoint(Delta.Utilities.Datatypes.Point)">
+      <summary>
+            Get the ray that passes through the Position in the screen (quadratic
+            coordinates). For details check out:
+            http://msdn.microsoft.com/enus/library/bb203905.aspx
+            </summary>
+      <param name="position">The position.</param>
+      <returns>Ray from screen point</returns>
+    </member>
+    <member name="F:Delta.Engine.ScreenSpace.InternalViewProjection2D">
+      <summary>
+            Note: Do not change this value, the rendering system needs it and
+            changing it outside of internal graphics rendering code might have no
+            effect or will destroy rendering.
+            <para />
+            ViewProjection2D is the ViewProjection matrix used for all 2D rendering,
+            basically it converts our quad screen space to the [0,1] screen area we
+            have in the shaders. Is pre-calculated and will change if the resolution
+            changes (dependant on AspectRatio obviously). Since this rarely changes
+            we can do some good optimizations in Shader.SetRenderMatrix2D for all
+            2D rendering. 
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.ScreenSpace.InternalViewProjection3D">
+      <summary>
+            Note: Do not change this value, the rendering system needs it and
+            changing it outside of internal graphics rendering code might have no
+            effect or will destroy rendering.
+            <para />
+            View projection matrix for 3D rendering, mainly updated and used from
+            the Delta.Rendering.Cameras classes. Used in Shader.SetRenderMatrix3D
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.ScreenSpace.InternalViewInverse">
+      <summary>
+            Note: Do not change this value, the rendering system needs it and
+            changing it outside of internal graphics rendering code might have no
+            effect or will destroy rendering.
+            <para />
+            Inverse view matrix, which contains the camera (eye) position in
+            the forth row (see shader code, which will do viewInverse[3].xyz).
+            Also set by the Delta.Rendering.Cameras classes.
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.ScreenSpace.pixelToQuadraticScale">
+      <summary>
+            Helpers for more optimized ToQuadraticSpace and ToPixelSpace methods.
+            This way we only calculate these values once and can immediately
+            convert points from and to quadratic space (which is a lot faster).
+            Note that size and positions need different handling because positions
+            need to be corrected to the TopLeft offset. Quadratic space dependants
+            on the AspectRatio, sizes however are not affected by the offsets,
+            just the scaling (they are always quadratic like the name says).
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.ScreenSpace.DrawArea">
+      <summary>
+            Returns the visible draw area of the viewport in quadratic space,
+            usually something like (0, 0.2, 1, 0.8), updated in
+            CalculateAspectRatio.
+            </summary>
+    </member>
+    <member name="P:Delta.Engine.ScreenSpace.AspectRatio">
+      <summary>
+            AspectRatio of the current viewport, currently just returns the width/
+            height ratio of Window. Pre-calculated in CalculateAspectRatio, which
+            is called by Window.ResizeEvent and in the constructor here.
+            </summary>
+    </member>
+    <member name="T:Delta.Engine.SettingsNodes.ProfilingMode">
+      <summary>
+            Profiling modes, usually set via Settings, but you can also enable or
+            disable them via F1, F2, F3, F4 while the application is running. In
+            debug mode Fps is usually on by default, in release mode everything is
+            off by default and only the F1 key binding is hooked up. Note that
+            custom ProfilingFlags are not affected by this enum and will be shown
+            unless you are in the None mode, but F1 is even allowed in release
+            mode. Note: Also used for DrawDebugInfo modes (Debugging Modules) to
+            help find issues with different parts of the engine, but only certain
+            enum values have useful extra debug draw functionality (e.g. UI, 2D and
+            3D Rendering, Physics, Text and AI).
+            </summary>
+    </member>
+    <member name="F:Delta.Engine.SettingsNodes.ProfilingMode.Physics">
+      <summary>
+            F8: Extra profiling information about physics, is usually used when
+            profiling and optimizing physics, also useful in combination with
+            DebugModes for Physics. See Physics modules for details. If we have
+            3D Physics, this will show 3D physics profiling info (which is
+            the most critical for 3D games), otherwise just 2D physics profiling
+            will be done. Note: This is also used for DebugModes.
+            </summary>
+    </member>
+  </members>
+</doc>
